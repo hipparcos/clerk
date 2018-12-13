@@ -63,7 +63,7 @@ listed in order of priority.
 
 ### TODO
 - [ ] Backend:
-    - [ ] Create a Laravel project.
+    - [x] Create a Laravel project.
 - [ ] Backend/Model:
     - [ ] User:
         - [ ] Create migration (create table + insert test user);
