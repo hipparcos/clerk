@@ -43,3 +43,20 @@ listed in order of priority.
     - Bulma.
 - Deployment:
     - Docker.
+
+## Implementation
+### Model
+- user:
+    - user.id, INT, PK
+    - user.name, VARCHAR(255)
+    - user.email, VARCHAR(320)
+    - user.hash, VARCHAR(60), result of password_hash using BCRYPT
+- room:
+    - room.id, INT, PK
+    - room.name, VARCHAR(255)
+- booking:
+    - booking.id, INT, PK
+    - user.id#, FK
+    - room.id#, FK
+    - booking.start, DATETIME
+    - booking.end, DATETIME
