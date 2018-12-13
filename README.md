@@ -60,3 +60,50 @@ listed in order of priority.
     - room.id#, FK
     - booking.start, DATETIME
     - booking.end, DATETIME
+
+### TODO
+- [ ] Backend:
+    - [ ] Create a Laravel project.
+- [ ] Backend/Model:
+    - [ ] User:
+        - [ ] Create migration (create table + insert test user);
+        - [ ] Implement user creation;
+        - [ ] Implement user authentification.
+    - [ ] Room:
+        - [ ] Create migration (create table + insert rooms);
+    - [ ] Booking:
+        - [ ] Create migration (create table);
+        - [ ] Implement booking creation/modification:
+            - [ ] Block meeting collisions for the same room;
+            - [ ] Block meeting collisions for the same user (overridable).
+- [ ] Backend/API:
+    - [ ] User:
+        - [ ] POST /register: implement user creation;
+        - [ ] POST /login: implement user authentification;
+        - [ ] Implement user authentification middleware.
+    - [ ] Booking: (restricted to authenticated users)
+        - [ ] GET /bookings: implement booking listing for a user;
+        - [ ] POST /bookings: implement booking creation;
+        - [ ] GET /bookings/{id}: implement booking viewing;
+        - [ ] PUT /bookings/{id}: implement booking modification (user.id must match booking.user.id);
+        - [ ] DELETE /bookings/{id}: implement booking deletion (user.id must match booking.user.id);
+- [ ] Frontend: (as it is a SPA, every form/table will be implemented in its own component)
+    - [ ] Configure node.js, add required dependancies (vue.js, vue-router, bulma);
+    - [ ] Create a base layout;
+    - [ ] Configure vue-router;
+    - [ ] /:
+        - [ ] Create a timetable view of all bookings (obfuscated except for the one from the current user).
+    - [ ] /register:
+        - [ ] Create registration form;
+        - [ ] Display registration errors.
+    - [ ] /login:
+        - [ ] Create login form;
+        - [ ] Display login errors.
+    - [ ] /bookings:
+        - [ ] Create a table of bookings;
+        - [ ] Add a control to delete a booking;
+        - [ ] Add a control to modify a booking (in-place editing ?).
+    - [ ] /bookings/new:
+        - [ ] Create booking form.
+- [ ] Deployment:
+    - [ ] Create a Dockerfile to deploy the application.
