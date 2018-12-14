@@ -1,0 +1,23 @@
+version: '2'
+services:
+  clerk:
+    # Build using the Dockerfile at the root of clerk:
+    build: .
+    # Reroute 80 on the docker container to 4000 on the local machine:
+    ports:
+      - "4000:80"
+    depends_on:
+      - mariadb
+  mariadb:
+    # Use a base image:
+    image: mariadb:10.3.11
+    # Set a mountpoint to the local filesystem:
+    volumes:
+       - db_data:/var/lib/mariadb
+    # Set environment variables:
+    environment:
+      - MYSQL_ROOT_PASSWORD=fZmk11083KDkl
+      - MYSQL_DATABASE=clerk
+      - MYSQL_ALLOW_EMPTY_PASSWORD=no
+volumes:
+    db_data:
