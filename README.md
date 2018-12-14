@@ -69,8 +69,8 @@ listed in order of priority.
         - [x] Create migration (create table + insert test user);
         - [x] Implement user creation;
         - [x] Implement user authentification.
-    - [ ] Room:
-        - [ ] Create migration (create table + insert rooms);
+    - [x] Room:
+        - [x] Create migration (create table + insert rooms);
     - [ ] Booking:
         - [ ] Create migration (create table);
         - [ ] Implement booking creation/modification:
