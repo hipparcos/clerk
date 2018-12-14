@@ -54,12 +54,12 @@ listed in order of priority.
 - rooms:
     - rooms.id, INT, PK
     - rooms.name, VARCHAR(255), UNIQUE
-- booking:
-    - booking.id, INT, PK
-    - user.id#, FK
-    - room.id#, FK
-    - booking.start, DATETIME
-    - booking.end, DATETIME
+- bookings:
+    - bookings.id, INT, PK
+    - users.id#, FK, ON DELETE CASCADE
+    - rooms.id#, FK, ON DELETE CASCADE
+    - bookings.start, DATETIME
+    - bookings.end, DATETIME
 
 ### TODO
 - [ ] Backend:
@@ -72,7 +72,7 @@ listed in order of priority.
     - [x] Room:
         - [x] Create migration (create table + insert rooms);
     - [ ] Booking:
-        - [ ] Create migration (create table);
+        - [x] Create migration (create table);
         - [ ] Implement booking creation/modification:
             - [ ] Block meeting collisions for the same room;
             - [ ] Block meeting collisions for the same user (overridable).
