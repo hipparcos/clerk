@@ -66,7 +66,7 @@ listed in order of priority.
     - [x] Create a Laravel project.
 - [ ] Backend/Model:
     - [ ] User:
-        - [ ] Create migration (create table + insert test user);
+        - [x] Create migration (create table + insert test user);
         - [ ] Implement user creation;
         - [ ] Implement user authentification.
     - [ ] Room:
