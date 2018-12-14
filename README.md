@@ -51,9 +51,9 @@ listed in order of priority.
     - users.name, VARCHAR(255)
     - users.email, VARCHAR(320)
     - users.passwort, VARCHAR(60), result of password_hash using BCRYPT
-- room:
-    - room.id, INT, PK
-    - room.name, VARCHAR(255)
+- rooms:
+    - rooms.id, INT, PK
+    - rooms.name, VARCHAR(255), UNIQUE
 - booking:
     - booking.id, INT, PK
     - user.id#, FK
