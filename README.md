@@ -65,10 +65,10 @@ listed in order of priority.
 - [ ] Backend:
     - [x] Create a Laravel project.
 - [ ] Backend/Model:
-    - [ ] User:
+    - [x] User: (use default Laravel authentification scaffolding)
         - [x] Create migration (create table + insert test user);
-        - [ ] Implement user creation;
-        - [ ] Implement user authentification.
+        - [x] Implement user creation;
+        - [x] Implement user authentification.
     - [ ] Room:
         - [ ] Create migration (create table + insert rooms);
     - [ ] Booking:
