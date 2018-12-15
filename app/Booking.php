@@ -8,7 +8,14 @@ class Booking extends Model
 {
     public $timestamps = false;
 
-    public function validate() {
-        return NULL;
+    protected $dates = [
+        'start', 'end',
+    ];
+
+    public function save(array $options = Array()) {
+        if ($this->end <= $this->start) {
+            return false;
+        }
+        return parent::save($options);
     }
 }
