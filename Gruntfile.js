@@ -1,6 +1,12 @@
 module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    copy: {
+      font: {
+        src: 'node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2',
+        dest: 'public/webfonts/fa-solid-900.woff2',
+      },
+    },
     browserify: {
       options: {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
@@ -69,6 +75,7 @@ module.exports = function(grunt) {
     },
   });
 
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -76,7 +83,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default', ['jshint', 'browserify', 'concat', 'uglify', 'cssmin']);
+  grunt.registerTask('default', ['jshint', 'copy', 'browserify', 'concat', 'uglify', 'cssmin']);
 };
 
 /* vim: set ts=2 sw=2: */
