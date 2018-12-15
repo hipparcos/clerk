@@ -7,6 +7,7 @@ module.exports = function(grunt) {
       },
       js: {
         src: [
+          'node_modules/@fortawesome/fontawesome-free/js/all.js',
           'resources/js/*.js',
         ],
         dest: 'public/js/<%= pkg.name %>.js',
@@ -24,7 +25,11 @@ module.exports = function(grunt) {
       //   dest: 'public/js/<%= pkg.name %>.js'
       // },
       css: {
-        src: ['resources/css/*.css'],
+        src: [
+          'node_modules/bulma/css/bulma.css',
+          'node_modules/@fortawesome/fontawesome-free/css/all.css',
+          'resources/css/*.css'
+        ],
         dest: 'public/css/<%= pkg.name %>.css'
       },
     },
