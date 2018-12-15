@@ -20,41 +20,53 @@ class BookingTest extends TestCase
         $this->tatooine = factory(App\Room::class)->create()->id;
     }
 
-    public function testValidate() {
+    public function testSave() {
+        $now = new DateTime();
         $testcases = [
             [
                 'case' => 'happy path',
-                'valid' => true,
-                'booking' => factory(App\Booking::class)->create([
+                'saveable' => true,
+                'booking' => factory(App\Booking::class)->make([
                     'user_id' => $this->james,
                     'room_id' => $this->tatooine,
                     'start' => new DateTime(),
-                    'start' => (new DateTime())->add(new DateInterval('PT1H')),
+                    'end' => (new DateTime())->add(new DateInterval('PT1H')),
             ])],
             [
                 'case' => '0 minute long must not be valid',
-                'valid' => false,
-                'booking' => factory(App\Booking::class)->create([
+                'saveable' => false,
+                'booking' => factory(App\Booking::class)->make([
                     'user_id' => $this->james,
                     'room_id' => $this->tatooine,
-                    'start' => new DateTime(),
-                    'start' => new DateTime(),
+                    'start' => $now,
+                    'end' => $now,
             ])],
             [
                 'case' => 'end < start must not be valid',
-                'valid' => false,
-                'booking' => factory(App\Booking::class)->create([
+                'saveable' => false,
+                'booking' => factory(App\Booking::class)->make([
                     'user_id' => $this->james,
                     'room_id' => $this->tatooine,
                     'start' => new DateTime(),
-                    'start' => (new DateTime())->sub(new DateInterval('PT1H')),
+                    'end' => (new DateTime())->sub(new DateInterval('PT1H')),
             ])],
         ];
 
         foreach ($testcases as $tt) {
+            // Try to save the booking to DB.
             $this->assertTrue(
-                $tt['valid'] === $tt['booking']->validate(), 
+                $tt['saveable'] === $tt['booking']->save(),
                 'Case: '.$tt['case'].'.');
+            // Check the DB.
+            if ($tt['saveable']) {
+                $this->assertDatabaseHas('bookings', [
+                    'id' => $tt['booking']->id
+                ]);
+            } else {
+                $this->assertDatabaseMissing('bookings', [
+                    'id' => $tt['booking']->id
+                ]);
+            }
         }
     }
 }
