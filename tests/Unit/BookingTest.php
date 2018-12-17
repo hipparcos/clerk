@@ -144,6 +144,15 @@ class BookingTest extends TestCase
                     'start' => $now_halfaft,
                     'end' => $now_2haft,
             ])],
+            [
+                'case' => 'same room, start before, finish after, must collide',
+                'collide' => true,
+                'booking' => factory(App\Booking::class)->make([
+                    'user_id' => $this->ethan,
+                    'room_id' => $this->tatooine,
+                    'start' => $now_1hbef,
+                    'end' => $now_2haft,
+            ])],
         ];
         // Tests.
         foreach ($testcases as $tt) {
