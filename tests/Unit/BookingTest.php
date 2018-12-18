@@ -180,4 +180,70 @@ class BookingTest extends TestCase
             $bk->delete();
         }
     }
+
+    public function testCheckUserCollision() {
+        // Fixtures.
+        $booked = factory(App\Booking::class)->create([
+            'user_id' => $this->james,
+            'room_id' => $this->tatooine,
+            'start' => $this->now,
+            'end' => $this->now_1haft,
+        ]);
+        // Test cases.
+        $testcases = [
+            [
+                'case' => 'different user, same room, must not collide',
+                'collide' => false,
+                'booking' => factory(App\Booking::class)->make([
+                    'user_id' => $this->ethan,
+                    'room_id' => $this->gotham,
+                    'start' => $this->now,
+                    'end' => $this->now_1haft,
+            ])],
+            [
+                'case' => 'different room, before, must not collide',
+                'collide' => false,
+                'booking' => factory(App\Booking::class)->make([
+                    'user_id' => $this->james,
+                    'room_id' => $this->gotham,
+                    'start' => $this->now_1hbef,
+                    'end' => $this->now,
+            ])],
+            [
+                'case' => 'different room, after, must not collide',
+                'collide' => false,
+                'booking' => factory(App\Booking::class)->make([
+                    'user_id' => $this->james,
+                    'room_id' => $this->gotham,
+                    'start' => $this->now_1haft,
+                    'end' => $this->now_2haft,
+            ])],
+            [
+                'case' => 'different room, same time, must collide',
+                'collide' => true,
+                'booking' => factory(App\Booking::class)->make([
+                    'user_id' => $this->james,
+                    'room_id' => $this->gotham,
+                    'start' => $this->now,
+                    'end' => $this->now_1haft,
+            ])],
+        ];
+        // Tests.
+        foreach ($testcases as $tt) {
+            $bk = $tt['booking'];
+            // Check collision.
+            $this->assertTrue(
+                $tt['collide'] === $bk->checkUserCollision(),
+                'Case: '.$tt['case'].'.');
+            // Check the DB.
+            // Does not block save().
+            $this->assertTrue(
+                $bk->save(),
+                'Case: '.$tt['case'].'.');
+            $this->assertDatabaseHas('bookings', [
+                'id' => $bk->id
+            ]);
+            $bk->delete();
+        }
+    }
 }
