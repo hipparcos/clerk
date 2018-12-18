@@ -64,18 +64,18 @@ listed in order of priority.
 ### TODO
 - [ ] Backend:
     - [x] Create a Laravel project.
-- [ ] Backend/Model:
+- [x] Backend/Model:
     - [x] User: (use default Laravel authentification scaffolding)
         - [x] Create migration (create table + insert test user);
         - [x] Implement user creation;
         - [x] Implement user authentification.
     - [x] Room:
         - [x] Create migration (create table + insert rooms);
-    - [ ] Booking:
+    - [x] Booking:
         - [x] Create migration (create table);
-        - [ ] Implement booking creation/modification:
-            - [ ] Block meeting collisions for the same room;
-            - [ ] Block meeting collisions for the same user (overridable).
+        - [x] Implement booking creation/modification:
+            - [x] Block meeting collisions for the same room;
+            - [x] Block meeting collisions for the same user (overridable).
 - [ ] Backend/API:
     - [ ] User:
         - [ ] POST /register: implement user creation;
