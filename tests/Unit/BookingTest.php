@@ -22,6 +22,13 @@ class BookingTest extends TestCase
         // Rooms.
         $this->tatooine = factory(App\Room::class)->create()->id;
         $this->gotham = factory(App\Room::class)->create()->id;
+        // Instants.
+        $this->now = new DateTime();
+        $this->now_2haft   = (clone $this->now)->add(new DateInterval('PT2H'));
+        $this->now_1haft   = (clone $this->now)->add(new DateInterval('PT1H'));
+        $this->now_halfaft = (clone $this->now)->add(new DateInterval('PT30M'));
+        $this->now_1hbef   = (clone $this->now)->sub(new DateInterval('PT1H'));
+        $this->now_halfbef = (clone $this->now)->sub(new DateInterval('PT30M'));
     }
 
     public function testSave() {
@@ -33,8 +40,8 @@ class BookingTest extends TestCase
                 'booking' => factory(App\Booking::class)->make([
                     'user_id' => $this->james,
                     'room_id' => $this->tatooine,
-                    'start' => new DateTime(),
-                    'end' => (new DateTime())->add(new DateInterval('PT1H')),
+                    'start' => $this->now,
+                    'end' => $this->now_1haft,
             ])],
             [
                 'case' => '0 minute long must not be valid',
@@ -42,8 +49,8 @@ class BookingTest extends TestCase
                 'booking' => factory(App\Booking::class)->make([
                     'user_id' => $this->james,
                     'room_id' => $this->tatooine,
-                    'start' => $now,
-                    'end' => $now,
+                    'start' => $this->now,
+                    'end' => $this->now,
             ])],
             [
                 'case' => 'end < start must not be valid',
@@ -51,42 +58,37 @@ class BookingTest extends TestCase
                 'booking' => factory(App\Booking::class)->make([
                     'user_id' => $this->james,
                     'room_id' => $this->tatooine,
-                    'start' => new DateTime(),
-                    'end' => (new DateTime())->sub(new DateInterval('PT1H')),
+                    'start' => $this->now,
+                    'end' => $this->now_1hbef,
             ])],
         ];
 
         foreach ($testcases as $tt) {
+            $bk = $tt['booking'];
             // Try to save the booking to DB.
             $this->assertTrue(
-                $tt['saveable'] === $tt['booking']->save(),
+                $tt['saveable'] === $bk->save(),
                 'Case: '.$tt['case'].'.');
             // Check the DB.
             if ($tt['saveable']) {
                 $this->assertDatabaseHas('bookings', [
-                    'id' => $tt['booking']->id
+                    'id' => $bk->id
                 ]);
             } else {
                 $this->assertDatabaseMissing('bookings', [
-                    'id' => $tt['booking']->id
+                    'id' => $bk->id
                 ]);
             }
         }
     }
 
     public function testCheckRoomCollision() {
-        $now = new DateTime();
-        $now_2haft   = (clone $now)->add(new DateInterval('PT2H'));
-        $now_1haft   = (clone $now)->add(new DateInterval('PT1H'));
-        $now_halfaft = (clone $now)->add(new DateInterval('PT30M'));
-        $now_1hbef   = (clone $now)->sub(new DateInterval('PT1H'));
-        $now_halfbef = (clone $now)->sub(new DateInterval('PT30M'));
         // Fixtures.
         $booked = factory(App\Booking::class)->create([
             'user_id' => $this->james,
             'room_id' => $this->tatooine,
-            'start' => $now,
-            'end' => $now_1haft,
+            'start' => $this->now,
+            'end' => $this->now_1haft,
         ]);
         // Test cases.
         $testcases = [
@@ -96,8 +98,8 @@ class BookingTest extends TestCase
                 'booking' => factory(App\Booking::class)->make([
                     'user_id' => $this->ethan,
                     'room_id' => $this->gotham,
-                    'start' => $now,
-                    'end' => $now_1haft,
+                    'start' => $this->now,
+                    'end' => $this->now_1haft,
             ])],
             [
                 'case' => 'same room, before, must not collide',
@@ -105,8 +107,8 @@ class BookingTest extends TestCase
                 'booking' => factory(App\Booking::class)->make([
                     'user_id' => $this->ethan,
                     'room_id' => $this->tatooine,
-                    'start' => $now_1hbef,
-                    'end' => $now,
+                    'start' => $this->now_1hbef,
+                    'end' => $this->now,
             ])],
             [
                 'case' => 'same room, after, must not collide',
@@ -114,8 +116,8 @@ class BookingTest extends TestCase
                 'booking' => factory(App\Booking::class)->make([
                     'user_id' => $this->ethan,
                     'room_id' => $this->tatooine,
-                    'start' => $now_1haft,
-                    'end' => $now_2haft,
+                    'start' => $this->now_1haft,
+                    'end' => $this->now_2haft,
             ])],
             [
                 'case' => 'same room, same time, must collide',
@@ -123,8 +125,8 @@ class BookingTest extends TestCase
                 'booking' => factory(App\Booking::class)->make([
                     'user_id' => $this->ethan,
                     'room_id' => $this->tatooine,
-                    'start' => $now,
-                    'end' => $now_1haft,
+                    'start' => $this->now,
+                    'end' => $this->now_1haft,
             ])],
             [
                 'case' => 'same room, end during meeting, must collide',
@@ -132,8 +134,8 @@ class BookingTest extends TestCase
                 'booking' => factory(App\Booking::class)->make([
                     'user_id' => $this->ethan,
                     'room_id' => $this->tatooine,
-                    'start' => $now_halfbef,
-                    'end' => $now_halfaft,
+                    'start' => $this->now_halfbef,
+                    'end' => $this->now_halfaft,
             ])],
             [
                 'case' => 'same room, start during meeting, must collide',
@@ -141,8 +143,8 @@ class BookingTest extends TestCase
                 'booking' => factory(App\Booking::class)->make([
                     'user_id' => $this->ethan,
                     'room_id' => $this->tatooine,
-                    'start' => $now_halfaft,
-                    'end' => $now_2haft,
+                    'start' => $this->now_halfaft,
+                    'end' => $this->now_2haft,
             ])],
             [
                 'case' => 'same room, start before, finish after, must collide',
@@ -150,8 +152,8 @@ class BookingTest extends TestCase
                 'booking' => factory(App\Booking::class)->make([
                     'user_id' => $this->ethan,
                     'room_id' => $this->tatooine,
-                    'start' => $now_1hbef,
-                    'end' => $now_2haft,
+                    'start' => $this->now_1hbef,
+                    'end' => $this->now_2haft,
             ])],
         ];
         // Tests.
