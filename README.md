@@ -82,7 +82,7 @@ listed in order of priority.
         - [ ] POST /login: implement user authentification;
         - [ ] Implement user authentification middleware.
     - [ ] Booking: (restricted to authenticated users)
-        - [ ] GET /bookings: implement booking listing for a user;
+        - [x] GET /bookings: implement booking listing for a user;
         - [ ] POST /bookings: implement booking creation;
         - [ ] GET /bookings/{id}: implement booking viewing;
         - [ ] PUT /bookings/{id}: implement booking modification (user.id must match booking.user.id);

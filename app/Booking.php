@@ -23,6 +23,14 @@ class Booking extends Model
         return parent::save($options);
     }
 
+    static public function allForUser($user_id) {
+        return DB::table('bookings')
+            ->where('bookings.user_id', $user_id)
+            ->join('rooms', 'rooms.id', '=', 'bookings.room_id')
+            ->select('rooms.name', 'bookings.start', 'bookings.end')
+            ->get();
+    }
+
     /**
      * checkCollision return true if this meeting overlaps or surrounds
      * an other booking.
