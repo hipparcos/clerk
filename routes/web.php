@@ -17,4 +17,5 @@ Route::get('/', 'HomeController@index')->name('home');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/bookings', 'BookingController@index');
+    Route::post('/bookings', 'BookingController@create');
 });

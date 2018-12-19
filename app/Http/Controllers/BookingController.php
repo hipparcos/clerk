@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Booking;
+use DateTime;
+use DateInterval;
 
 class BookingController extends Controller {
     /**
@@ -15,5 +17,26 @@ class BookingController extends Controller {
         return response()->json([
             'bookings' => Booking::allForUser(Auth::id()),
         ]);
+    }
+
+    /**
+     * create creates a booking.
+     */
+    public function create(Request $request) {
+        $start = new DateTime($request->input('start'));
+        $end = (clone $start)
+            ->add(new DateInterval('PT'. $request->input('end') .'M'));
+
+        $booking = new Booking;
+        $booking->user_id = Auth::id();
+        $booking->room_id = $request->input('room_id');
+        $booking->start = $start;
+        $booking->end = $end;
+
+        if (!$booking->save()) {
+            return response()->json([], 500);
+        }
+
+        return response()->json(['id' => $booking->id], 201);
     }
 }
