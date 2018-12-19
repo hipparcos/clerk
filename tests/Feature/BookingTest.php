@@ -72,4 +72,39 @@ class BookingTest extends TestCase
                 ],
             ]);
     }
+
+    public function testCreate() {
+        // Not authenticated: must be rejected.
+        $response = $this
+            ->post('/bookings', [
+                'room_id' => $this->gotham->id,
+                'start' => $this->inst1->format('Y-m-d H:i:s'),
+                'end' => 60,
+            ]);
+        $response->assertStatus(302);
+
+        // Authenticated: must create a booking.
+        $response = $this
+            ->actingAs($this->james)
+            ->call('POST', '/bookings', [
+                'room_id' => $this->gotham->id,
+                'start' => $this->inst1->format('Y-m-d H:i:s'),
+                'end' => 60,
+            ]);
+        $this->assertEquals(201, $response->status());
+        $this->assertDatabaseHas('bookings', [
+            'id' => $response->json()['id'],
+            'room_id' => $this->gotham->id,
+        ]);
+
+        // Authenticated, but invalid: must return an error code.
+        $response = $this
+            ->actingAs($this->ethan)
+            ->post('/bookings', [
+                'room_id' => $this->tatooine->id,
+                'start' => $this->inst0->format('Y-m-d H:i:s'),
+                'end' => 60,
+            ]);
+        $this->assertEquals(500, $response->status());
+    }
 }
