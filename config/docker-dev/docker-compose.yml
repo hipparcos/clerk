@@ -1,0 +1,39 @@
+version: '2'
+services:
+  app:
+    container_name: clerk-dev-app
+    build:
+      context: ./
+      dockerfile: app.dockerfile
+    working_dir: /var/www
+    volumes:
+      - ../../:/var/www
+    environment:
+      - "DB_PORT=3306"
+      - "DB_HOST=database"
+    depends_on:
+      - database
+  web:
+    container_name: clerk-dev-web
+    build:
+      context: ./
+      dockerfile: web.dockerfile
+    working_dir: /var/www
+    volumes_from:
+      - app
+    ports:
+      - 8080:80
+  database:
+    container_name: clerk-dev-database
+    image: mariadb:10.3
+    volumes:
+      - dbdata:/var/lib/mariadb
+    environment:
+      - "MYSQL_DATABASE=clerk"
+      - "MYSQL_USER=clerk"
+      - "MYSQL_PASSWORD=secret"
+      - "MYSQL_ROOT_PASSWORD=secret"
+    ports:
+        - "33061:3306"
+volumes:
+  dbdata:

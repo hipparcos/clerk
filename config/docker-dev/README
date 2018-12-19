@@ -1,0 +1,34 @@
+The clerk development environment is composed by 3 containers:
+    - app: php-fpm;
+    - web: nginx;
+    - database: mariadb.
+
+The site is available at:
+    127.0.0.1:8080
+
+Your .env file must match the database configuration of docker-compose.yml.
+    DB_DATABASE=clerk
+    DB_USERNAME=clerk
+    DB_PASSWORD=secret
+
+How to build/run:
+    $ docker-compose -f [path_to_docker-compose] build
+    $ docker-compose -f [path_to_docker-compose] up
+
+Take care to fix permissions so the app container can write to `storage/logs`.
+    $ chmod 777 storage/logs
+UID and GID outputed by this command must match your UID and GID:
+    $ docker-compse -f [path_to_docker-compose.yml] exec app ls -la storage/logs
+If not, modify app.dockerfile accordingly.
+
+To call command on the app container:
+	$ docker-compose -f [path_to_docker-compose.yml] exec app [command]
+
+Add this function to your .bashrc (set CLERK_ROOT to the clerk directory):
+    export CLERK_ROOT=
+    function clerk-dev() {
+        ( cd $CLERK_ROOT && docker-compose -f config/docker-dev/docker-compose.yml $* )
+    }
+You can now manage your environment by calling clerk-dev. Example:
+    $ clerk-dev up
+    $ clerk-dev exec app php artisan migrate:refresh --seed
