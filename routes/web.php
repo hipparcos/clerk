@@ -11,9 +11,4 @@
 |
 */
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/bookings', 'BookingController@index');
-    Route::post('/bookings', 'BookingController@create');
-});
-
 Route::view('/', 'root')->name('root');

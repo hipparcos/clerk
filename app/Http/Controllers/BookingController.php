@@ -15,7 +15,7 @@ class BookingController extends Controller {
      */
     public function index() {
         return response()->json([
-            'bookings' => Booking::allForUser(Auth::id()),
+            'data' => Booking::allForUser(Auth::id()),
         ]);
     }
 
@@ -34,9 +34,9 @@ class BookingController extends Controller {
         $booking->end = $end;
 
         if (!$booking->save()) {
-            return response()->json([], 500);
+            return response()->json([], 422);
         }
 
-        return response()->json(['id' => $booking->id], 201);
+        return response()->json(['data' => ['id' => $booking->id]], 201);
     }
 }

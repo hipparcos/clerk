@@ -4,13 +4,14 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use DateTime;
 use DateInterval;
+use Laravel\Passport\Passport;
 
 class BookingTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseMigrations;
 
     public function setUp() {
         parent::setUp();
@@ -45,20 +46,21 @@ class BookingTest extends TestCase
         ]);
     }
 
-    public function testIndex() {
-        // Not authenticated: must be rejected.
-        $response = $this
-            ->get('/bookings');
-        $response->assertStatus(302);
+    public function testIndexNotAuthenticated() {
+        $response = $this->getJson('/api/bookings');
 
-        // Authenticated: must return a list of all bookings for the current user.
-        $response = $this
-            ->actingAs($this->ethan)
-            ->get('/bookings');
+        $response->assertStatus(401);
+    }
+
+    public function testIndexAuthenticated() {
+        Passport::actingAs($this->ethan, ['*']);
+
+        $response = $this->getJson('/api/bookings');
+
         $response
             ->assertStatus(200)
             ->assertJson([
-                'bookings' => [
+                'data' => [
                     [
                         'name' => $this->gotham->name,
                         'start' => $this->bk0->start,
@@ -73,38 +75,44 @@ class BookingTest extends TestCase
             ]);
     }
 
-    public function testCreate() {
-        // Not authenticated: must be rejected.
+    public function testCreateNotAuthenticated() {
         $response = $this
-            ->post('/bookings', [
+            ->postJson('/api/bookings', [
                 'room_id' => $this->gotham->id,
                 'start' => $this->inst1->format('Y-m-d H:i:s'),
                 'end' => 60,
             ]);
-        $response->assertStatus(302);
 
-        // Authenticated: must create a booking.
+        $response->assertStatus(401);
+    }
+
+    public function testCreateAuthenticated() {
+        Passport::actingAs($this->james, ['*']);
+
         $response = $this
-            ->actingAs($this->james)
-            ->call('POST', '/bookings', [
+            ->postJson('/api/bookings', [
                 'room_id' => $this->gotham->id,
                 'start' => $this->inst1->format('Y-m-d H:i:s'),
                 'end' => 60,
             ]);
-        $this->assertEquals(201, $response->status());
+
+        $response->assertStatus(201);
         $this->assertDatabaseHas('bookings', [
-            'id' => $response->json()['id'],
+            'id' => $response->json()['data']['id'],
             'room_id' => $this->gotham->id,
         ]);
+    }
 
-        // Authenticated, but invalid: must return an error code.
+    public function testCreateAuthenticatedInvalid() {
+        Passport::actingAs($this->ethan, ['*']);
+
         $response = $this
-            ->actingAs($this->ethan)
-            ->post('/bookings', [
+            ->postJson('/api/bookings', [
                 'room_id' => $this->tatooine->id,
                 'start' => $this->inst0->format('Y-m-d H:i:s'),
                 'end' => 60,
             ]);
-        $this->assertEquals(500, $response->status());
+
+        $response->assertStatus(422);
     }
 }

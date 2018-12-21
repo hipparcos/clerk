@@ -17,6 +17,13 @@ Route::prefix('auth')->namespace('Auth')->group(function() {
     Route::post('register', 'RegisterController@register')->name('register');
 });
 
+Route::middleware('auth:api')->group(function() {
+    Route::prefix('bookings')->group(function() {
+        Route::get('/', 'BookingController@index');
+        Route::post('/', 'BookingController@create');
+    });
+});
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
