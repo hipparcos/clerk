@@ -2,42 +2,19 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Http\Request;
+use Illuminate\Auth\Events\Registered;
 use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Register Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users as well as their
-    | validation and creation. By default this controller uses a trait to
-    | provide this functionality without requiring any additional code.
-    |
-    */
-
-    use RegistersUsers;
-
-    /**
-     * Where to redirect users after registration.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/home';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    protected function guard()
     {
-        $this->middleware('guest');
+        return Auth::guard();
     }
 
     /**
@@ -68,5 +45,33 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+    }
+
+    /**
+     * Handle a registration request for the application.
+     *
+     * @override
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function register(Request $request)
+    {
+        $data = $request->only([
+            'name', 'email', 'password', 'password_confirmation'
+        ]);
+
+        $errors = $this->validator($data)->errors();
+        if(count($errors)) {
+            return response()->json(['errors' => $errors], 401);
+        }
+
+        $user = $this->create($data);
+        event(new Registered($user));
+
+        $this->guard()->login($user);
+
+        return response()->json(['user' => $user->only([
+                'id', 'name', 'email',
+            ])], 201);
     }
 }
