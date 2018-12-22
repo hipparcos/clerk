@@ -3,7 +3,19 @@ base_url:=http://127.0.0.1:8080
 client_secret:=DvYKWsQPGXUPrRH41PsHtrMgtMMwfalJ0BjsoVhF
 token_file:=token
 
-all: # do nothing by default.
+all: exec # do nothing by default.
+
+# exec executes a command on a container then exit.
+# @param container app, web, database; default: app
+# @param args the command to run and its arguments
+exec:
+	$(clerk_dev) exec $(if $(container),$(container),app) $(args)
+
+# run executes a command on a container.
+# @param container app, web, database; default: app
+# @param args the command to run and its arguments
+run:
+	$(clerk_dev) run $(if $(container),$(container),app) $(args)
 
 # autoload reload php autoload.
 autoload:
@@ -34,8 +46,9 @@ req-json:
 	@echo -e "\n"
 
 # Run all tests.
+# @param args
 test:
-	$(clerk_dev) exec app vendor/bin/phpunit
+	$(clerk_dev) exec app vendor/bin/phpunit $(args)
 
 # Migrate the databse & seed it.
 db-migrate:
