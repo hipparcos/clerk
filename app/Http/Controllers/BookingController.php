@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Booking;
+use App\Http\Resources\Booking as BookingResource;
+use App\Http\Resources\BookingCollection;
 use DateTime;
 use DateInterval;
 
@@ -13,10 +15,10 @@ class BookingController extends Controller {
     /**
      * index returns a list of all booking for the current user.
      */
-    public function index() {
-        return response()->json([
-            'data' => Booking::allForUser(Auth::id()),
-        ]);
+    public function index(Request $request) {
+        return new BookingCollection(
+            Auth::user()->bookings()->get()
+        );
     }
 
     /**

@@ -61,16 +61,8 @@ class BookingTest extends TestCase
             ->assertStatus(200)
             ->assertJson([
                 'data' => [
-                    [
-                        'name' => $this->gotham->name,
-                        'start' => $this->bk0->start,
-                        'end' => $this->bk0->end,
-                    ],
-                    [
-                        'name' => $this->tatooine->name,
-                        'start' => $this->bk1->start,
-                        'end' => $this->bk1->end,
-                    ],
+                    [ 'id' => $this->bk0->id ],
+                    [ 'id' => $this->bk1->id ],
                 ],
             ]);
     }
