@@ -5,6 +5,8 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\Room as RoomResource;
+use App\Http\Resources\User as UserResource;
 
 class Booking extends JsonResource
 {
@@ -20,12 +22,16 @@ class Booking extends JsonResource
             'id' => $this->id,
             'type' => 'booking',
             'attributes' => [
-                'user_id' => $this->when(
-                    $this->user_id == Auth::id(), $this->user_id
+                'start' => $this->start,
+                'end' => $this->end,
+            ],
+            'relationships' => [
+                'user' => $this->when(
+                    $this->user_id == Auth::id(), new UserResource($this->user)
                 ),
-                'room_id' => $this->room_id,
-                'start'   => $this->start,
-                'end'     => $this->end,
+                'room' => [
+                    'data' => new RoomResource($this->room),
+                ],
             ],
         ];
     }
