@@ -3,32 +3,38 @@ base_url:=http://127.0.0.1:8080
 client_secret:=DvYKWsQPGXUPrRH41PsHtrMgtMMwfalJ0BjsoVhF
 token_file:=token
 
+.PHONY: all
 all: exec # do nothing by default.
 
 # exec executes a command on a container then exit.
 # @param container app, web, database; default: app
 # @param args the command to run and its arguments
+.PHONY: exec
 exec:
 	$(clerk_dev) exec $(if $(container),$(container),app) $(args)
 
 # run executes a command on a container.
 # @param container app, web, database; default: app
 # @param args the command to run and its arguments
+.PHONY: run
 run:
 	$(clerk_dev) run $(if $(container),$(container),app) $(args)
 
 # artisan executes a php artisan command.
 # @param args the command to run and its arguments
+.PHONY: artisan
 artisan:
 	$(clerk_dev) run app php artisan $(args)
 
 # autoload reload php autoload.
+.PHONY: autoload
 autoload:
 	composer dump-autoload
 
 # req-token write an authentification token to $(token_file).
 # @param username
 # @param password
+.PHONY: req-token
 req-token:
 	echo "Authorization: Bearer " > $(token_file)
 	curl -H "Accept: application/json" -H "Content-Type: application/json" \
@@ -44,6 +50,7 @@ req-token:
 # @param token the authentification token file
 # @param data the request payload
 # @param url the url
+.PHONY: req-json
 req-json:
 	curl -H "Accept: application/json" -H "Content-Type: application/json" \
 	     -v$(if $(method), -X $(method),)$(if $(token), -H $(token),)$(if $(data), -d $(data),) \
@@ -52,15 +59,16 @@ req-json:
 
 # Run all tests.
 # @param args
+.PHONY: test
 test:
 	$(clerk_dev) exec app vendor/bin/phpunit $(args)
 
 # Migrate the databse & seed it.
+.PHONY: db-migrate
 db-migrate:
 	$(clerk_dev) exec app php artisan migrate:refresh --seed
 
 # Connect to the database CLI.
+.PHONY: db-connect
 db-connect:
 	mysql -h localhost -P 33061 --protocol=tcp -u clerk --password=secret --database=clerk
-
-.PHONY: all db-connect
