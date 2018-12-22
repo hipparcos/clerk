@@ -17,6 +17,11 @@ exec:
 run:
 	$(clerk_dev) run $(if $(container),$(container),app) $(args)
 
+# artisan executes a php artisan command.
+# @param args the command to run and its arguments
+artisan:
+	$(clerk_dev) run app php artisan $(args)
+
 # autoload reload php autoload.
 autoload:
 	composer dump-autoload
