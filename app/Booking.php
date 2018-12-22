@@ -13,6 +13,27 @@ class Booking extends Model
         'start', 'end',
     ];
 
+    protected $casts = [
+        'start' => 'datetime:Y-m-d H:i:s',
+        'end'   => 'datetime:Y-m-d H:i:s',
+    ];
+
+    /**
+     * Get the user that owns this booking.
+     */
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
+    /**
+     * Get the room associated with this booking.
+     */
+    public function room()
+    {
+        return $this->belongsTo('App\Room');
+    }
+
     public function save(array $options = Array()) {
         if ($this->end <= $this->start) {
             return false;
