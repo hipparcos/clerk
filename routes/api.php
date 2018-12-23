@@ -19,7 +19,7 @@ Route::prefix('auth')->namespace('Auth')->group(function() {
 
 Route::middleware('auth:api')->group(function() {
     Route::apiResource('bookings', 'BookingController')->only([
-        'index', 'show', 'store'
+        'index', 'show', 'store', 'destroy'
     ]);
 });
 

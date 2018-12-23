@@ -67,4 +67,15 @@ class BookingController extends Controller {
                 'Location', route('bookings.show', ['id' => $booking->id])
             ]);
     }
+
+    /**
+     * destroy deletes a booking.
+     */
+    public function destroy(Request $request, $id) {
+        Booking::where([
+            ['id', '=', $id],
+            ['user_id', '=', Auth::id()],
+        ])->firstOrFail()->delete();
+        return response()->json(null, 200);
+    }
 }

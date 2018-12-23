@@ -208,4 +208,20 @@ class BookingTest extends TestCase
             'id' => $data['id'],
         ]);
     }
+
+    public function testDestroy() {
+        Passport::actingAs($this->ethan, ['*']);
+
+        $response = $this->deleteJson('/api/bookings/'.$this->bk0->id);
+
+        $response->assertStatus(200);
+    }
+
+    public function testDestroyNotOwned() {
+        Passport::actingAs($this->james, ['*']);
+
+        $response = $this->deleteJson('/api/bookings/'.$this->bk1->id);
+
+        $response->assertStatus(404);
+    }
 }
