@@ -135,14 +135,14 @@ class BookingTest extends TestCase
         ]);
     }
 
-    public function testCreateAuthenticatedInvalid() {
-        Passport::actingAs($this->ethan, ['*']);
+    public function testCreateAuthenticatedRoomCollision() {
+        Passport::actingAs($this->james, ['*']);
 
         $response = $this
             ->postJson('/api/bookings', [
                 'data' => [
                     'attributes' => [
-                        'start' => $this->inst0->format('Y-m-d H:i:s'),
+                        'start' => $this->inst1->format('Y-m-d H:i:s'),
                         'duration' => 60,
                     ],
                     'relationships' => [
@@ -153,6 +153,59 @@ class BookingTest extends TestCase
                 ],
             ]);
 
-        $response->assertStatus(422);
+        $response
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('data.attributes.room.data.id');
+    }
+
+    public function testCreateAuthenticatedUserCollision() {
+        Passport::actingAs($this->ethan, ['*']);
+
+        $response = $this
+            ->postJson('/api/bookings', [
+                'data' => [
+                    'attributes' => [
+                        'start' => $this->inst1->format('Y-m-d H:i:s'),
+                        'duration' => 60,
+                    ],
+                    'relationships' => [
+                        'room' => [
+                            'data' => ['id' => $this->gotham->id],
+                        ],
+                    ],
+                ],
+            ]);
+
+        $response
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('data.attributes.start');
+    }
+
+    public function testCreateAuthenticatedUserCollisionOverride() {
+        Passport::actingAs($this->ethan, ['*']);
+
+        $response = $this
+            ->postJson('/api/bookings', [
+                'data' => [
+                    'attributes' => [
+                        'start' => $this->inst1->format('Y-m-d H:i:s'),
+                        'duration' => 60,
+                    ],
+                    'relationships' => [
+                        'room' => [
+                            'data' => ['id' => $this->gotham->id],
+                        ],
+                    ],
+                ],
+                'meta' => [
+                    'overrideUserCollision' => true,
+                ],
+            ]);
+
+        $response->assertStatus(201);
+        $data = $response->json()['data'];
+        $this->assertDatabaseHas('bookings', [
+            'id' => $data['id'],
+        ]);
     }
 }
