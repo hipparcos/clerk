@@ -67,6 +67,30 @@ class BookingTest extends TestCase
             ]);
     }
 
+    public function testShowNotAuthenticated() {
+        $response = $this->getJson('/api/bookings/'.$this->bk0->id);
+
+        $response->assertStatus(401);
+    }
+
+    public function testShowAuthenticated() {
+        Passport::actingAs($this->ethan, ['*']);
+
+        $response = $this->getJson('/api/bookings/'.$this->bk0->id);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson(['data' => ['id' => $this->bk0->id]]);
+    }
+
+    public function testShowNotFound() {
+        Passport::actingAs($this->ethan, ['*']);
+
+        $response = $this->getJson('/api/bookings/1000');
+
+        $response->assertStatus(404);
+    }
+
     public function testCreateNotAuthenticated() {
         $response = $this
             ->postJson('/api/bookings', [

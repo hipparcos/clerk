@@ -19,6 +19,22 @@ class BookingController extends Controller {
         return new BookingCollection(
             Auth::user()->bookings()->get()
         );
+
+    /**
+     * show returns the details of a booking.
+     */
+    public function show(Request $request, $id) {
+        $booking = Booking::find($id);
+        if ($booking == null) {
+            return response()->json(null, 404);
+        }
+        return response()
+            ->json([
+                'links' => [
+                    'self' => route('bookings.show', $booking->id)
+                ],
+                'data' => new BookingResource($booking),
+            ], 200);
     }
 
     /**
