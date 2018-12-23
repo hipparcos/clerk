@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Booking;
 use App\Http\Resources\Booking as BookingResource;
 use App\Http\Resources\BookingCollection;
+use App\Http\Requests\StoreBooking;
 use Carbon\Carbon;
 
 class BookingController extends Controller {
@@ -41,13 +42,8 @@ class BookingController extends Controller {
     /**
      * store creates a booking.
      */
-    public function store(Request $request) {
-        $request->validate([
-            'data.attributes.start' => 'required|date',
-            'data.attributes.duration' => 'required|integer|min:1',
-            'data.relationships.room.data.id' => 'required|exists:rooms,id',
-        ]);
-        $data = $request->all()['data'];
+    public function store(StoreBooking $request) {
+        $data = $request->validated()['data'];
 
         $start = new Carbon($data['attributes']['start']);
         $end = (clone $start)->addMinutes($data['attributes']['duration']);
