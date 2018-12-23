@@ -8,8 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Booking;
 use App\Http\Resources\Booking as BookingResource;
 use App\Http\Resources\BookingCollection;
-use DateTime;
-use DateInterval;
+use Carbon\Carbon;
 
 class BookingController extends Controller {
     /**
@@ -50,10 +49,8 @@ class BookingController extends Controller {
         ]);
         $data = $request->all()['data'];
 
-        $start = new DateTime($data['attributes']['start']);
-        $end = (clone $start)->add(
-            new DateInterval('PT'.$data['attributes']['duration'].'M')
-        );
+        $start = new Carbon($data['attributes']['start']);
+        $end = (clone $start)->addMinutes($data['attributes']['duration']);
 
         $booking = new Booking([
             'user_id' => Auth::id(),
