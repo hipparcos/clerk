@@ -16,9 +16,11 @@ class BookingController extends Controller {
      * index returns a list of all booking for the current user.
      */
     public function index(Request $request) {
-        return new BookingCollection(
-            Auth::user()->bookings()->get()
-        );
+        return response()
+            ->json(new BookingCollection(
+                Auth::user()->bookings()->get()
+            ), 200);
+    }
 
     /**
      * show returns the details of a booking.
