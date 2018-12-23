@@ -22,9 +22,9 @@ class BookingController extends Controller {
     }
 
     /**
-     * create creates a booking.
+     * store creates a booking.
      */
-    public function create(Request $request) {
+    public function store(Request $request) {
         $data = $request->only([
             'data.attributes.start',
             'data.attributes.duration',
@@ -52,7 +52,7 @@ class BookingController extends Controller {
                 'data' => new BookingResource($booking),
             ], 201)
             ->withHeaders([
-                'Location', route('bookings/show', ['id' => $booking->id])
+                'Location', route('bookings.show', ['id' => $booking->id])
             ]);
     }
 }
