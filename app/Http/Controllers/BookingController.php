@@ -25,20 +25,34 @@ class BookingController extends Controller {
      * create creates a booking.
      */
     public function create(Request $request) {
-        $start = new DateTime($request->input('start'));
-        $end = (clone $start)
-            ->add(new DateInterval('PT'. $request->input('end') .'M'));
+        $data = $request->only([
+            'data.attributes.start',
+            'data.attributes.duration',
+            'data.relationships.room.data.id',
+        ])['data'];
 
-        $booking = new Booking;
-        $booking->user_id = Auth::id();
-        $booking->room_id = $request->input('room_id');
-        $booking->start = $start;
-        $booking->end = $end;
+        $start = new DateTime($data['attributes']['start']);
+        $end = (clone $start)->add(
+            new DateInterval('PT'.$data['attributes']['duration'].'M')
+        );
+
+        $booking = new Booking([
+            'user_id' => Auth::id(),
+            'room_id' => $data['relationships']['room']['data']['id'],
+            'start'   => $start,
+            'end'     => $end,
+        ]);
 
         if (!$booking->save()) {
-            return response()->json([], 422);
+            return response()->json(null, 422);
         }
 
-        return response()->json(['data' => ['id' => $booking->id]], 201);
+        return response()
+            ->json([
+                'data' => new BookingResource($booking),
+            ], 201)
+            ->withHeaders([
+                'Location', route('bookings/show', ['id' => $booking->id])
+            ]);
     }
 }

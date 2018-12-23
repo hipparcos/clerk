@@ -18,6 +18,10 @@ class Booking extends Model
         'end'   => 'datetime:Y-m-d H:i:s',
     ];
 
+    protected $fillable = [
+        'user_id', 'room_id', 'start', 'end'
+    ];
+
     /**
      * Get the user that owns this booking.
      */

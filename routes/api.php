@@ -19,8 +19,9 @@ Route::prefix('auth')->namespace('Auth')->group(function() {
 
 Route::middleware('auth:api')->group(function() {
     Route::prefix('bookings')->group(function() {
-        Route::get('/', 'BookingController@index');
-        Route::post('/', 'BookingController@create');
+        Route::get('/', 'BookingController@index')->name('bookings/index');
+        Route::post('/', 'BookingController@create')->name('bookings/create');
+        Route::get('/{id}', 'BookingController@show')->name('bookings/show');
     });
 });
 

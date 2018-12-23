@@ -70,9 +70,17 @@ class BookingTest extends TestCase
     public function testCreateNotAuthenticated() {
         $response = $this
             ->postJson('/api/bookings', [
-                'room_id' => $this->gotham->id,
-                'start' => $this->inst1->format('Y-m-d H:i:s'),
-                'end' => 60,
+                'data' => [
+                    'attributes' => [
+                        'start' => $this->inst1->format('Y-m-d H:i:s'),
+                        'duration' => 60,
+                    ],
+                    'relationships' => [
+                        'room' => [
+                            'data' => ['id' => $this->gotham->id],
+                        ],
+                    ],
+                ],
             ]);
 
         $response->assertStatus(401);
@@ -83,15 +91,23 @@ class BookingTest extends TestCase
 
         $response = $this
             ->postJson('/api/bookings', [
-                'room_id' => $this->gotham->id,
-                'start' => $this->inst1->format('Y-m-d H:i:s'),
-                'end' => 60,
+                'data' => [
+                    'attributes' => [
+                        'start' => $this->inst1->format('Y-m-d H:i:s'),
+                        'duration' => 60,
+                    ],
+                    'relationships' => [
+                        'room' => [
+                            'data' => ['id' => $this->gotham->id],
+                        ],
+                    ],
+                ],
             ]);
 
         $response->assertStatus(201);
+        $data = $response->json()['data'];
         $this->assertDatabaseHas('bookings', [
-            'id' => $response->json()['data']['id'],
-            'room_id' => $this->gotham->id,
+            'id' => $data['id'],
         ]);
     }
 
@@ -100,9 +116,17 @@ class BookingTest extends TestCase
 
         $response = $this
             ->postJson('/api/bookings', [
-                'room_id' => $this->tatooine->id,
-                'start' => $this->inst0->format('Y-m-d H:i:s'),
-                'end' => 60,
+                'data' => [
+                    'attributes' => [
+                        'start' => $this->inst0->format('Y-m-d H:i:s'),
+                        'duration' => 60,
+                    ],
+                    'relationships' => [
+                        'room' => [
+                            'data' => ['id' => $this->tatooine->id],
+                        ],
+                    ],
+                ],
             ]);
 
         $response->assertStatus(422);
