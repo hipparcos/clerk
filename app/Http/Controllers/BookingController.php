@@ -43,11 +43,12 @@ class BookingController extends Controller {
      * store creates a booking.
      */
     public function store(Request $request) {
-        $data = $request->only([
-            'data.attributes.start',
-            'data.attributes.duration',
-            'data.relationships.room.data.id',
-        ])['data'];
+        $request->validate([
+            'data.attributes.start' => 'required|date',
+            'data.attributes.duration' => 'required|integer|min:1',
+            'data.relationships.room.data.id' => 'required|exists:rooms,id',
+        ]);
+        $data = $request->all()['data'];
 
         $start = new DateTime($data['attributes']['start']);
         $end = (clone $start)->add(
