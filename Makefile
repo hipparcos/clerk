@@ -38,7 +38,7 @@ autoload:
 req-token:
 	echo "Authorization: Bearer " > $(token_file)
 	curl -H "Accept: application/json" -H "Content-Type: application/json" \
-	     -v -X POST -d '{ "grant_type": "password", "client_id": 1, "client_secret": "DvYKWsQPGXUPrRH41PsHtrMgtMMwfalJ0BjsoVhF", "username": $(if $(username),"$(username)","test@domain.local"), "password":$(if $(password),"$(password)","test"), "scope": "*" }' \
+	     -v -s -X POST -d '{ "grant_type": "password", "client_id": 1, "client_secret": "DvYKWsQPGXUPrRH41PsHtrMgtMMwfalJ0BjsoVhF", "username": $(if $(username),"$(username)","test@domain.local"), "password":$(if $(password),"$(password)","test"), "scope": "*" }' \
 	     $(base_url)/oauth/token \
 	| grep -Po '"access_token":.*?[^\\]",' \
 	| sed -e 's/"access_token"://' -e 's/"//' -e 's/",$$//' \
