@@ -13,11 +13,11 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::prefix('auth')->namespace('Auth')->group(function() {
-    Route::post('register', 'RegisterController@register')->name('register');
-});
+// Auth routes.
+Route::post('register', 'AuthController@register')->name('register');
 
 Route::middleware('auth:api')->group(function() {
+    // Bookings.
     Route::apiResource('bookings', 'BookingController')->only([
         'index', 'show', 'store', 'update', 'destroy'
     ]);

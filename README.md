@@ -62,7 +62,7 @@ listed in order of priority.
     - bookings.end, DATETIME
 
 ### TODO
-- [ ] Backend:
+- [x] Backend:
     - [x] Create a Laravel project.
 - [x] Backend/Model:
     - [x] User: (use default Laravel authentification scaffolding)
@@ -76,11 +76,11 @@ listed in order of priority.
         - [x] Implement booking creation/modification:
             - [x] Block meeting collisions for the same room;
             - [x] Block meeting collisions for the same user (overridable).
-- [ ] Backend/API:
-    - [ ] User:
-        - [ ] POST /register: implement user creation;
-        - [ ] POST /login: implement user authentification;
-        - [ ] Implement user authentification middleware.
+- [x] Backend/API:
+    - [x] User:
+        - [x] POST /register: implement user creation;
+        - [x] POST /login: implement user authentification (Passport);
+        - [x] Implement user authentification middleware (Passport).
     - [x] Booking: (restricted to authenticated users)
         - [x] GET /bookings: implement booking listing for a given day (or today);
         - [x] POST /bookings: implement booking creation;
