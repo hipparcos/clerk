@@ -81,11 +81,11 @@ listed in order of priority.
         - [ ] POST /register: implement user creation;
         - [ ] POST /login: implement user authentification;
         - [ ] Implement user authentification middleware.
-    - [ ] Booking: (restricted to authenticated users)
+    - [x] Booking: (restricted to authenticated users)
         - [x] GET /bookings: implement booking listing for a user;
         - [x] POST /bookings: implement booking creation;
         - [x] GET /bookings/{id}: implement booking viewing;
-        - [ ] PUT /bookings/{id}: implement booking modification (user.id must match booking.user.id);
+        - [x] PUT /bookings/{id}: implement booking modification (user.id must match booking.user.id);
         - [x] DELETE /bookings/{id}: implement booking deletion (user.id must match booking.user.id);
 - [ ] Frontend: (as it is a SPA, every form/table will be implemented in its own component)
     - [ ] Configure node.js, add required dependancies (vue.js, vue-router, bulma);

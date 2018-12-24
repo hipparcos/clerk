@@ -69,6 +69,35 @@ class BookingController extends Controller {
     }
 
     /**
+     * update updates an existing booking.
+     */
+    public function update(StoreBooking $request, $id) {
+        $booking = Booking::where([
+            ['id', '=', $id],
+            ['user_id', '=', Auth::id()],
+        ])->firstOrFail();
+
+        $data = $request->validated()['data'];
+
+        $booking->room_id = $data['relationships']['room']['data']['id'];
+        $booking->start = new Carbon($data['attributes']['start']);
+        $booking->end = (clone $booking->start)
+            ->addMinutes($data['attributes']['duration']);
+
+        if (!$booking->save()) {
+            return response()->json(null, 422);
+        }
+
+        return response()
+            ->json([
+                'links' => [
+                    'self' => route('bookings.show', $booking->id)
+                ],
+                'data' => new BookingResource($booking),
+            ], 200);
+    }
+
+    /**
      * destroy deletes a booking.
      */
     public function destroy(Request $request, $id) {

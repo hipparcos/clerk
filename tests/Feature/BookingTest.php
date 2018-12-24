@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use DateTime;
 use DateInterval;
 use Laravel\Passport\Passport;
+use Carbon\Carbon;
 
 class BookingTest extends TestCase
 {
@@ -22,9 +23,9 @@ class BookingTest extends TestCase
         $this->tatooine = factory(\App\Room::class)->create();
         $this->gotham   = factory(\App\Room::class)->create();
         // Instants.
-        $this->inst0 = new DateTime('01/01/2000 10:00:00');
-        $this->inst1 = new DateTime('01/01/2000 11:00:00');
-        $this->inst2 = new DateTime('01/01/2000 12:00:00');
+        $this->inst0 = new Carbon('01/01/2000 10:00:00');
+        $this->inst1 = new Carbon('01/01/2000 11:00:00');
+        $this->inst2 = new Carbon('01/01/2000 12:00:00');
         // Bookings.
         $this->bk0 = factory(\App\Booking::class)->create([
             'user_id' => $this->ethan->id,
@@ -207,6 +208,92 @@ class BookingTest extends TestCase
         $this->assertDatabaseHas('bookings', [
             'id' => $data['id'],
         ]);
+    }
+
+    public function testUpdate() {
+        Passport::actingAs($this->ethan, ['*']);
+
+        $id = $this->bk0->id;
+        $duration = 120;
+        $response = $this
+            ->patchJson('/api/bookings/'.$id, [
+                'data' => [
+                    'type' => 'booking',
+                    'id' => $id,
+                    'attributes' => [
+                        'start' => $this->inst2->format('Y-m-d H:i:s'),
+                        'duration' => $duration,
+                    ],
+                    'relationships' => [
+                        'room' => [
+                            'data' => ['id' => $this->tatooine->id],
+                        ],
+                    ],
+                ],
+            ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'id' => $id,
+                    'attributes' => [
+                        'end' => json_encode((clone $this->inst2)->addMinutes($duration)),
+                    ],
+                ],
+            ]);
+    }
+
+    public function testUpdateRoomCollision() {
+        Passport::actingAs($this->ethan, ['*']);
+
+        $id = $this->bk0->id;
+        $duration = 60;
+        $response = $this
+            ->patchJson('/api/bookings/'.$id, [
+                'data' => [
+                    'type' => 'booking',
+                    'id' => $id,
+                    'attributes' => [
+                        'start' => $this->inst0->format('Y-m-d H:i:s'),
+                        'duration' => $duration,
+                    ],
+                    'relationships' => [
+                        'room' => [
+                            'data' => ['id' => $this->tatooine->id],
+                        ],
+                    ],
+                ],
+            ]);
+
+        $response
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('data.attributes.room.data.id');
+    }
+
+    public function testUpdateNotOwned() {
+        Passport::actingAs($this->james, ['*']);
+
+        $id = $this->bk0->id;
+        $duration = 120;
+        $response = $this
+            ->patchJson('/api/bookings/'.$id, [
+                'data' => [
+                    'type' => 'booking',
+                    'id' => $id,
+                    'attributes' => [
+                        'start' => $this->inst2->format('Y-m-d H:i:s'),
+                        'duration' => $duration,
+                    ],
+                    'relationships' => [
+                        'room' => [
+                            'data' => ['id' => $this->tatooine->id],
+                        ],
+                    ],
+                ],
+            ]);
+
+        $response->assertStatus(404);
     }
 
     public function testDestroy() {
