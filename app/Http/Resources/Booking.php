@@ -22,8 +22,8 @@ class Booking extends JsonResource
             'id' => $this->id,
             'type' => 'booking',
             'attributes' => [
-                'start' => $this->start,
-                'end' => $this->end,
+                'start' => json_encode($this->start),
+                'end' => json_encode($this->end),
             ],
             'relationships' => [
                 'user' => $this->when(
