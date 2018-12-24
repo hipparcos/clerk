@@ -23,9 +23,12 @@ class BookingTest extends TestCase
         $this->tatooine = factory(\App\Room::class)->create();
         $this->gotham   = factory(\App\Room::class)->create();
         // Instants.
-        $this->inst0 = new Carbon('01/01/2000 10:00:00');
-        $this->inst1 = new Carbon('01/01/2000 11:00:00');
-        $this->inst2 = new Carbon('01/01/2000 12:00:00');
+        $now = Carbon::now();
+        $now->minute = 0;
+        $now->second = 0;
+        $this->inst0 = (clone $now)->hour(10);
+        $this->inst1 = (clone $now)->hour(11);
+        $this->inst2 = (clone $now)->hour(12);
         // Bookings.
         $this->bk0 = factory(\App\Booking::class)->create([
             'user_id' => $this->ethan->id,
@@ -39,11 +42,18 @@ class BookingTest extends TestCase
             'start'   => $this->inst1,
             'end'     => $this->inst2,
         ]);
-        factory(\App\Booking::class)->create([
+        $this->bk2 = factory(\App\Booking::class)->create([
             'user_id' => $this->james->id,
             'room_id' => $this->tatooine->id,
             'start'   => $this->inst0,
             'end'     => $this->inst1,
+        ]);
+        // Historic booking.
+        $this->bk3 = factory(\App\Booking::class)->create([
+            'user_id' => $this->james->id,
+            'room_id' => $this->tatooine->id,
+            'start'   => Carbon::create(2000, 1, 1, 10, 0, 0),
+            'end'     => Carbon::create(2000, 1, 1, 11, 0, 0),
         ]);
     }
 
@@ -53,7 +63,7 @@ class BookingTest extends TestCase
         $response->assertStatus(401);
     }
 
-    public function testIndexAuthenticated() {
+    public function testIndexToday() {
         Passport::actingAs($this->ethan, ['*']);
 
         $response = $this->getJson('/api/bookings');
@@ -64,6 +74,21 @@ class BookingTest extends TestCase
                 'data' => [
                     [ 'id' => $this->bk0->id ],
                     [ 'id' => $this->bk1->id ],
+                    [ 'id' => $this->bk2->id ],
+                ],
+            ]);
+    }
+
+    public function testIndexHistoric() {
+        Passport::actingAs($this->ethan, ['*']);
+
+        $response = $this->getJson('/api/bookings/2000/01/01');
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    [ 'id' => $this->bk3->id ],
                 ],
             ]);
     }

@@ -13,12 +13,21 @@ use Carbon\Carbon;
 
 class BookingController extends Controller {
     /**
-     * index returns a list of all booking for the current user.
+     * index returns a list of all booking for a given day.
+     * If no year/month/day are provided, index returns the bookings of today.
+     * @param int $year
+     * @param int $month
+     * @param int $day
      */
-    public function index(Request $request) {
+    public function index(Request $request, int $year = null, int $month = null, int $day = null) {
+        if ($year && $month && $day) {
+            $date = Carbon::create($year, $month, $day, 0, 0, 0, 'UTC');
+        } else {
+            $date = Carbon::now();
+        }
         return response()
             ->json(new BookingCollection(
-                Auth::user()->bookings()->get()
+                Booking::whereDate('start', $date->format('Ymd'))->get()
             ), 200);
     }
 
