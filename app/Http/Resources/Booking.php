@@ -24,6 +24,7 @@ class Booking extends JsonResource
             'attributes' => [
                 'start' => json_encode($this->start),
                 'end' => json_encode($this->end),
+                'duration' => $this->start->diffInMinutes($this->end),
             ],
             'relationships' => [
                 'user' => $this->when(
