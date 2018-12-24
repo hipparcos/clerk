@@ -27,7 +27,7 @@ class BookingController extends Controller {
         }
         return response()
             ->json(new BookingCollection(
-                Booking::whereDate('start', $date->format('Ymd'))->get()
+                Booking::onDate($date)
             ), 200);
     }
 

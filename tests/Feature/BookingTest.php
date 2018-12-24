@@ -20,8 +20,8 @@ class BookingTest extends TestCase
         $this->james = factory(\App\User::class)->create();
         $this->ethan = factory(\App\User::class)->create();
         // Rooms.
-        $this->tatooine = factory(\App\Room::class)->create();
-        $this->gotham   = factory(\App\Room::class)->create();
+        $this->tatooine = factory(\App\Room::class)->create(['name' => 'tatooine']);
+        $this->gotham   = factory(\App\Room::class)->create(['name' => 'gotham']);
         // Instants.
         $now = Carbon::now();
         $now->minute = 0;
@@ -72,9 +72,9 @@ class BookingTest extends TestCase
             ->assertStatus(200)
             ->assertJson([
                 'data' => [
-                    [ 'id' => $this->bk0->id ],
-                    [ 'id' => $this->bk1->id ],
-                    [ 'id' => $this->bk2->id ],
+                    [ 'id' => $this->bk0->id ], // gotham, 10h
+                    [ 'id' => $this->bk2->id ], // tatooine, 10h
+                    [ 'id' => $this->bk1->id ], // tatooine, 11h
                 ],
             ]);
     }

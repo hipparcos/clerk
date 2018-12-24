@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class Booking extends Model
 {
@@ -90,5 +91,19 @@ class Booking extends Model
      */
     public function checkUserCollision() {
         return $this->checkCollision('user_id', $this->user_id);
+    }
+
+    /**
+     * onDate returns all bookings on a given date.
+     * The list of bookings is ordered by room name & by date.
+     * @param Carbon $date
+     */
+    static public function onDate(Carbon $date) {
+        return Booking::whereDate('start', $date->format('Ymd'))
+            ->join('rooms', 'bookings.room_id', '=', 'rooms.id')
+            ->select('bookings.*', 'rooms.name')
+            ->orderBy('rooms.name', 'asc')
+            ->orderBy('start', 'asc')
+            ->get();
     }
 }
