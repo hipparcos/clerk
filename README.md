@@ -88,7 +88,7 @@ listed in order of priority.
         - [ ] PUT /bookings/{id}: implement booking modification (user.id must match booking.user.id);
         - [ ] DELETE /bookings/{id}: implement booking deletion (user.id must match booking.user.id);
 - [ ] Frontend: (as it is a SPA, every form/table will be implemented in its own component)
-    - [ ] Configure node.js, add required dependancies (vue.js, vue-router, bulma);
+    - [x] Configure node.js, add required dependancies (vue.js, vue-router, axios, bulma);
     - [ ] Create a base layout;
     - [ ] Configure vue-router;
     - [ ] /:
