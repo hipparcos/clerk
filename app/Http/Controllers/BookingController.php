@@ -25,27 +25,16 @@ class BookingController extends Controller {
         } else {
             $date = Carbon::now();
         }
-        return response()
-            ->json(new BookingCollection(
-                Booking::onDate($date)
-            ), 200);
+        $bookings = Booking::onDate($date);
+        return new BookingCollection($bookings);
     }
 
     /**
      * show returns the details of a booking.
      */
     public function show(Request $request, $id) {
-        $booking = Booking::find($id);
-        if ($booking == null) {
-            return response()->json(null, 404);
-        }
-        return response()
-            ->json([
-                'links' => [
-                    'self' => route('bookings.show', $booking->id)
-                ],
-                'data' => new BookingResource($booking),
-            ], 200);
+        $booking = Booking::findOrFail($id);
+        return new BookingResource($booking);
     }
 
     /**
@@ -68,13 +57,8 @@ class BookingController extends Controller {
             return response()->json(null, 422);
         }
 
-        return response()
-            ->json([
-                'data' => new BookingResource($booking),
-            ], 201)
-            ->withHeaders([
-                'Location', route('bookings.show', ['id' => $booking->id])
-            ]);
+        return (new BookingResource($booking))->response(201)
+            ->header('Location', route('bookings.show', ['id' => $booking->id]));
     }
 
     /**
@@ -97,13 +81,7 @@ class BookingController extends Controller {
             return response()->json(null, 422);
         }
 
-        return response()
-            ->json([
-                'links' => [
-                    'self' => route('bookings.show', $booking->id)
-                ],
-                'data' => new BookingResource($booking),
-            ], 200);
+        return new BookingResource($booking);
     }
 
     /**

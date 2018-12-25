@@ -36,4 +36,18 @@ class Booking extends JsonResource
             ],
         ];
     }
+
+    /**
+     * Get additional data that should be returned with the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function with($request) {
+        return [
+            'links' => [
+                'self' => route('bookings.show', $this->id),
+            ],
+        ];
+    }
 }
