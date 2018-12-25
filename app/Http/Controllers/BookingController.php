@@ -42,19 +42,16 @@ class BookingController extends Controller {
      */
     public function store(StoreBooking $request) {
         $data = $request->validated()['data'];
-
         $start = new Carbon($data['attributes']['start']);
-        $end = (clone $start)->addMinutes($data['attributes']['duration']);
 
-        $booking = new Booking([
+        $booking = Booking::create([
             'user_id' => Auth::id(),
             'room_id' => $data['relationships']['room']['data']['id'],
             'start'   => $start,
-            'end'     => $end,
+            'end'     => (clone $start)->addMinutes($data['attributes']['duration']),
         ]);
-
-        if (!$booking->save()) {
-            return response()->json(null, 422);
+        if (!$booking->id) {
+            abort(500, 'Booking has been validated but creation has failed.');
         }
 
         return (new BookingResource($booking))->response(201)
@@ -71,15 +68,13 @@ class BookingController extends Controller {
         ])->firstOrFail();
 
         $data = $request->validated()['data'];
+        $start = new Carbon($data['attributes']['start']);
 
-        $booking->room_id = $data['relationships']['room']['data']['id'];
-        $booking->start = new Carbon($data['attributes']['start']);
-        $booking->end = (clone $booking->start)
-            ->addMinutes($data['attributes']['duration']);
-
-        if (!$booking->save()) {
-            return response()->json(null, 422);
-        }
+        $booking->update([
+            'room_id' => $data['relationships']['room']['data']['id'],
+            'start'   => $start,
+            'end'     => (clone $start)->addMinutes($data['attributes']['duration']),
+        ]);
 
         return new BookingResource($booking);
     }
