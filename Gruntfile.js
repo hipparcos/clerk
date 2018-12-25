@@ -9,9 +9,11 @@ module.exports = function(grunt) {
     },
     browserify: {
       options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+        banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n',
+        transform: [["babelify", { "presets": ["env"] }]],
       },
       js: {
+        srcType: 'module',
         src: [
           'node_modules/@fortawesome/fontawesome-free/js/all.js',
           'resources/js/*.js',
@@ -62,6 +64,8 @@ module.exports = function(grunt) {
       // Configure JSHint (documented at http://www.jshint.com/docs/):
       options: {
         // More options here if you want to override JSHint defaults:
+        asi: true,
+        esversion: 6,
         globals: {
           jQuery: true,
           console: true,
