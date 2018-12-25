@@ -19,8 +19,8 @@ class Booking extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
             'type' => 'booking',
+            'id' => $this->id,
             'attributes' => [
                 'start' => json_encode($this->start),
                 'end' => json_encode($this->end),
