@@ -180,7 +180,7 @@ class BookingTest extends TestCase
             ]);
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(409)
             ->assertJsonValidationErrors('data.attributes.room.data.id');
     }
 
@@ -203,7 +203,7 @@ class BookingTest extends TestCase
             ]);
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(409)
             ->assertJsonValidationErrors('data.attributes.start');
     }
 
@@ -326,7 +326,7 @@ class BookingTest extends TestCase
             ]);
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(409)
             ->assertJsonValidationErrors('data.attributes.room.data.id');
     }
 

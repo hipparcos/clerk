@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Booking;
@@ -57,6 +58,7 @@ class StoreBooking extends FormRequest
             $validator->errors()->add(
                 'data.attributes.room.data.id', 'This room is already in use at that time.'
             );
+            throw (new ValidationException($validator))->status(409);
         }
     }
 
@@ -67,6 +69,7 @@ class StoreBooking extends FormRequest
             $validator->errors()->add(
                 'data.attributes.start', 'You already have a booking at that time. You may override this warning.'
             );
+            throw (new ValidationException($validator))->status(409);
         }
     }
 
