@@ -63,16 +63,19 @@ class Booking extends Model
                 [$column, $value],
                 ['start', '<=', $this->start],
                 ['end', '>', $this->start],
+                ['id', '!=', $this->id],
             ])
             ->orWhere([
                 [$column, $value],
                 ['start', '<', $this->end],
                 ['end', '>=', $this->end],
+                ['id', '!=', $this->id],
             ])
             ->orWhere([
                 [$column, $value],
                 ['start', '>=', $this->start],
                 ['end', '<', $this->end],
+                ['id', '!=', $this->id],
             ])
             ->limit(1)->exists();
     }

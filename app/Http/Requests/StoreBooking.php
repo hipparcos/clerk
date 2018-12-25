@@ -80,7 +80,12 @@ class StoreBooking extends FormRequest
     {
         $validator->after(function ($validator) {
             $start = new Carbon($this->input('data.attributes.start'));
-            $booking = new Booking([
+
+            $booking = new Booking();
+            if ($this->method() == 'PATCH' || $this->method() == 'PUT') {
+                $booking->id = $this->route()->parameter('booking');
+            }
+            $booking->fill([
                 'user_id' => Auth::id(),
                 'room_id' => $this->input('data.relationships.room.data.id'),
                 'start' => $start,

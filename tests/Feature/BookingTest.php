@@ -269,6 +269,40 @@ class BookingTest extends TestCase
             ]);
     }
 
+    public function testUpdateDurationOnly() {
+        Passport::actingAs($this->ethan, ['*']);
+
+        $id = $this->bk0->id;
+        $duration = 40;
+        $response = $this
+            ->patchJson('/api/bookings/'.$id, [
+                'data' => [
+                    'type' => 'booking',
+                    'id' => $id,
+                    'attributes' => [
+                        'start' => $this->inst0->format('Y-m-d H:i:s'),
+                        'duration' => $duration,
+                    ],
+                    'relationships' => [
+                        'room' => [
+                            'data' => ['id' => $this->gotham->id],
+                        ],
+                    ],
+                ],
+            ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'id' => $id,
+                    'attributes' => [
+                        'end' => json_encode((clone $this->inst0)->addMinutes($duration)),
+                    ],
+                ],
+            ]);
+    }
+
     public function testUpdateRoomCollision() {
         Passport::actingAs($this->ethan, ['*']);
 
