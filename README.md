@@ -54,39 +54,39 @@ listed in order of priority.
 - rooms:
     - rooms.id, INT, PK
     - rooms.name, VARCHAR(255), UNIQUE
-- booking:
-    - booking.id, INT, PK
-    - user.id#, FK
-    - room.id#, FK
-    - booking.start, DATETIME
-    - booking.end, DATETIME
+- bookings:
+    - bookings.id, INT, PK
+    - users.id#, FK, ON DELETE CASCADE
+    - rooms.id#, FK, ON DELETE CASCADE
+    - bookings.start, DATETIME
+    - bookings.end, DATETIME
 
 ### TODO
-- [ ] Backend:
+- [x] Backend:
     - [x] Create a Laravel project.
-- [ ] Backend/Model:
+- [x] Backend/Model:
     - [x] User: (use default Laravel authentification scaffolding)
         - [x] Create migration (create table + insert test user);
         - [x] Implement user creation;
         - [x] Implement user authentification.
     - [x] Room:
         - [x] Create migration (create table + insert rooms);
-    - [ ] Booking:
-        - [ ] Create migration (create table);
-        - [ ] Implement booking creation/modification:
-            - [ ] Block meeting collisions for the same room;
-            - [ ] Block meeting collisions for the same user (overridable).
-- [ ] Backend/API:
-    - [ ] User:
-        - [ ] POST /register: implement user creation;
-        - [ ] POST /login: implement user authentification;
-        - [ ] Implement user authentification middleware.
-    - [ ] Booking: (restricted to authenticated users)
-        - [ ] GET /bookings: implement booking listing for a user;
-        - [ ] POST /bookings: implement booking creation;
-        - [ ] GET /bookings/{id}: implement booking viewing;
-        - [ ] PUT /bookings/{id}: implement booking modification (user.id must match booking.user.id);
-        - [ ] DELETE /bookings/{id}: implement booking deletion (user.id must match booking.user.id);
+    - [x] Booking:
+        - [x] Create migration (create table);
+        - [x] Implement booking creation/modification:
+            - [x] Block meeting collisions for the same room;
+            - [x] Block meeting collisions for the same user (overridable).
+- [x] Backend/API:
+    - [x] User:
+        - [x] POST /register: implement user creation;
+        - [x] POST /login: implement user authentification (Passport);
+        - [x] Implement user authentification middleware (Passport).
+    - [x] Booking: (restricted to authenticated users)
+        - [x] GET /bookings: implement booking listing for a given day (or today);
+        - [x] POST /bookings: implement booking creation;
+        - [x] GET /bookings/{id}: implement booking viewing;
+        - [x] PUT /bookings/{id}: implement booking modification (user.id must match booking.user.id);
+        - [x] DELETE /bookings/{id}: implement booking deletion (user.id must match booking.user.id);
 - [ ] Frontend: (as it is a SPA, every form/table will be implemented in its own component)
     - [x] Configure node.js, add required dependancies (vue.js, vue-router, axios, bulma);
     - [ ] Create a base layout;
