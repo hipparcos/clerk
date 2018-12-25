@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>{{ config('app.name', 'clerk') }}</title>
-        <link rel="stylesheet" href="css/clerk.css">
+        <link rel="stylesheet" href="css/app.css">
     </head>
     <body>
         <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
@@ -40,6 +40,6 @@
         <div class="container">
         </div>
 
-        <script src="js/clerk.js"></script>
+        <script src="js/app.js"></script>
     </body>
 </html>
