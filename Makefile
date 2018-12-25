@@ -6,6 +6,16 @@ token_file:=token
 .PHONY: all
 all: exec # do nothing by default.
 
+# deploy-dev configures laravel test environment.
+# @require composer
+# @require npm
+deploy-dev:
+	composer install
+	npm install
+	sed 's/homestead/clerk/' .env.example > .env
+	php artisan key:generate
+	php artisan passport:keys
+
 # exec executes a command on a container then exit.
 # @param container app, web, database; default: app
 # @param args the command to run and its arguments
@@ -51,7 +61,7 @@ req-token:
 # @param data the request payload
 # @param url the url
 # @param nojq bypass jq
-# @deps jq
+# @require jq
 .PHONY: req-json
 req-json:
 	curl -H "Accept: application/json" -H "Content-Type: application/json" -v -s\
