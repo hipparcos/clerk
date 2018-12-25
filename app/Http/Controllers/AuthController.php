@@ -31,11 +31,7 @@ class AuthController extends Controller
         ]);
         Auth::guard()->login($user);
 
-        return response()->json([
-                'data' => new UserResource($user),
-            ], 201)
-            ->withHeaders([
-                'Location', route('profile')
-            ]);
+        return (new UserResource($user))->response(201)
+            ->header('Location', route('profile'));
     }
 }
