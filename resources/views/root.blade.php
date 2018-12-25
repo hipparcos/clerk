@@ -11,38 +11,10 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/fontawesome.css" integrity="sha384-jLuaxTTBR42U2qJ/pm4JRouHkEDHkVqH0T1nyQXn1mZ7Snycpf6Rl25VBNthU4z0" crossorigin="anonymous">
     </head>
     <body>
-        <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
-            <div class="navbar-brand">
-                <a class="navbar-item" href="/">
-                    <i class="fas fa-building"></i>&nbsp;{{ config('app.name', 'clerk') }}
-                </a>
-            </div>
-
-            <div id="navbar" class="navbar-menu">
-                <div class="navbar-start">
-                    <a class="navbar-item">
-                        Home
-                    </a>
-                </div>
-
-                <div class="navbar-end">
-                    <div class="navbar-item">
-                        <div class="buttons">
-                            <a class="button is-primary">
-                                <strong>Register</strong>
-                            </a>
-                            <a class="button is-light">
-                                Log in
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </nav>
-
-        <div class="container">
+        <div id="app">
+            <clerk-nav app="{{ config('app.name', 'clerk') }}"></clerk-nav>
+            <router-view class="container"></router-view>
         </div>
-
         <script src="js/app.js"></script>
     </body>
 </html>
