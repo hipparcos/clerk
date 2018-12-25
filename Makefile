@@ -50,11 +50,12 @@ req-token:
 # @param token the authentification token file
 # @param data the request payload
 # @param url the url
+# @deps jq
 .PHONY: req-json
 req-json:
-	curl -H "Accept: application/json" -H "Content-Type: application/json" \
-	     -v$(if $(method), -X $(method),)$(if $(token), -H $(token),)$(if $(data), -d $(data),) \
-	     $(base_url)$(url)
+	curl -H "Accept: application/json" -H "Content-Type: application/json" -v -s\
+	     $(if $(method), -X $(method),)$(if $(token), -H $(token),)$(if $(data), -d $(data),) \
+		 $(base_url)$(url) | jq '.|del(.trace[5:])'
 	@echo -e "\n"
 
 # Run all tests.
