@@ -22,6 +22,12 @@ const app = new Vue({
         'clerk-nav': navComponent,
     },
     data: {
-        token: ""
+        token: "",
+        flashSuccessData: "",
+    },
+    methods: {
+        onFlashSuccess: function(message) {
+            this.flashSuccessData = message
+        }
     }
 }).$mount('#app')

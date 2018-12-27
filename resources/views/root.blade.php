@@ -13,7 +13,13 @@
     <body>
         <div id="app">
             <clerk-nav app="{{ config('app.name', 'clerk') }}" :token="token"></clerk-nav>
-            <router-view class="container"></router-view>
+            <div v-if="flashSuccessData" class="container notification is-success">
+                <button class="delete" @click="flashSuccessData = ''"></button>
+                <p>@{{ flashSuccessData }}</p>
+            </div>
+            <router-view class="container"
+                v-on:flash-success="onFlashSuccess"
+                ></router-view>
         </div>
         <script src="js/app.js"></script>
     </body>
