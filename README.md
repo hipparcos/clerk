@@ -89,16 +89,16 @@ listed in order of priority.
         - [x] DELETE /bookings/{id}: implement booking deletion (user.id must match booking.user.id);
 - [ ] Frontend: (as it is a SPA, every form/table will be implemented in its own component)
     - [x] Configure node.js, add required dependancies (vue.js, vue-router, axios, bulma);
-    - [ ] Create a base layout;
-    - [ ] Configure vue-router;
+    - [x] Create a base layout;
+    - [x] Configure vue-router;
     - [ ] /:
         - [ ] Create a timetable view of all bookings (obfuscated except for the one from the current user).
-    - [ ] /register:
-        - [ ] Create registration form;
-        - [ ] Display registration errors.
-    - [ ] /login:
-        - [ ] Create login form;
-        - [ ] Display login errors.
+    - [x] /register:
+        - [x] Create registration form;
+        - [x] Display registration errors.
+    - [x] /login:
+        - [x] Create login form;
+        - [x] Display login errors.
     - [ ] /bookings:
         - [ ] Create a table of bookings;
         - [ ] Add a control to delete a booking;
