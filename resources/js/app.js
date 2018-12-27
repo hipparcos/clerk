@@ -4,12 +4,14 @@ Vue.use(VueRouter)
 
 import navComponent from './components/nav.vue'
 import registerComponent from './components/form/register.vue'
+import loginComponent from './components/form/login.vue'
 
 const root = { template: '<p>This is clerk.</p>' }
 
 const routes = [
   { path: '/', component: root },
   { path: '/register', component: registerComponent },
+  { path: '/login', component: loginComponent },
 ]
 
 const router = new VueRouter({
@@ -26,6 +28,9 @@ const app = new Vue({
         flashSuccessData: "",
     },
     methods: {
+        onToken: function(token) {
+            this.token = token
+        },
         onFlashSuccess: function(message) {
             this.flashSuccessData = message
         }

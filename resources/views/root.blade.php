@@ -18,6 +18,7 @@
                 <p>@{{ flashSuccessData }}</p>
             </div>
             <router-view class="container"
+                v-on:token="onToken"
                 v-on:flash-success="onFlashSuccess"
                 ></router-view>
         </div>

@@ -4,18 +4,14 @@
             <router-link to="/register" class="button is-primary">
                 <strong>Register</strong>
             </router-link>
-            <a class="button is-light">
+            <router-link to="/login" class="button is-light">
                 Log in
-            </a>
+            </router-link>
         </div>
     </div>
 </template>
 
 <script>
 export default {
-    methods: {
-        register: function() {
-        }
-    }
 }
 </script>
