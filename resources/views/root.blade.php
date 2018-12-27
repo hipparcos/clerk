@@ -12,7 +12,7 @@
     </head>
     <body>
         <div id="app">
-            <clerk-nav app="{{ config('app.name', 'clerk') }}"></clerk-nav>
+            <clerk-nav app="{{ config('app.name', 'clerk') }}" :token="token"></clerk-nav>
             <router-view class="container"></router-view>
         </div>
         <script src="js/app.js"></script>

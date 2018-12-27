@@ -14,23 +14,29 @@
             </div>
 
             <div class="navbar-end">
-                <div class="navbar-item">
-                    <div class="buttons">
-                        <a class="button is-primary">
-                            <strong>Register</strong>
-                        </a>
-                        <a class="button is-light">
-                            Log in
-                        </a>
-                    </div>
-                </div>
+                <template v-if="token">
+                    <logout></logout>
+                </template>
+                <template v-else>
+                    <login></login>
+                </template>
             </div>
         </div>
     </nav>
 </template>
 
 <script>
-module.exports = {
-    props: ['app']
+import LoginComponent from './nav/login.vue'
+import LogoutComponent from './nav/logout.vue'
+
+export default {
+    props: {
+        app: String,
+        token: String
+    },
+    components: {
+        login: LoginComponent,
+        logout: LogoutComponent
+    },
 }
 </script>

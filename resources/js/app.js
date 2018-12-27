@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
-import VueNavComponent from './components/nav.vue'
+import NavComponent from './components/nav.vue'
 
 const root = { template: '<p>This is clerk.</p>' }
 
@@ -17,6 +17,9 @@ const router = new VueRouter({
 const app = new Vue({
     router: router,
     components: {
-        'clerk-nav': VueNavComponent
+        'clerk-nav': NavComponent
+    },
+    data: {
+        token: ""
     }
 }).$mount('#app')
