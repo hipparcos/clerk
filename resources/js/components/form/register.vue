@@ -103,8 +103,9 @@ export default {
             .then(function (response) {
                 this.clear()
                 //TODO login user.
-                this.$router.push('/')
-                //TODO flash success.
+                this.$router.push('/', function() {
+                    this.$emit('flash-success', 'Registration completed.')
+                }.bind(this))
             }.bind(this))
             .catch(function (error) {
                 let data = error.response.data
