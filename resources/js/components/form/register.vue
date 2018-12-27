@@ -60,6 +60,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
     data: function() {
         return {
@@ -80,6 +82,51 @@ export default {
     },
     methods: {
         submit: function() {
+            // Clear.
+            this.clearErrors()
+            // Request.
+            axios({
+                method: 'post',
+                url: '/api/register',
+                data: {
+                    data: {
+                        type: "user",
+                        attributes: {
+                            name: this.name,
+                            email: this.email,
+                            password: this.password,
+                            password_confirmation: this.password_confirmation,
+                        }
+                    }
+                }
+            })
+            .then(function (response) {
+                this.clear()
+                //TODO login user.
+                this.$router.push('/')
+                //TODO flash success.
+            }.bind(this))
+            .catch(function (error) {
+                let data = error.response.data
+                this.errors.message
+                    = data.message
+                if ('data.attributes.name' in data.errors) {
+                    this.errors.fields.name
+                        = data.errors['data.attributes.name']
+                }
+                if ('data.attributes.email' in data.errors) {
+                    this.errors.fields.email
+                        = data.errors['data.attributes.email']
+                }
+                if ('data.attributes.password' in data.errors) {
+                    this.errors.fields.password
+                        = data.errors['data.attributes.password']
+                }
+                if ('data.attributes.password_confirmation' in data.errors) {
+                    this.errors.fields.password_confirmation
+                        = data.errors['data.attributes.password_confirmation']
+                }
+            }.bind(this));
         },
         clear: function() {
             this.name = ""
