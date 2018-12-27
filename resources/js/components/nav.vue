@@ -15,7 +15,10 @@
 
             <div class="navbar-end">
                 <template v-if="token">
-                    <logout></logout>
+                    <logout
+                        v-on:token="onToken"
+                        v-on:flash-success="onFlashSuccess"
+                        ></logout>
                 </template>
                 <template v-else>
                     <login></login>
@@ -38,5 +41,13 @@ export default {
         login: LoginComponent,
         logout: LogoutComponent
     },
+    methods: {
+        onToken: function(token) {
+            this.$emit('token', token)
+        },
+        onFlashSuccess: function(message) {
+            this.$emit('flash-success', message)
+        },
+    }
 }
 </script>

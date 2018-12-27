@@ -12,7 +12,12 @@
     </head>
     <body>
         <div id="app">
-            <clerk-nav app="{{ config('app.name', 'clerk') }}" :token="token"></clerk-nav>
+            <clerk-nav
+                app="{{ config('app.name', 'clerk') }}"
+                :token="token"
+                v-on:token="onToken"
+                v-on:flash-success="onFlashSuccess"
+                ></clerk-nav>
             <div v-if="flashSuccessData" class="container notification is-success">
                 <button class="delete" @click="flashSuccessData = ''"></button>
                 <p>@{{ flashSuccessData }}</p>
