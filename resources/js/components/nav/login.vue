@@ -1,9 +1,9 @@
 <template>
     <div class="navbar-item">
         <div class="buttons">
-            <a class="button is-primary">
+            <router-link to="/register" class="button is-primary">
                 <strong>Register</strong>
-            </a>
+            </router-link>
             <a class="button is-light">
                 Log in
             </a>
@@ -13,5 +13,9 @@
 
 <script>
 export default {
+    methods: {
+        register: function() {
+        }
+    }
 }
 </script>

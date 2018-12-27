@@ -2,12 +2,14 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
-import NavComponent from './components/nav.vue'
+import navComponent from './components/nav.vue'
+import registerComponent from './components/form/register.vue'
 
 const root = { template: '<p>This is clerk.</p>' }
 
 const routes = [
   { path: '/', component: root },
+  { path: '/register', component: registerComponent },
 ]
 
 const router = new VueRouter({
@@ -17,7 +19,7 @@ const router = new VueRouter({
 const app = new Vue({
     router: router,
     components: {
-        'clerk-nav': NavComponent
+        'clerk-nav': navComponent,
     },
     data: {
         token: ""
