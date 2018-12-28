@@ -31,6 +31,7 @@
 
 <script>
 import axios from 'axios'
+import login from '../../lib/login.js'
 
 export default {
     data: function() {
@@ -48,30 +49,19 @@ export default {
             // Clear.
             this.clearErrors()
             // Request.
-            axios({
-                method: 'post',
-                url: '/oauth/token',
-                data: {
-                    grant_type: "password",
-                    client_id: 1,
-                    client_secret: "DvYKWsQPGXUPrRH41PsHtrMgtMMwfalJ0BjsoVhF",
-                    username: this.email,
-                    password: this.password,
-                    scope: "*"
-                }
-            })
-            .then(function (response) {
-                this.clear()
-                this.$router.push('/', function() {
-                    this.$emit('token', response.data.access_token)
-                    this.$emit('flash-success', 'You are now logged in.')
+            login.login(this.email, this.password)
+                .then(function (response) {
+                    this.clear()
+                    this.$router.push('/', function() {
+                        this.$emit('token', response.data.access_token)
+                        this.$emit('flash-success', 'You are now logged in.')
+                    }.bind(this))
                 }.bind(this))
-            }.bind(this))
-            .catch(function (error) {
-                let data = error.response.data
-                this.errors.message = data.message
-                this.errors.hint = data.hint.replace('username', 'email')
-            }.bind(this));
+                .catch(function (error) {
+                    let data = error.response.data
+                    this.errors.message = data.message
+                    this.errors.hint = data.hint.replace('username', 'email')
+                }.bind(this));
         },
         clear: function() {
             this.email = ""

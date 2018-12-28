@@ -61,6 +61,7 @@
 
 <script>
 import axios from 'axios'
+import login from '../../lib/login.js'
 
 export default {
     data: function() {
@@ -100,34 +101,37 @@ export default {
                     }
                 }
             })
-            .then(function (response) {
-                this.clear()
-                //TODO login user.
-                this.$router.push('/', function() {
-                    this.$emit('flash-success', 'Registration completed.')
+                .then(function (response) {
+                    login.login(this.email, this.password)
+                        .then(function (response) {
+                            this.$emit('token', response.data.access_token)
+                            this.clear()
+                            this.$router.push('/', function() {
+                                    this.$emit('flash-success', 'Registration completed.')
+                                }.bind(this))
+                        }.bind(this))
                 }.bind(this))
-            }.bind(this))
-            .catch(function (error) {
-                let data = error.response.data
-                this.errors.message
-                    = data.message
-                if ('data.attributes.name' in data.errors) {
-                    this.errors.fields.name
-                        = data.errors['data.attributes.name']
-                }
-                if ('data.attributes.email' in data.errors) {
-                    this.errors.fields.email
-                        = data.errors['data.attributes.email']
-                }
-                if ('data.attributes.password' in data.errors) {
-                    this.errors.fields.password
-                        = data.errors['data.attributes.password']
-                }
-                if ('data.attributes.password_confirmation' in data.errors) {
-                    this.errors.fields.password_confirmation
-                        = data.errors['data.attributes.password_confirmation']
-                }
-            }.bind(this));
+                .catch(function (error) {
+                    let data = error.response.data
+                    this.errors.message
+                        = data.message
+                    if ('data.attributes.name' in data.errors) {
+                        this.errors.fields.name
+                            = data.errors['data.attributes.name']
+                    }
+                    if ('data.attributes.email' in data.errors) {
+                        this.errors.fields.email
+                            = data.errors['data.attributes.email']
+                    }
+                    if ('data.attributes.password' in data.errors) {
+                        this.errors.fields.password
+                            = data.errors['data.attributes.password']
+                    }
+                    if ('data.attributes.password_confirmation' in data.errors) {
+                        this.errors.fields.password_confirmation
+                            = data.errors['data.attributes.password_confirmation']
+                    }
+                }.bind(this));
         },
         clear: function() {
             this.name = ""
