@@ -35,7 +35,8 @@
         "sass-loader": "^7.1.0",
         "vue": "^2.5.21",
         "vue-router": "^3.0.2",
-        "vue-template-compiler": "^2.5.21"
+        "vue-template-compiler": "^2.5.21",
+        "vue2-datepicker": "^2.6.4"
     },
     "dependencies": {}
 }
