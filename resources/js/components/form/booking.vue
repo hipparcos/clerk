@@ -60,6 +60,19 @@
                     </p>
                 </div>
             </div>
+            <div class="field-label is-normal">
+                <label class="label">Override?</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <p class="control">
+                        <label class="checkbox">
+                            <input class="checkbox" type="checkbox" v-model="override">
+                            Yes
+                        </label>
+                    </p>
+                </div>
+            </div>
             <div class="field-body">
                 <div class="field is-grouped">
                     <p class="control">
@@ -89,6 +102,7 @@ export default {
             room: 0,
             start: new Date(Date.now()),
             durationData: 0,
+            override: false,
             errors: {
                 message: "",
                 fields: {
@@ -154,12 +168,16 @@ export default {
                             room: {
                                 data: { id: this.room }
                             }
-                        }
+                        },
+                    },
+                    meta: {
+                        overrideUserCollision: this.override
                     }
                 }
             })
                 .then(function (response) {
                     this.$emit('flash-success', 'Booking saved.')
+                    this.override = false
                 }.bind(this))
                 .catch(function (error) {
                     let data = error.response.data
