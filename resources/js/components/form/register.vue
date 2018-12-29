@@ -50,10 +50,10 @@
         </div>
         <div class="field is-grouped">
             <div class="control">
-                <button class="button is-link" @click="submit">Register</button>
+                <button class="button is-link" @click.prevent="submit">Register</button>
             </div>
             <div class="control">
-                <button class="button is-text" @click="clear">Clear</button>
+                <button class="button is-text" @click.prevent="clear">Clear</button>
             </div>
         </div>
     </form>

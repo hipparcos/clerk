@@ -23,7 +23,7 @@
         </div>
         <div class="field is-grouped">
             <div class="control">
-                <button class="button is-link" @click="submit">Log in</button>
+                <button class="button is-link" @click.prevent="submit">Log in</button>
             </div>
         </div>
     </form>

@@ -19,7 +19,7 @@
                 v-on:flash-success="onFlashSuccess"
                 ></clerk-nav>
             <div v-if="flashSuccessData" class="container notification is-success">
-                <button class="delete" @click="flashSuccessData = ''"></button>
+                <button class="delete" @click.prevent="flashSuccessData = ''"></button>
                 <p>@{{ flashSuccessData }}</p>
             </div>
             <router-view class="container"
