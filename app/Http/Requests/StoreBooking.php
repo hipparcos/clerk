@@ -61,8 +61,8 @@ class StoreBooking extends FormRequest
     {
         if ($booking->checkRoomCollision()) {
             $validator->errors()->add(
-                'data.attributes.room.data.id',
-                'This :attribute is already in use at that time.'
+                'data.relationships.room.data.id',
+                'This room is already in use at that time.'
             );
             throw (new ValidationException($validator))->status(409);
         }
