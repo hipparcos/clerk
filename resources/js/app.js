@@ -5,6 +5,7 @@ Vue.use(VueRouter)
 import navComponent from './components/nav.vue'
 import registerComponent from './components/form/register.vue'
 import loginComponent from './components/form/login.vue'
+import bookingComponent from './components/form/booking.vue'
 
 const root = { template: '<p>This is clerk.</p>' }
 
@@ -12,6 +13,7 @@ const routes = [
   { path: '/', component: root },
   { path: '/register', component: registerComponent },
   { path: '/login', component: loginComponent },
+  { path: '/bookings/new', component: bookingComponent },
 ]
 
 const router = new VueRouter({
