@@ -26,12 +26,17 @@ const app = new Vue({
         'clerk-nav': navComponent,
     },
     data: {
-        token: "",
+        token: localStorage.getItem('token') || '',
         flashSuccessData: "",
     },
     methods: {
         onToken: function(token) {
             this.token = token
+            if (token) {
+                localStorage.setItem('token', token)
+            } else {
+                localStorage.removeItem('token')
+            }
         },
         onFlashSuccess: function(message) {
             this.flashSuccessData = message
