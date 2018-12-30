@@ -24,10 +24,9 @@
                             v-model="room"
                             >
                             <option disabled selected value="0">Select a room...</option>
-                            <option value="1">Room 1</option>
-                            <option value="2">Room 2</option>
-                            <option value="3">Room 3</option>
-                            <option value="4">Room 4</option>
+                            <option v-for="r in rooms" :key="r.id" :value="r.id">
+                                {{ r.attributes.name }}
+                            </option>
                         </select>
                     </p>
                 </div>
@@ -97,9 +96,22 @@ export default {
     props: {
         token: String,
     },
+    created: function() {
+        axios({
+            method: 'get',
+            url: '/api/rooms',
+            headers: {
+                'Authorization': 'Bearer ' + this.token,
+            },
+        })
+            .then(function (response) {
+                this.rooms = response.data.data
+            }.bind(this))
+    },
     data: function() {
         return {
             room: 0,
+            rooms: [],
             start: new Date(Date.now()),
             durationData: 0,
             override: false,
