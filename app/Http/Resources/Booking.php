@@ -27,9 +27,9 @@ class Booking extends JsonResource
                 'duration' => $this->start->diffInMinutes($this->end),
             ],
             'relationships' => [
-                'user' => $this->when(
-                    $this->user_id == Auth::id(), new UserResource($this->user)
-                ),
+                'user' => [
+                    'data' => new UserResource($this->user),
+                ],
                 'room' => [
                     'data' => new RoomResource($this->room),
                 ],
