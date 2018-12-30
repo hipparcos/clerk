@@ -26,4 +26,8 @@ Route::middleware('auth:api')->group(function() {
     Route::get('profile', function (Request $request) {
         return $request->user();
     })->name('profile');
+    // Rooms.
+    Route::get('rooms', function (Request $request) {
+        return new \App\Http\Resources\RoomCollection(\App\Room::orderBy('name')->get());
+    })->name('books');
 });
