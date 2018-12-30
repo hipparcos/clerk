@@ -9,11 +9,49 @@ import bookingComponent from './components/form/booking.vue'
 
 const root = { template: '<p>This is clerk.</p>' }
 
+const state = {
+    authenticated: false,
+}
+
+const ifAuthenticated = function(to, from, next) {
+    if (state.authenticated) {
+        next()
+        return
+    }
+    next('/login')
+}
+const ifNotAuthenticated = function(to, from, next) {
+    if (!state.authenticated) {
+        next()
+        return
+    }
+    next('/')
+}
+
 const routes = [
-  { path: '/', component: root },
-  { path: '/register', component: registerComponent },
-  { path: '/login', component: loginComponent },
-  { path: '/bookings/new', component: bookingComponent },
+    {
+        path: '/',
+        name: 'root',
+        component: root
+    },
+    {
+        path: '/register',
+        name: 'register',
+        component: registerComponent,
+        beforeEnter: ifNotAuthenticated,
+    },
+    {
+        path: '/login',
+        name: 'login',
+        component: loginComponent,
+        beforeEnter: ifNotAuthenticated,
+    },
+    {
+        path: '/bookings/new',
+        name: 'bookings.new',
+        component: bookingComponent,
+        beforeEnter: ifAuthenticated,
+    },
 ]
 
 const router = new VueRouter({
@@ -22,12 +60,27 @@ const router = new VueRouter({
 
 const app = new Vue({
     router: router,
+    mounted: function() {
+        state.authenticated = this.authenticated
+    },
     components: {
         'clerk-nav': navComponent,
     },
     data: {
         token: localStorage.getItem('token') || '',
         flashSuccessData: "",
+    },
+    watch: {
+        token: function(oldVal, newVal) {
+            state.authenticated = this.authenticated
+        },
+    },
+    computed: {
+        // authenticated tells if the current user is authenticated.
+        // @return boolean
+        authenticated: function() {
+            return (this.token) ? true : false;
+        }
     },
     methods: {
         onToken: function(token) {
