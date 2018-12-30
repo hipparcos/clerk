@@ -22,14 +22,14 @@ class Booking extends JsonResource
             'type' => 'booking',
             'id' => $this->id,
             'attributes' => [
-                'start' => json_encode($this->start),
-                'end' => json_encode($this->end),
+                'start' => $this->start,
+                'end' => $this->end,
                 'duration' => $this->start->diffInMinutes($this->end),
             ],
             'relationships' => [
-                'user' => $this->when(
-                    $this->user_id == Auth::id(), new UserResource($this->user)
-                ),
+                'user' => [
+                    'data' => new UserResource($this->user),
+                ],
                 'room' => [
                     'data' => new RoomResource($this->room),
                 ],
