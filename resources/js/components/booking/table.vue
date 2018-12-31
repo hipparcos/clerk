@@ -101,7 +101,14 @@ export default {
         },
         onUpdate: function(booking) {
             let idx = this.bookings.findIndex(b => b.id == booking.id)
-            this.bookings[idx] = booking
+            let newStart = moment(this.bookings[idx].attributes.start)
+            // If the date has been changed, remove the booking.
+            let today = this.date.clone()
+            if (newStart.isBefore(today.startOf('day')) || newStart.isAfter(today.endOf('day'))) {
+                this.onDelete(booking)
+            } else {
+                this.bookings[idx] = booking
+            }
         },
         onDelete: function(booking) {
             this.bookings = this.bookings.filter(b => b.id != booking.id)
