@@ -51,8 +51,7 @@
         <td>{{ booking.relationships.user.data.attributes.name }}</td>
         <td>{{ booking.relationships.user.data.attributes.email }}</td>
         <td>
-            <!-- TODO hide actions if current user is not the owner -->
-            <span class="buttons">
+            <span class="buttons" v-if="booking.relationships.user.data.id == $store.getters.getProfile.id">
                 <a class="button is-small"
                     :class="{ 'is-link': editMode }"
                     @click.prevent="edit"
