@@ -4,14 +4,14 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 import store from './store.js'
-import { USER_REQUEST } from './components/user/actions.js'
-import { ROOMS_REQUEST } from './components/room/actions.js'
+import { USER_REQUEST } from './user/actions.js'
+import { ROOMS_REQUEST } from './room/actions.js'
 
-import NavComponent          from './components/nav.vue'
-import AuthRegisterComponent from './components/auth/form/register.vue'
-import AuthLoginComponent    from './components/auth/form/login.vue'
-import BookingIndexComponent from './components/booking/table.vue'
-import BookingNewComponent   from './components/booking/new.vue'
+import NavComponent          from './nav.vue'
+import AuthRegisterComponent from './auth/form/register.vue'
+import AuthLoginComponent    from './auth/form/login.vue'
+import BookingIndexComponent from './booking/table.vue'
+import BookingNewComponent   from './booking/new.vue'
 
 const root = { template: '<p></p>' }
 
