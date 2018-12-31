@@ -18,7 +18,7 @@
             <template v-if="editMode">
                 <span class="control">
                     <date-picker type="datetime" lang="en" format="DD-MM-YYYY H:mm"
-                        class="is-small"
+                        class="inplace"
                         :time-picker-options="startTimePickerOptions"
                         :not-before="today"
                         v-model="booking.attributes.start"
@@ -155,7 +155,7 @@ export default {
 </script>
 
 <style>
-.mx-input {
+.inplace .mx-input {
     height: 1.8em;
 }
 </style>
