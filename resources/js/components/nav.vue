@@ -29,9 +29,9 @@
 </template>
 
 <script>
-import LoginComponent from './nav/login.vue'
-import LogoutComponent from './nav/logout.vue'
-import BookingComponent from './nav/booking.vue'
+import AuthNavLoginComponent  from './auth/nav/login.vue'
+import AuthNavLogoutComponent from './auth/nav/logout.vue'
+import BookingNavComponent    from './booking/nav.vue'
 
 export default {
     props: {
@@ -39,9 +39,9 @@ export default {
         token: String
     },
     components: {
-        login: LoginComponent,
-        logout: LogoutComponent,
-        booking: BookingComponent,
+        login: AuthNavLoginComponent,
+        logout: AuthNavLogoutComponent,
+        booking: BookingNavComponent,
     },
     methods: {
         onToken: function(token) {

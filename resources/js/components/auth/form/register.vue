@@ -61,7 +61,7 @@
 
 <script>
 import axios from 'axios'
-import login from '../../lib/login.js'
+import login from '../../../lib/login.js'
 
 export default {
     data: function() {

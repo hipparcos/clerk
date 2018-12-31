@@ -45,11 +45,11 @@ import _ from 'lodash'
 import axios from 'axios'
 import moment from 'moment'
 import DatePicker from 'vue2-datepicker'
-import bookingTrComponent from './booking-tr.vue'
+import BookingTrComponent from './table-row.vue'
 
 export default {
     components: {
-        'booking-tr': bookingTrComponent,
+        'booking-tr': BookingTrComponent,
         DatePicker,
     },
     props: {

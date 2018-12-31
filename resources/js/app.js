@@ -2,11 +2,11 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
-import navComponent from './components/nav.vue'
-import registerComponent from './components/form/register.vue'
-import loginComponent from './components/form/login.vue'
-import bookingIndexComponent from './components/list/booking.vue'
-import bookingNewComponent from './components/form/booking.vue'
+import NavComponent          from './components/nav.vue'
+import AuthRegisterComponent from './components/auth/form/register.vue'
+import AuthLoginComponent    from './components/auth/form/login.vue'
+import BookingIndexComponent from './components/booking/table.vue'
+import BookingNewComponent   from './components/booking/new.vue'
 
 const root = { template: '<p></p>' }
 
@@ -38,25 +38,25 @@ const routes = [
     {
         path: '/register',
         name: 'register',
-        component: registerComponent,
+        component: AuthRegisterComponent,
         beforeEnter: ifNotAuthenticated,
     },
     {
         path: '/login',
         name: 'login',
-        component: loginComponent,
+        component: AuthLoginComponent,
         beforeEnter: ifNotAuthenticated,
     },
     {
         path: '/bookings/new',
         name: 'bookings.new',
-        component: bookingNewComponent,
+        component: BookingNewComponent,
         beforeEnter: ifAuthenticated,
     },
     {
         path: '/bookings',
         name: 'bookings.index',
-        component: bookingIndexComponent,
+        component: BookingIndexComponent,
         beforeEnter: ifAuthenticated,
     },
 ]
@@ -71,7 +71,7 @@ const app = new Vue({
         state.authenticated = this.authenticated
     },
     components: {
-        'clerk-nav': navComponent,
+        'clerk-nav': NavComponent,
     },
     data: {
         token: localStorage.getItem('token') || '',
