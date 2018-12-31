@@ -3,9 +3,10 @@
         <td>
             <template v-if="editMode">
                 <span class="control">
-                    <input class="input" type="text"
+                    <input class="input is-small" type="text"
                         size="4" maxlength="4" style="width: 4em;"
                         v-model="booking.relationships.room.data.id"
+                        @keyup.enter="edit"
                         >
                 </span>
             </template>
@@ -17,6 +18,7 @@
             <template v-if="editMode">
                 <span class="control">
                     <date-picker type="datetime" lang="en" format="DD-MM-YYYY H:mm"
+                        class="is-small"
                         :time-picker-options="startTimePickerOptions"
                         :not-before="today"
                         v-model="booking.attributes.start"
@@ -30,9 +32,10 @@
         <td>
             <template v-if="editMode">
                 <span class="control">
-                    <input class="input" type="text"
+                    <input class="input is-small" type="text" ref="duration"
                         size="4" maxlength="4" style="width: 4em;"
                         v-model="booking.attributes.duration"
+                        @keyup.enter="edit"
                         >
                 </span>
             </template>
@@ -45,7 +48,10 @@
         <td>
             <!-- TODO hide actions if current user is not the owner -->
             <span class="buttons">
-                <a class="button is-small" @click.prevent="edit">
+                <a class="button is-small"
+                    :class="{ 'is-link': editMode }"
+                    @click.prevent="edit"
+                    >
                     <span>Edit</span>
                     <span class="icon is-small">
                         <i class="fas fa-edit"></i>
@@ -154,3 +160,9 @@ export default {
     },
 }
 </script>
+
+<style>
+.mx-input {
+    height: 1.8em;
+}
+</style>
