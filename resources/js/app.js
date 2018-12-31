@@ -5,6 +5,7 @@ Vue.use(VueRouter)
 
 import store from './store.js'
 import { USER_REQUEST } from './components/user/actions.js'
+import { ROOMS_REQUEST } from './components/room/actions.js'
 
 import NavComponent          from './components/nav.vue'
 import AuthRegisterComponent from './components/auth/form/register.vue'
@@ -91,8 +92,12 @@ const app = new Vue({
                 throw err;
             });
         });
-        // Load user profile.
-        store.dispatch(USER_REQUEST)
+        if (store.getters.isAuthenticated) {
+            // Load user profile.
+            store.dispatch(USER_REQUEST)
+            // Load list of rooms.
+            store.dispatch(ROOMS_REQUEST)
+        }
     },
     components: {
         'clerk-nav': NavComponent,

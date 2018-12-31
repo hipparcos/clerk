@@ -1,0 +1,3 @@
+export const ROOMS_REQUEST = 'ROOMS_REQUEST'
+export const ROOMS_SUCCESS = 'ROOMS_SUCCESS'
+export const ROOMS_ERROR   = 'ROOMS_ERROR'

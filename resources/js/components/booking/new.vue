@@ -99,30 +99,24 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import axios from 'axios'
 import DatePicker from 'vue2-datepicker'
 
+import { ROOMS_REQUEST } from '../room/actions.js'
 
 export default {
     components: { DatePicker },
     props: {
     },
     created: function() {
-        axios({
-            method: 'get',
-            url: '/api/rooms',
-        })
-            .then(function (response) {
-                this.rooms = response.data.data
-            }.bind(this))
-            .catch(function (error) {
-                console.log(error.message)
-            }.bind(this))
+        this.updateRooms = _.debounce(function() {
+            this.$store.dispatch(ROOMS_REQUEST)
+        }.bind(this), 1000)
     },
     data: function() {
         return {
             room: 0,
-            rooms: [],
             start: new Date(Date.now()),
             durationData: 15,
             override: false,
@@ -143,6 +137,12 @@ export default {
         }
     },
     computed: {
+        rooms: function() {
+            if (!this.$store.getters.areRoomsLoaded) {
+                this.updateRooms()
+            }
+            return this.$store.getters.getRooms
+        },
         duration: {
             get: function() {
                 return this.durationData
