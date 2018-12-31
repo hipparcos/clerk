@@ -40,24 +40,36 @@ const routes = [
         name: 'register',
         component: AuthRegisterComponent,
         beforeEnter: ifNotAuthenticated,
+        meta: {
+            displayName: 'Register',
+        },
     },
     {
         path: '/login',
         name: 'login',
         component: AuthLoginComponent,
         beforeEnter: ifNotAuthenticated,
+        meta: {
+            displayName: 'Log in',
+        },
     },
     {
         path: '/bookings/new',
         name: 'bookings.new',
         component: BookingNewComponent,
         beforeEnter: ifAuthenticated,
+        meta: {
+            displayName: 'Book a room',
+        },
     },
     {
         path: '/bookings',
         name: 'bookings.index',
         component: BookingIndexComponent,
         beforeEnter: ifAuthenticated,
+        meta: {
+            displayName: 'View bookings',
+        },
     },
 ]
 

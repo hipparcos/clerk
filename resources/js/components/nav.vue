@@ -11,6 +11,14 @@
                 <template v-if="token">
                     <booking></booking>
                 </template>
+                <h1 class="navbar-item" v-if="$route.meta.displayName">
+                    <span class="icon">
+                        <i class="fas fa-chevron-circle-right"></i>
+                    </span>
+                    <span>
+                        <strong>{{ $route.meta.displayName }}</strong>
+                    </span>
+                </h1>
             </div>
 
             <div class="navbar-end">
