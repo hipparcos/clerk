@@ -26,10 +26,12 @@
 </template>
 
 <script>
+import axios from 'axios'
 import moment from 'moment'
 
 export default {
     props: {
+        token: String,
         booking: Object,
     },
     data: function() {
@@ -49,7 +51,19 @@ export default {
             // TODO implement edit booking.
         },
         remove: function() {
-            // TODO implemnt delete booking.
+            axios({
+                method: 'delete',
+                url: '/api/bookings/' + this.booking.id,
+                headers: {
+                    'Authorization': 'Bearer ' + this.token,
+                },
+            })
+                .then(function(response) {
+                    this.$emit('booking-delete', this.booking.id)
+                }.bind(this))
+                .catch(function(error) {
+                    console.log("Can't delete booking "+ this.booking.id + ".")
+                }.bind(this))
         },
     },
 }
