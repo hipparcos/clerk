@@ -16,6 +16,7 @@
                 :key="booking.id"
                 :booking="booking"
                 :token="token"
+                @booking-update="onUpdate"
                 @booking-delete="onDelete"
                 >
             </booking-tr>
@@ -58,8 +59,12 @@ export default {
                         )
                 }.bind(this))
         },
-        onDelete: function(id) {
-            this.bookings = this.bookings.filter(booking => booking.id != id)
+        onUpdate: function(booking) {
+            let idx = this.bookings.findIndex(b => b.id == booking.id)
+            this.bookings[idx] = booking
+        },
+        onDelete: function(booking) {
+            this.bookings = this.bookings.filter(b => b.id != booking.id)
         },
     },
 }

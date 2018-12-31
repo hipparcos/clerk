@@ -1,8 +1,45 @@
 <template>
     <tr>
-        <td>{{ booking.relationships.room.data.attributes.name }}</td>
-        <td>{{ startTime }}</td>
-        <td>{{ booking.attributes.duration }} min</td>
+        <td>
+            <template v-if="editMode">
+                <span class="control">
+                    <input class="input" type="text"
+                        size="4" maxlength="4" style="width: 4em;"
+                        v-model="booking.relationships.room.data.id"
+                        >
+                </span>
+            </template>
+            <template v-else>
+                {{ booking.relationships.room.data.attributes.name }}
+            </template>
+        </td>
+        <td>
+            <template v-if="editMode">
+                <span class="control">
+                    <date-picker type="datetime" lang="en" format="DD-MM-YYYY H:mm"
+                        :time-picker-options="startTimePickerOptions"
+                        :not-before="today"
+                        v-model="booking.attributes.start"
+                        ></date-picker>
+                </span>
+            </template>
+            <template v-else>
+                {{ startTime }}
+            </template>
+        </td>
+        <td>
+            <template v-if="editMode">
+                <span class="control">
+                    <input class="input" type="text"
+                        size="4" maxlength="4" style="width: 4em;"
+                        v-model="booking.attributes.duration"
+                        >
+                </span>
+            </template>
+            <template v-else>
+                {{ booking.attributes.duration }}
+            </template>
+        </td>
         <td>{{ booking.relationships.user.data.attributes.name }}</td>
         <td>{{ booking.relationships.user.data.attributes.email }}</td>
         <td>
@@ -28,14 +65,23 @@
 <script>
 import axios from 'axios'
 import moment from 'moment'
+import DatePicker from 'vue2-datepicker'
 
 export default {
+    components: { DatePicker },
     props: {
         token: String,
         booking: Object,
     },
     data: function() {
         return {
+            editMode: false,
+            // DatePicker
+            startTimePickerOptions:{
+                start: '08:00',
+                step: '00:15',
+                end: '18:00'
+            },
         }
     },
     computed: {
@@ -45,10 +91,50 @@ export default {
         startTime: function() {
             return this.start.format('h:mm a')
         },
+        today: function() {
+            let d = new Date()
+            d.setHours(0)
+            d.setMinutes(0)
+            d.setSeconds(0)
+            d.setMilliseconds(0)
+            return d
+        },
     },
     methods: {
         edit: function() {
-            // TODO implement edit booking.
+            if (!this.editMode) {
+                this.editMode = true
+                return
+            }
+            axios({
+                method: 'patch',
+                url: '/api/bookings/' + this.booking.id,
+                headers: {
+                    'Authorization': 'Bearer ' + this.token,
+                },
+                data: {
+                    data: {
+                        type: "booking",
+                        id: this.booking.id,
+                        attributes: {
+                            start: this.booking.attributes.start,
+                            duration: this.booking.attributes.duration,
+                        },
+                        relationships: {
+                            room: {
+                                data: { id: this.booking.relationships.room.data.id }
+                            }
+                        },
+                    },
+                }
+            })
+                .then(function (response) {
+                    this.$emit('booking-update', this.booking)
+                    this.editMode = false
+                }.bind(this))
+                .catch(function (error) {
+                    console.log("Can't edit booking "+ this.booking.id + ".")
+                }.bind(this));
         },
         remove: function() {
             axios({
@@ -59,7 +145,7 @@ export default {
                 },
             })
                 .then(function(response) {
-                    this.$emit('booking-delete', this.booking.id)
+                    this.$emit('booking-delete', this.booking)
                 }.bind(this))
                 .catch(function(error) {
                     console.log("Can't delete booking "+ this.booking.id + ".")
