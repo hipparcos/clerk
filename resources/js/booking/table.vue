@@ -74,7 +74,7 @@ export default {
         }
     },
     watch: {
-        date: function(oldVal, newVal) {
+        date: function() {
             this.debounceGetBookings()
         },
     },

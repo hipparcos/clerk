@@ -3,11 +3,16 @@
         <td>
             <template v-if="editMode">
                 <span class="control">
-                    <input class="input is-small" type="text"
-                        size="4" maxlength="4" style="width: 4em;"
-                        v-model="booking.relationships.room.data.id"
-                        @keyup.enter="edit"
-                        >
+                    <span class="select is-small">
+                        <select
+                            v-model="booking.relationships.room.data.id"
+                            >
+                            <option disabled selected value="0">Select a room...</option>
+                            <option v-for="r in rooms" :key="r.id" :value="r.id">
+                                {{ r.attributes.name }}
+                            </option>
+                        </select>
+                    </span>
                 </span>
             </template>
             <template v-else>
@@ -78,6 +83,11 @@ export default {
     props: {
         booking: Object,
     },
+    created: function() {
+        this.updateRooms = _.debounce(function() {
+            this.$store.dispatch(ROOMS_REQUEST)
+        }.bind(this), 1000)
+    },
     data: function() {
         return {
             editMode: false,
@@ -90,6 +100,12 @@ export default {
         }
     },
     computed: {
+        rooms: function() {
+            if (!this.$store.getters.areRoomsLoaded) {
+                this.updateRooms()
+            }
+            return this.$store.getters.getRooms
+        },
         start: function() {
             return moment(this.booking.attributes.start)
         },
@@ -103,6 +119,12 @@ export default {
             d.setSeconds(0)
             d.setMilliseconds(0)
             return d
+        },
+    },
+    watch: {
+        'booking.relationships.room.data.id': function(id) {
+            this.booking.relationships.room.data.attributes.name =
+                this.rooms.filter(r => r.id == id)[0].attributes.name
         },
     },
     methods: {
