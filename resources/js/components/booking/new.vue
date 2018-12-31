@@ -1,5 +1,5 @@
 <template>
-    <form>
+    <form class="booking-form">
         <div v-if="errors.message" class="notification is-danger">
             <button class="delete" @click.prevent="errors.message = ''"></button>
             <h6 class="title is-6">{{ errors.message }}</h6>
@@ -17,69 +17,81 @@
             </div>
             <div class="field-body">
                 <div class="field">
-                    <p class="select"
-                        v-bind:class="{ 'is-danger': errors.fields.room.length > 0 }"
-                        >
-                        <select
-                            v-model="room"
+                    <div class="control">
+                        <div class="select is-fullwidth"
+                            v-bind:class="{ 'is-danger': errors.fields.room.length > 0 }"
                             >
-                            <option disabled selected value="0">Select a room...</option>
-                            <option v-for="r in rooms" :key="r.id" :value="r.id">
-                                {{ r.attributes.name }}
-                            </option>
-                        </select>
-                    </p>
+                            <select
+                                v-model="room"
+                                >
+                                <option disabled selected value="0">Select a room...</option>
+                                <option v-for="r in rooms" :key="r.id" :value="r.id">
+                                    {{ r.attributes.name }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+        <div class="field is-horizontal">
             <div class="field-label is-normal">
                 <label class="label">Date</label>
             </div>
             <div class="field-body">
                 <div class="field">
-                    <p class="control">
+                    <div class="control is-fullwidth">
                         <date-picker type="datetime" lang="en" format="DD-MM-YYYY H:mm"
                             v-bind:class="{ 'is-danger': errors.fields.start.length > 0 }"
                             :time-picker-options="startTimePickerOptions"
                             :not-before="today"
+                            :width="'23em'"
                             v-model="start"
                             ></date-picker>
-                    </p>
+                    </div>
                 </div>
             </div>
+        </div>
+        <div class="field is-horizontal">
             <div class="field-label is-normal">
                 <label class="label">Duration</label>
             </div>
             <div class="field-body">
                 <div class="field">
-                    <p class="control">
-                        <input class="input" type="text" style="max-width: 4em;"
-                            maxlength="4" size="4"
+                    <div class="control">
+                        <input class="input" type="text"
+                            maxlength="4" style="max-width: 4em;"
                             v-model="duration"
                             v-bind:class="{ 'is-danger': errors.fields.duration.length > 0 }">
-                    </p>
+                    </div>
                 </div>
             </div>
+        </div>
+        <div class="field is-horizontal">
             <div class="field-label is-normal">
                 <label class="label">Override?</label>
             </div>
             <div class="field-body">
                 <div class="field">
-                    <p class="control">
+                    <div class="control is-narrow">
                         <label class="checkbox">
                             <input class="checkbox" type="checkbox" v-model="override">
-                            Yes
                         </label>
-                    </p>
+                    </div>
                 </div>
+            </div>
+        </div>
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
             </div>
             <div class="field-body">
                 <div class="field is-grouped">
-                    <p class="control">
+                    <div class="control">
                         <button class="button is-link" @click.prevent="submit">Book</button>
-                    </p>
-                    <p class="control">
+                    </div>
+                    <div class="control">
                         <button class="button is-text" @click.prevent="clear">Clear</button>
-                    </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -116,7 +128,7 @@ export default {
             room: 0,
             rooms: [],
             start: new Date(Date.now()),
-            durationData: 0,
+            durationData: 15,
             override: false,
             errors: {
                 message: "",
@@ -227,3 +239,9 @@ export default {
     }
 }
 </script>
+
+<style>
+.booking-form {
+    max-width: 26em;
+}
+</style>
