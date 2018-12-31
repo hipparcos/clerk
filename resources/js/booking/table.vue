@@ -14,7 +14,7 @@
                 </div>
             </div>
         </div>
-        <table class="table">
+        <table class="table container">
             <thead>
                 <tr>
                     <th>Room</th>
