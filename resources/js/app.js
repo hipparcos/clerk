@@ -1,6 +1,10 @@
+import axios from 'axios'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
+
+import store from './store.js'
+import { USER_REQUEST } from './components/user/actions.js'
 
 import NavComponent          from './components/nav.vue'
 import AuthRegisterComponent from './components/auth/form/register.vue'
@@ -10,19 +14,15 @@ import BookingNewComponent   from './components/booking/new.vue'
 
 const root = { template: '<p></p>' }
 
-const state = {
-    authenticated: false,
-}
-
 const ifAuthenticated = function(to, from, next) {
-    if (state.authenticated) {
+    if (store.getters.isAuthenticated) {
         next()
         return
     }
     next('/login')
 }
 const ifNotAuthenticated = function(to, from, next) {
-    if (!state.authenticated) {
+    if (!store.getters.ifAuthenticated) {
         next()
         return
     }
@@ -74,47 +74,38 @@ const routes = [
 ]
 
 const router = new VueRouter({
+    mode: 'history',
     routes: routes
 })
 
 const app = new Vue({
     router: router,
-    mounted: function() {
-        state.authenticated = this.authenticated
+    store: store,
+    created: function () {
+        axios.interceptors.response.use(undefined, function (err) {
+            return new Promise(function (resolve, reject) {
+                if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
+                    this.$store.dispatch(AUTH_LOGOUT)
+                    this.$router.push('/login')
+                }
+                throw err;
+            });
+        });
+        // Load user profile.
+        store.dispatch(USER_REQUEST)
     },
     components: {
         'clerk-nav': NavComponent,
     },
     data: {
-        token: localStorage.getItem('token') || '',
         flashSuccessData: "",
     },
-    watch: {
-        token: function(oldVal, newVal) {
-            state.authenticated = this.authenticated
-        },
-    },
-    computed: {
-        // authenticated tells if the current user is authenticated.
-        // @return boolean
-        authenticated: function() {
-            return (this.token) ? true : false;
-        }
-    },
     methods: {
-        onToken: function(token) {
-            this.token = token
-            if (token) {
-                localStorage.setItem('token', token)
-            } else {
-                localStorage.removeItem('token')
-            }
-        },
         onFlashSuccess: function(message) {
             this.flashSuccessData = message
             setTimeout(function() {
                 this.flashSuccessData = ''
             }.bind(this), 5000);
-        }
+        },
     }
 }).$mount('#app')

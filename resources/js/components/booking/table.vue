@@ -30,7 +30,6 @@
                     v-for="booking in bookings"
                     :key="booking.id"
                     :booking="booking"
-                    :token="token"
                     @booking-update="onUpdate"
                     @booking-delete="onDelete"
                     >
@@ -53,7 +52,6 @@ export default {
         DatePicker,
     },
     props: {
-        token: String,
     },
     created: function() {
         this.getBookings()
@@ -86,9 +84,6 @@ export default {
                 method: 'get',
                 url: '/api/bookings/' +
                     this.date.format('YYYY/MM/DD'),
-                headers: {
-                    'Authorization': 'Bearer ' + this.token,
-                },
             })
                 .then(function(response) {
                     this.bookings = response.data.data

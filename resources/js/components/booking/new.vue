@@ -106,15 +106,11 @@ import DatePicker from 'vue2-datepicker'
 export default {
     components: { DatePicker },
     props: {
-        token: String,
     },
     created: function() {
         axios({
             method: 'get',
             url: '/api/rooms',
-            headers: {
-                'Authorization': 'Bearer ' + this.token,
-            },
         })
             .then(function (response) {
                 this.rooms = response.data.data
@@ -181,9 +177,6 @@ export default {
             axios({
                 method: 'post',
                 url: '/api/bookings',
-                headers: {
-                    'Authorization': 'Bearer ' + this.token,
-                },
                 data: {
                     data: {
                         type: "booking",

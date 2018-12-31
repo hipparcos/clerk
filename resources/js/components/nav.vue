@@ -8,7 +8,7 @@
 
         <div id="navbar" class="navbar-menu">
             <div class="navbar-start">
-                <template v-if="token">
+                <template v-if="$store.getters.isAuthenticated">
                     <booking></booking>
                 </template>
                 <h1 class="navbar-item" v-if="$route.meta.displayName">
@@ -22,9 +22,9 @@
             </div>
 
             <div class="navbar-end">
-                <template v-if="token">
+                <template v-if="$store.getters.isAuthenticated">
+                    <user-nav></user-nav>
                     <logout
-                        v-on:token="onToken"
                         v-on:flash-success="onFlashSuccess"
                         ></logout>
                 </template>
@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import AuthNavUserComponent   from './auth/nav/user.vue'
 import AuthNavLoginComponent  from './auth/nav/login.vue'
 import AuthNavLogoutComponent from './auth/nav/logout.vue'
 import BookingNavComponent    from './booking/nav.vue'
@@ -44,17 +45,14 @@ import BookingNavComponent    from './booking/nav.vue'
 export default {
     props: {
         app: String,
-        token: String
     },
     components: {
+        'user-nav': AuthNavUserComponent,
         login: AuthNavLoginComponent,
         logout: AuthNavLogoutComponent,
         booking: BookingNavComponent,
     },
     methods: {
-        onToken: function(token) {
-            this.$emit('token', token)
-        },
         onFlashSuccess: function(message) {
             this.$emit('flash-success', message)
         },

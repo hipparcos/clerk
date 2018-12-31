@@ -14,8 +14,6 @@
         <div id="app">
             <clerk-nav
                 app="{{ config('app.name', 'clerk') }}"
-                :token="token"
-                v-on:token="onToken"
                 v-on:flash-success="onFlashSuccess"
                 ></clerk-nav>
             <div v-if="flashSuccessData" class="container notification is-success">
@@ -23,8 +21,6 @@
                 <p>@{{ flashSuccessData }}</p>
             </div>
             <router-view class="container"
-                :token="token"
-                v-on:token="onToken"
                 v-on:flash-success="onFlashSuccess"
                 ></router-view>
         </div>

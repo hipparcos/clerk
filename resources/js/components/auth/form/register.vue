@@ -61,7 +61,8 @@
 
 <script>
 import axios from 'axios'
-import login from '../../../lib/login.js'
+
+import { AUTH_REQUEST } from '../actions.js'
 
 export default {
     data: function() {
@@ -102,14 +103,17 @@ export default {
                 }
             })
                 .then(function (response) {
-                    login.login(this.email, this.password)
-                        .then(function (response) {
-                            this.$emit('token', response.data.access_token)
+                    let { email, password } = this
+                    this.$store.dispatch(AUTH_REQUEST, { email, password })
+                        .then(function(response) {
                             this.clear()
                             this.$router.push('/', function() {
-                                    this.$emit('flash-success', 'Registration completed.')
-                                }.bind(this))
+                                this.$emit('flash-success', 'Registration completed.')
+                            }.bind(this))
                         }.bind(this))
+                        .catch(function (error) {
+                            console.log("Fail to log in after registration.")
+                        }.bind(this));
                 }.bind(this))
                 .catch(function (error) {
                     let data = error.response.data

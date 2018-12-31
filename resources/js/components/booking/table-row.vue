@@ -76,7 +76,6 @@ import DatePicker from 'vue2-datepicker'
 export default {
     components: { DatePicker },
     props: {
-        token: String,
         booking: Object,
     },
     data: function() {
@@ -115,9 +114,6 @@ export default {
             axios({
                 method: 'patch',
                 url: '/api/bookings/' + this.booking.id,
-                headers: {
-                    'Authorization': 'Bearer ' + this.token,
-                },
                 data: {
                     data: {
                         type: "booking",
@@ -146,9 +142,6 @@ export default {
             axios({
                 method: 'delete',
                 url: '/api/bookings/' + this.booking.id,
-                headers: {
-                    'Authorization': 'Bearer ' + this.token,
-                },
             })
                 .then(function(response) {
                     this.$emit('booking-delete', this.booking)

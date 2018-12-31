@@ -31,7 +31,8 @@
 
 <script>
 import axios from 'axios'
-import login from '../../../lib/login.js'
+
+import { AUTH_REQUEST } from '../actions.js'
 
 export default {
     data: function() {
@@ -49,11 +50,11 @@ export default {
             // Clear.
             this.clearErrors()
             // Request.
-            login.login(this.email, this.password)
-                .then(function (response) {
+            let { email, password } = this
+            this.$store.dispatch(AUTH_REQUEST, { email, password })
+                .then(function(response) {
                     this.clear()
                     this.$router.push('/', function() {
-                        this.$emit('token', response.data.access_token)
                         this.$emit('flash-success', 'You are now logged in.')
                     }.bind(this))
                 }.bind(this))
