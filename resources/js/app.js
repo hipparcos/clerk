@@ -112,6 +112,9 @@ const app = new Vue({
         },
         onFlashSuccess: function(message) {
             this.flashSuccessData = message
+            setTimeout(function() {
+                this.flashSuccessData = ''
+            }.bind(this), 5000);
         }
     }
 }).$mount('#app')
