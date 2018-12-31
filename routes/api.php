@@ -24,7 +24,7 @@ Route::middleware('auth:api')->group(function() {
     Route::get('bookings/{year}/{month}/{day}', 'BookingController@index');
     // User.
     Route::get('profile', function (Request $request) {
-        return $request->user();
+        return new \App\Http\Resources\User($request->user());
     })->name('profile');
     // Rooms.
     Route::get('rooms', function (Request $request) {
