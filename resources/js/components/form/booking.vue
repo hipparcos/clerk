@@ -107,6 +107,9 @@ export default {
             .then(function (response) {
                 this.rooms = response.data.data
             }.bind(this))
+            .catch(function (error) {
+                console.log(error.message)
+            }.bind(this))
     },
     data: function() {
         return {

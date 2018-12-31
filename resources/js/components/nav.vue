@@ -8,11 +8,13 @@
 
         <div id="navbar" class="navbar-menu">
             <div class="navbar-start">
+                <template v-if="token">
+                    <booking></booking>
+                </template>
             </div>
 
             <div class="navbar-end">
                 <template v-if="token">
-                    <booking></booking>
                     <logout
                         v-on:token="onToken"
                         v-on:flash-success="onFlashSuccess"

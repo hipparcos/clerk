@@ -5,9 +5,10 @@ Vue.use(VueRouter)
 import navComponent from './components/nav.vue'
 import registerComponent from './components/form/register.vue'
 import loginComponent from './components/form/login.vue'
-import bookingComponent from './components/form/booking.vue'
+import bookingIndexComponent from './components/list/booking.vue'
+import bookingNewComponent from './components/form/booking.vue'
 
-const root = { template: '<p>This is clerk.</p>' }
+const root = { template: '<p></p>' }
 
 const state = {
     authenticated: false,
@@ -49,7 +50,13 @@ const routes = [
     {
         path: '/bookings/new',
         name: 'bookings.new',
-        component: bookingComponent,
+        component: bookingNewComponent,
+        beforeEnter: ifAuthenticated,
+    },
+    {
+        path: '/bookings',
+        name: 'bookings.index',
+        component: bookingIndexComponent,
         beforeEnter: ifAuthenticated,
     },
 ]
