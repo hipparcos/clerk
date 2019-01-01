@@ -3,7 +3,9 @@
         <td>
             <template v-if="editMode">
                 <span class="control">
-                    <span class="select is-small">
+                    <span class="select is-small"
+                        :class="{ 'is-danger': errors.fields.room.length > 0 }"
+                        >
                         <select
                             v-model="booking.relationships.room.data.id"
                             >
@@ -26,6 +28,7 @@
                         class="inplace"
                         :time-picker-options="startTimePickerOptions"
                         :not-before="today"
+                        :class="{ 'is-danger': errors.fields.start.length > 0 }"
                         v-model="booking.attributes.start"
                         ></date-picker>
                 </span>
@@ -41,6 +44,7 @@
                         size="4" maxlength="4" style="width: 4em;"
                         v-model="booking.attributes.duration"
                         @keyup.enter="edit"
+                        :class="{ 'is-danger': errors.fields.duration.length > 0 }"
                         >
                 </span>
             </template>
@@ -90,6 +94,14 @@ export default {
     data: function() {
         return {
             editMode: false,
+            errors: {
+                message: "",
+                fields: {
+                    room: [],
+                    start: [],
+                    duration: [],
+                },
+            },
             // DatePicker
             startTimePickerOptions:{
                 start: '08:00',
@@ -132,6 +144,8 @@ export default {
                 this.editMode = true
                 return
             }
+            this.clearErrors()
+            this.$emit('errors', this.errors)
             axios({
                 method: 'patch',
                 url: '/api/bookings/' + this.booking.id,
@@ -157,6 +171,22 @@ export default {
                 }.bind(this))
                 .catch(function (error) {
                     console.log("Can't edit booking "+ this.booking.id + ".")
+                    let data = error.response.data
+                    this.errors.message
+                        = data.message
+                    if ('data.relationships.room.data.id' in data.errors) {
+                        this.errors.fields.room
+                            = data.errors['data.relationships.room.data.id']
+                    }
+                    if ('data.attributes.start' in data.errors) {
+                        this.errors.fields.start
+                            = data.errors['data.attributes.start']
+                    }
+                    if ('data.attributes.duration' in data.errors) {
+                        this.errors.fields.duration
+                            = data.errors['data.attributes.duration']
+                    }
+                    this.$emit('errors', this.errors)
                 }.bind(this));
         },
         remove: function() {
@@ -170,6 +200,12 @@ export default {
                 .catch(function(error) {
                     console.log("Can't delete booking "+ this.booking.id + ".")
                 }.bind(this))
+        },
+        clearErrors: function() {
+            this.errors.message = ""
+            this.errors.fields.room = []
+            this.errors.fields.start = []
+            this.errors.fields.duration = []
         },
     },
 }

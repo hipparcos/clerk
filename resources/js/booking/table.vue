@@ -1,5 +1,16 @@
 <template>
     <div>
+        <div v-if="errors.message" class="notification is-danger">
+            <button class="delete" @click.prevent="errors.message = ''"></button>
+            <h6 class="title is-6">{{ errors.message }}</h6>
+            <div v-if="hasErrors" class="content">
+                <ul>
+                    <template v-for="f in errors.fields">
+                        <li v-for="err in f">{{ err }}</li>
+                    </template>
+                </ul>
+            </div>
+        </div>
         <div class="field is-horizontal">
             <div class="field-label is-normal">
                 <label class="label">Date</label>
@@ -32,6 +43,7 @@
                     :booking="booking"
                     @booking-update="onUpdate"
                     @booking-delete="onDelete"
+                    @errors="onErrors"
                     >
                 </booking-tr>
             </tbody>
@@ -61,6 +73,10 @@ export default {
         return {
             date: moment(),
             bookings: [],
+            errors: {
+                message: "",
+                fields: {},
+            },
         }
     },
     computed: {
@@ -71,7 +87,11 @@ export default {
             set: function(d) {
                 this.date = moment(d)
             },
-        }
+        },
+        hasErrors: function() {
+            return Object.values(this.errors.fields)
+                .reduce(function(acc, f) { return acc + f.length }, 0) > 0
+        },
     },
     watch: {
         date: function() {
@@ -108,6 +128,10 @@ export default {
         onDelete: function(booking) {
             this.bookings = this.bookings.filter(b => b.id != booking.id)
         },
+        onErrors: function(errors) {
+            this.errors.message = errors.message
+            this.$set(this.errors, 'fields', errors.fields)
+        }
     },
 }
 </script>
