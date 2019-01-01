@@ -65,6 +65,14 @@
                         <i class="fas fa-edit"></i>
                     </span>
                 </a>
+                <a v-if="editMode" class="button is-small"
+                    @click.prevent="cancel"
+                    >
+                    <span>Cancel</span>
+                    <span class="icon is-small">
+                        <i class="fas fa-ban"></i>
+                    </span>
+                </a>
                 <button-confirmed
                     classes="button is-small is-danger is-outlined"
                     @confirmed="remove"
@@ -94,10 +102,13 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import axios from 'axios'
 import moment from 'moment'
 import DatePicker from 'vue2-datepicker'
 import ButtonConfirmed from '../ui/button-confirmed.vue'
+
+const copy = (obj) => JSON.parse(JSON.stringify(obj))
 
 export default {
     components: {
@@ -105,7 +116,7 @@ export default {
         'button-confirmed': ButtonConfirmed,
     },
     props: {
-        booking: Object,
+        initialBooking: Object,
     },
     created: function() {
         this.updateRooms = _.debounce(function() {
@@ -115,6 +126,7 @@ export default {
     data: function() {
         return {
             editMode: false,
+            booking: copy(this.initialBooking),
             override: false,
             errors: {
                 message: "",
@@ -161,6 +173,11 @@ export default {
         },
     },
     methods: {
+        cancel: function() {
+            this.editMode = false
+            this.$set(this.$data, 'booking', copy(this.initialBooking))
+            this.clear()
+        },
         edit: function() {
             if (!this.editMode) {
                 this.editMode = true
