@@ -71,6 +71,19 @@
                         <i class="fas fa-times"></i>
                     </span>
                 </a>
+                <!-- Override user collision -->
+                <div class="field is-horizontal" v-if="editMode">
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control is-narrow">
+                                <label class="checkbox is-small">
+                                    <input class="checkbox" type="checkbox" v-model="override">
+                                    Override?
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </span>
         </td>
     </tr>
@@ -94,6 +107,7 @@ export default {
     data: function() {
         return {
             editMode: false,
+            override: false,
             errors: {
                 message: "",
                 fields: {
@@ -144,8 +158,6 @@ export default {
                 this.editMode = true
                 return
             }
-            this.clearErrors()
-            this.$emit('errors', this.errors)
             axios({
                 method: 'patch',
                 url: '/api/bookings/' + this.booking.id,
@@ -163,11 +175,16 @@ export default {
                             }
                         },
                     },
+                    meta: {
+                        overrideUserCollision: this.override
+                    }
                 }
             })
                 .then(function (response) {
                     this.$emit('booking-update', this.booking)
                     this.editMode = false
+                    this.clear()
+                    this.$emit('errors', this.errors)
                 }.bind(this))
                 .catch(function (error) {
                     console.log("Can't edit booking "+ this.booking.id + ".")
@@ -200,6 +217,10 @@ export default {
                 .catch(function(error) {
                     console.log("Can't delete booking "+ this.booking.id + ".")
                 }.bind(this))
+        },
+        clear: function() {
+            this.override = false
+            this.clearErrors()
         },
         clearErrors: function() {
             this.errors.message = ""
