@@ -28,10 +28,10 @@
         <table class="table container">
             <thead>
                 <tr>
-                    <th>Room</th>
-                    <th>Start</th>
+                    <th><a @click.prevent="sortBookings(roomSorter)">Room</a></th>
+                    <th><a @click.prevent="sortBookings(timeSorter)">Start</a></th>
                     <th>Duration</th>
-                    <th>User</th>
+                    <th><a @click.prevent="sortBookings(userSorter)">User</a></th>
                     <th>Email</th>
                     <th>Actions</th>
                 </tr>
@@ -68,11 +68,26 @@ export default {
     created: function() {
         this.getBookings()
         this.debounceGetBookings = _.debounce(this.getBookings, 500)
+        // Sorters
+        this.roomSorter = (l, r) => {
+            let lroom = l.relationships.room.data.attributes.name
+            let rroom = r.relationships.room.data.attributes.name
+            return lroom > rroom
+        }
+        this.userSorter = (l, r) => {
+            let luser = l.relationships.user.data.attributes.name
+            let ruser = r.relationships.user.data.attributes.name
+            return luser > ruser
+        }
+        this.timeSorter = (l, r) => {
+            return r.attributes.start.isBefore(l.attributes.start)
+        }
     },
     data: function() {
         return {
             date: moment(),
             bookings: [],
+            sorter: this.timeSorter,
             errors: {
                 message: "",
                 fields: {},
@@ -107,12 +122,18 @@ export default {
             })
                 .then(function(response) {
                     this.bookings = response.data.data
+                    this.bookings.map(b => b.attributes.start = moment(b.attributes.start))
+                    this.sortBookings(this.timeSorter)
                 }.bind(this))
                 .catch(function(error) {
                     this.$emit('flash-error', 'Error getting bookings: <br>'
                         + error.response.status + ' ' + error.response.data
                         )
                 }.bind(this))
+        },
+        sortBookings: function(sorter) {
+            this.sorter = sorter || this.sorter || this.timeSorter
+            this.bookings.sort(this.sorter)
         },
         onUpdate: function(booking) {
             let idx = this.bookings.findIndex(b => b.id == booking.id)
@@ -122,7 +143,9 @@ export default {
             if (newStart.isBefore(today.startOf('day')) || newStart.isAfter(today.endOf('day'))) {
                 this.onDelete(booking)
             } else {
+                booking.attributes.start = moment(booking.attributes.start)
                 this.bookings[idx] = booking
+                this.sortBookings()
             }
         },
         onDelete: function(booking) {
