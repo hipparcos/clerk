@@ -1,7 +1,7 @@
 <template>
     <form class="register-form">
         <div v-if="errors.message" class="notification is-danger">
-            <button class="delete" @click="errors.message = ''"></button>
+            <button class="delete" @click.prevent="errors.message = ''"></button>
             <h6 class="title is-6">{{ errors.message }}</h6>
         </div>
         <div class="field">
