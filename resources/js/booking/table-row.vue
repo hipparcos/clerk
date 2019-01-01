@@ -57,7 +57,10 @@
         <td>
             <span class="buttons" v-if="booking.relationships.user.data.id == $store.getters.getProfile.id">
                 <a class="button is-small"
-                    :class="{ 'is-link': editMode }"
+                    :class="{
+                        'is-link': editMode && !override,
+                        'is-warning': editMode && override
+                    }"
                     @click.prevent="edit"
                     >
                     <span>Edit</span>
@@ -82,20 +85,6 @@
                         <i class="fas fa-times"></i>
                     </span>
                 </button-confirmed>
-                <!-- Override user collision -->
-                <div class="field is-horizontal" v-if="editMode">
-                    <div class="field-body">
-                        <div class="field">
-                            <div class="control is-narrow">
-                                <label class="checkbox is-small">
-                                    &nbsp; <!-- TODO quick hack -->
-                                    <input class="checkbox" type="checkbox" v-model="override">
-                                    Override?
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </span>
         </td>
     </tr>
@@ -209,7 +198,6 @@ export default {
                     this.$emit('booking-update', this.booking)
                     this.editMode = false
                     this.clear()
-                    this.$emit('errors', this.errors)
                 }.bind(this))
                 .catch(function (error) {
                     console.log("Can't edit booking "+ this.booking.id + ".")
@@ -229,6 +217,10 @@ export default {
                             = data.errors['data.attributes.duration']
                     }
                     this.$emit('errors', this.errors)
+                    // If conflict, try to override.
+                    if (error.response.status == 409) {
+                        this.override = true
+                    }
                 }.bind(this));
         },
         remove: function() {
@@ -252,6 +244,7 @@ export default {
             this.errors.fields.room = []
             this.errors.fields.start = []
             this.errors.fields.duration = []
+            this.$emit('errors', this.errors)
         },
     },
 }
