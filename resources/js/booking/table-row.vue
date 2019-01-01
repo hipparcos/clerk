@@ -65,18 +65,22 @@
                         <i class="fas fa-edit"></i>
                     </span>
                 </a>
-                <a class="button is-small is-danger is-outlined" @click.prevent="remove">
+                <button-confirmed
+                    classes="button is-small is-danger is-outlined"
+                    @confirmed="remove"
+                    >
                     <span>Delete</span>
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
-                </a>
+                </button-confirmed>
                 <!-- Override user collision -->
                 <div class="field is-horizontal" v-if="editMode">
                     <div class="field-body">
                         <div class="field">
                             <div class="control is-narrow">
                                 <label class="checkbox is-small">
+                                    &nbsp; <!-- TODO quick hack -->
                                     <input class="checkbox" type="checkbox" v-model="override">
                                     Override?
                                 </label>
@@ -93,9 +97,13 @@
 import axios from 'axios'
 import moment from 'moment'
 import DatePicker from 'vue2-datepicker'
+import ButtonConfirmed from '../ui/button-confirmed.vue'
 
 export default {
-    components: { DatePicker },
+    components: {
+        DatePicker,
+        'button-confirmed': ButtonConfirmed,
+    },
     props: {
         booking: Object,
     },
