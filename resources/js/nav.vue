@@ -4,9 +4,22 @@
             <router-link to="/" class="navbar-item">
                 <i class="fas fa-building"></i>&nbsp;{{ app }}
             </router-link>
+
+            <a role="button" class="navbar-burger burger"
+                :class="{ 'is-active': hamburger }"
+                @click.prevent="hamburger = !hamburger"
+                aria-label="menu"
+                aria-expanded="false"
+                data-target="navbar">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
         </div>
 
-        <div id="navbar" class="navbar-menu">
+        <div id="navbar" class="navbar-menu"
+            :class="{ 'is-active': hamburger }"
+            >
             <div class="navbar-start">
                 <template v-if="$store.getters.isAuthenticated">
                     <booking></booking>
@@ -45,6 +58,11 @@ import BookingNavComponent    from './booking/nav.vue'
 export default {
     props: {
         app: String,
+    },
+    data: function() {
+        return {
+            hamburger: false,
+        }
     },
     components: {
         'user-nav': AuthNavUserComponent,
