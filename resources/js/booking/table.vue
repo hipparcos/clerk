@@ -25,7 +25,10 @@
                 </div>
             </div>
         </div>
-        <table class="table container">
+        <p v-if="status == 'loading'" class="has-text-centered has-text-weight-bold">
+            Loading bookings...
+        </p>
+        <table v-else-if="bookings.length > 0" class="table container">
             <thead>
                 <tr>
                     <th><a @click.prevent="sortBookings(roomSorter)">Room</a></th>
@@ -48,6 +51,9 @@
                 </booking-tr>
             </tbody>
         </table>
+        <p v-else class="has-text-centered has-text-weight-bold">
+            No bookings {{ prettySelectedDate }}.
+        </p>
     </div>
 </template>
 
@@ -99,6 +105,7 @@ export default {
         return {
             date: toMoment(this.year, this.month, this.day),
             bookings: [],
+            status: "loading",
             sorter: this.timeSorter,
             errors: {
                 message: "",
@@ -115,6 +122,16 @@ export default {
                 this.date = moment(d)
             },
         },
+        prettySelectedDate: function() {
+            return moment(this.selectedDate).calendar(null,{
+                lastDay : '[yesterday]',
+                sameDay : '[today]',
+                nextDay : '[tomorrow]',
+                lastWeek : '[on last] dddd',
+                nextWeek : '[on] dddd',
+                sameElse : '[on the] DD/MM/YYYY'
+            });
+        },
         hasErrors: function() {
             return Object.values(this.errors.fields)
                 .reduce(function(acc, f) { return acc + f.length }, 0) > 0
@@ -122,11 +139,13 @@ export default {
     },
     watch: {
         date: function() {
+            this.status = "loading"
             this.debounceGetBookings()
         },
     },
     methods: {
         getBookings: function() {
+            this.status = "loading"
             axios({
                 method: 'get',
                 url: '/api/bookings/' +
@@ -136,11 +155,13 @@ export default {
                     this.bookings = response.data.data
                     this.bookings.map(b => b.attributes.start = moment(b.attributes.start))
                     this.sortBookings(this.timeSorter)
+                    this.status = "success"
                 }.bind(this))
                 .catch(function(error) {
                     this.$emit('flash-error', 'Error getting bookings: <br>'
                         + error.response.status + ' ' + error.response.data
                         )
+                    this.status = "error"
                 }.bind(this))
         },
         sortBookings: function(sorter) {
