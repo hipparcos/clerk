@@ -85,6 +85,16 @@
 
                     <template slot="message">
                         Do you really want to delete this booking?
+                        <div class="box">
+                        <div class="content">
+                            Booking in
+                            <strong>{{ booking.relationships.room.data.attributes.name }}</strong>
+                            <br>
+                            From {{ start.calendar() }}
+                            to {{ end.calendar() }}
+                            ({{ booking.attributes.duration }} minutes)
+                        </div>
+                        </div>
                     </template>
 
                     <span>Delete</span>
@@ -149,6 +159,9 @@ export default {
         },
         start: function() {
             return moment(this.booking.attributes.start)
+        },
+        end: function() {
+            return this.start.clone().add(this.booking.attributes.duration, 'minutes')
         },
         startTime: function() {
             return this.start.format('h:mm a')
@@ -260,5 +273,9 @@ export default {
 <style>
 .inplace .mx-input {
     height: 1.8em;
+}
+
+.box {
+    margin-top: 1rem;
 }
 </style>
