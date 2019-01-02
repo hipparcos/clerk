@@ -58,13 +58,19 @@ import moment from 'moment'
 import DatePicker from 'vue2-datepicker'
 import BookingTrComponent from './table-row.vue'
 
+const toMoment = (year, month, day) => {
+    if (year && month && day) {
+        return moment(`${year}-${month}-${day}`)
+    }
+    return moment()
+}
+
 export default {
     components: {
         'booking-tr': BookingTrComponent,
         DatePicker,
     },
-    props: {
-    },
+    props: [ 'year', 'month', 'day' ],
     created: function() {
         this.getBookings()
         this.debounceGetBookings = _.debounce(this.getBookings, 500)
@@ -83,9 +89,15 @@ export default {
             return r.attributes.start.isBefore(l.attributes.start)
         }
     },
+    beforeRouteEnter: function(to, from, next) {
+        next(vm => {
+            vm.date = toMoment(vm.year, vm.month, vm.day),
+            vm.debounceGetBookings()
+        })
+    },
     data: function() {
         return {
-            date: moment(),
+            date: toMoment(this.year, this.month, this.day),
             bookings: [],
             sorter: this.timeSorter,
             errors: {
@@ -118,7 +130,7 @@ export default {
             axios({
                 method: 'get',
                 url: '/api/bookings/' +
-                    this.date.format('YYYY/MM/DD'),
+                    this.selectedDate.format('YYYY/MM/DD'),
             })
                 .then(function(response) {
                     this.bookings = response.data.data

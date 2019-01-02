@@ -192,8 +192,10 @@ export default {
                 }
             })
                 .then(function (response) {
-                    this.$emit('flash-success', 'Booking saved.')
-                    this.clear()
+                    let date = moment(this.start).format('/YYYY/MM/DD')
+                    this.$router.push('/bookings' + date, function() {
+                        this.$emit('flash-success', 'Booking saved.')
+                    }.bind(this))
                 }.bind(this))
                 .catch(function (error) {
                     let data = error.response.data

@@ -25,6 +25,16 @@ const routes = [
             displayName: 'View bookings',
         },
     },
+    {
+        path: '/bookings/:year/:month/:day',
+        name: 'bookings.index.date',
+        component: BookingIndexComponent,
+        beforeEnter: auth.ifAuthenticated,
+        props: true,
+        meta: {
+            displayName: 'View bookings',
+        },
+    },
 ]
 
 export default {
