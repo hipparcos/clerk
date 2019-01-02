@@ -78,8 +78,15 @@
                 </a>
                 <button-confirmed
                     classes="button is-small is-danger is-outlined"
-                    @confirmed="remove"
-                    >
+                    @confirmed="remove">
+                    <template slot="title">
+                        Confirm booking deletion
+                    </template>
+
+                    <template slot="message">
+                        Do you really want to delete this booking?
+                    </template>
+
                     <span>Delete</span>
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
