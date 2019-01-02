@@ -4,21 +4,29 @@
             <div class="modal-background"></div>
             <div class="modal-card">
                 <header class="modal-card-head">
-                    <p class="modal-card-title">Confirm action</p>
+                    <p class="modal-card-title">
+                        <slot name="title">
+                            Confirm action
+                        </slot>
+                    </p>
                     <button class="delete" aria-label="close"
                         @click.prevent="onCancel"
                         ></button>
                 </header>
                 <section class="modal-card-body">
-                Do you confirm this action?
+                    <slot name="message">
+                        Do you confirm this action?
+                    </slot>
                 </section>
                 <footer class="modal-card-foot">
-                    <button class="button is-success"
-                        @click.prevent="onConfirm"
-                        >Confirm</button>
-                    <button class="button"
-                        @click.prevent="onCancel"
-                        >Cancel</button>
+                    <a :class="classes.replace('is-small', '')" @click.prevent="onConfirm">
+                        <slot></slot>
+                    </a>
+                    <a :class="classesCancel" @click.prevent="onCancel">
+                        <slot name="cancel">
+                            Cancel
+                        </slot>
+                    </a>
                 </footer>
             </div>
         </div>
@@ -31,7 +39,14 @@
 <script>
 export default {
     props: {
-        classes: String,
+        classes: {
+            type: String,
+            default: "button is-danger",
+        },
+        classesCancel: {
+            type: String,
+            default: "button",
+        },
     },
     data: function() {
         return {
