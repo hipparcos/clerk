@@ -99,6 +99,7 @@ import axios from 'axios'
 import DatePicker from 'vue2-datepicker'
 
 import { ROOMS_REQUEST } from '../room/actions.js'
+import lib from './lib.js'
 
 export default {
     components: { DatePicker },
@@ -112,8 +113,8 @@ export default {
     data: function() {
         return {
             room: 0,
-            start: moment(),
-            durationData: 15,
+            start: lib.nextSlot(),
+            durationData: lib.slot,
             override: false,
             errors: {
                 message: "",
@@ -218,8 +219,8 @@ export default {
         },
         clear: function() {
             this.room = 0
-            this.start = moment()
-            this.duration = 0
+            this.start = lib.nextSlot()
+            this.duration = lib.slot
             this.override = false
             this.clearErrors()
         },
