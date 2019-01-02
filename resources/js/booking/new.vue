@@ -69,25 +69,19 @@
         </div>
         <div class="field is-horizontal">
             <div class="field-label is-normal">
-                <label class="label">Override?</label>
-            </div>
-            <div class="field-body">
-                <div class="field">
-                    <div class="control is-narrow">
-                        <label class="checkbox">
-                            <input class="checkbox" type="checkbox" v-model="override">
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="field is-horizontal">
-            <div class="field-label is-normal">
             </div>
             <div class="field-body">
                 <div class="field is-grouped">
                     <div class="control">
-                        <button class="button is-link" @click.prevent="submit">Book</button>
+                        <button
+                            class="button"
+                            :class="{
+                                'is-link': !override,
+                                'is-warning': override
+                            }"
+                            @click.prevent="submit">
+                            Book
+                        </button>
                     </div>
                     <div class="control">
                         <button class="button is-text" @click.prevent="clear">Clear</button>
@@ -100,6 +94,7 @@
 
 <script>
 import _ from 'lodash'
+import moment from 'moment'
 import axios from 'axios'
 import DatePicker from 'vue2-datepicker'
 
@@ -117,7 +112,7 @@ export default {
     data: function() {
         return {
             room: 0,
-            start: new Date(Date.now()),
+            start: moment(),
             durationData: 15,
             override: false,
             errors: {
@@ -197,7 +192,7 @@ export default {
             })
                 .then(function (response) {
                     this.$emit('flash-success', 'Booking saved.')
-                    this.override = false
+                    this.clear()
                 }.bind(this))
                 .catch(function (error) {
                     let data = error.response.data
@@ -215,12 +210,17 @@ export default {
                         this.errors.fields.duration
                             = data.errors['data.attributes.duration']
                     }
+                    // If conflict, try to override.
+                    if (error.response.status == 409) {
+                        this.override = true
+                    }
                 }.bind(this));
         },
         clear: function() {
-            this.room = ""
-            this.start = ""
+            this.room = 0
+            this.start = moment()
             this.duration = 0
+            this.override = false
             this.clearErrors()
         },
         clearErrors: function() {
