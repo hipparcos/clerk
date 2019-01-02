@@ -7,7 +7,10 @@ const routes = [
     {
         path: '/bookings/new',
         name: 'bookings.new',
-        component: BookingNewComponent,
+        components: {
+            default: BookingIndexComponent,
+            top: BookingNewComponent,
+        },
         beforeEnter: auth.ifAuthenticated,
         meta: {
             displayName: 'Book a room',

@@ -12,14 +12,21 @@
     </head>
     <body>
         <div id="app">
+            <!-- navbar -->
             <clerk-nav
                 app="{{ config('app.name', 'clerk') }}"
                 v-on:flash-success="onFlashSuccess"
                 ></clerk-nav>
+            <!-- flash -->
             <div v-if="flashSuccessData" class="container notification is-success">
                 <button class="delete" @click.prevent="flashSuccessData = ''"></button>
                 <p>@{{ flashSuccessData }}</p>
             </div>
+            <!-- top view -->
+            <router-view class="container" name="top"
+                v-on:flash-success="onFlashSuccess"
+                ></router-view>
+            <!-- main view -->
             <router-view class="container"
                 v-on:flash-success="onFlashSuccess"
                 ></router-view>
