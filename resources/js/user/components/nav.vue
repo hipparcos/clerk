@@ -9,7 +9,7 @@ export default {
     computed: {
         username: function() {
             if (this.$store.getters.isProfileLoaded) {
-                return this.$store.getters.getProfile.attributes.name
+                return this.$store.getters.getProfile.name
             } else {
                 return ""
             }

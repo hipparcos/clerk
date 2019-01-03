@@ -4,6 +4,8 @@ import Vue from 'vue'
 import { USER_REQUEST, USER_ERROR, USER_SUCCESS } from './actions.js'
 import { AUTH_LOGOUT } from './../auth/actions.js'
 
+import api from './api.js'
+
 const state = {
     status: '',
     profile: {}
@@ -17,14 +19,11 @@ const getters = {
 const actions = {
     [USER_REQUEST]: ({commit, dispatch}) => {
         commit(USER_REQUEST)
-        axios({
-            method: 'get',
-            url: '/api/profile'
-        })
-            .then(resp => {
-                commit(USER_SUCCESS, resp)
+        api.profile()
+            .then(user => {
+                commit(USER_SUCCESS, user)
             })
-            .catch(resp => {
+            .catch(err => {
                 commit(USER_ERROR)
                 dispatch(AUTH_LOGOUT)
             })
@@ -35,9 +34,9 @@ const mutations = {
     [USER_REQUEST]: (state) => {
         state.status = 'loading'
     },
-    [USER_SUCCESS]: (state, resp) => {
+    [USER_SUCCESS]: (state, user) => {
         state.status = 'success'
-        Vue.set(state, 'profile', resp.data.data)
+        Vue.set(state, 'profile', user)
     },
     [USER_ERROR]: (state) => {
         state.status = 'error'
