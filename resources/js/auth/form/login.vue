@@ -30,8 +30,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 import { AUTH_REQUEST } from '../actions.js'
 
 export default {
@@ -52,14 +50,14 @@ export default {
             // Request.
             let { email, password } = this
             this.$store.dispatch(AUTH_REQUEST, { email, password })
-                .then(function(response) {
+                .then(function(token) {
                     this.clear()
                     this.$router.push('/', function() {
                         this.$emit('flash-success', 'You are now logged in.')
                     }.bind(this))
                 }.bind(this))
                 .catch(function (error) {
-                    let data = error.response.data
+                    let data = error.data
                     this.errors.message = data.message
                     this.errors.hint = data.hint.replace('username', 'email')
                 }.bind(this));
