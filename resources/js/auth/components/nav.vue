@@ -1,8 +1,20 @@
 <template>
     <div class="navbar-item">
-        <a class="button is-light" @click="logout">
-            Log out
-        </a>
+        <!-- register/log in -->
+        <div class="buttons" v-if="!$store.getters.isAuthenticated">
+            <router-link to="/register" class="button is-primary">
+                <strong>Register</strong>
+            </router-link>
+            <router-link to="/login" class="button is-light">
+                Log in
+            </router-link>
+        </div>
+        <!-- log out -->
+        <div class="buttons" v-else>
+            <a class="button is-light" @click="logout">
+                Log out
+            </a>
+        </div>
     </div>
 </template>
 

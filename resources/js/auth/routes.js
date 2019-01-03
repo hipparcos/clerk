@@ -1,7 +1,7 @@
 import store from './store.js'
 
-import AuthRegisterComponent from './form/register.vue'
-import AuthLoginComponent    from './form/login.vue'
+import RegisterComponent from './components/register.vue'
+import LoginComponent    from './components/login.vue'
 
 const ifAuthenticated = function(to, from, next) {
     if (store.getters.isAuthenticated) {
@@ -23,7 +23,7 @@ const routes = [
     {
         path: '/register',
         name: 'register',
-        component: AuthRegisterComponent,
+        component: RegisterComponent,
         beforeEnter: ifNotAuthenticated,
         meta: {
             displayName: 'Register',
@@ -32,7 +32,7 @@ const routes = [
     {
         path: '/login',
         name: 'login',
-        component: AuthLoginComponent,
+        component: LoginComponent,
         beforeEnter: ifNotAuthenticated,
         meta: {
             displayName: 'Log in',

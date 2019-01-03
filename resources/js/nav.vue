@@ -22,8 +22,9 @@
             >
             <div class="navbar-start">
                 <template v-if="$store.getters.isAuthenticated">
-                    <booking></booking>
+                    <booking-nav></booking-nav>
                 </template>
+                <!-- route name -->
                 <h1 class="navbar-item" v-if="$route.meta.displayName">
                     <span class="icon">
                         <i class="fas fa-chevron-circle-right"></i>
@@ -35,25 +36,21 @@
             </div>
 
             <div class="navbar-end">
-                <template v-if="$store.getters.isAuthenticated">
-                    <user-nav></user-nav>
-                    <logout
-                        v-on:flash-success="onFlashSuccess"
-                        ></logout>
-                </template>
-                <template v-else>
-                    <login></login>
-                </template>
+                <user-nav
+                    v-on:flash-success="onFlashSuccess"
+                    ></user-nav>
+                <auth-nav
+                    v-on:flash-success="onFlashSuccess"
+                    ></auth-nav>
             </div>
         </div>
     </nav>
 </template>
 
 <script>
-import AuthNavUserComponent   from './auth/nav/user.vue'
-import AuthNavLoginComponent  from './auth/nav/login.vue'
-import AuthNavLogoutComponent from './auth/nav/logout.vue'
-import BookingNavComponent    from './booking/nav.vue'
+import AuthNavComponent from './auth/components/nav.vue'
+import UserNavComponent from './user/components/nav.vue'
+import BookingNavComponent from './booking/nav.vue'
 
 export default {
     props: {
@@ -65,10 +62,9 @@ export default {
         }
     },
     components: {
-        'user-nav': AuthNavUserComponent,
-        login: AuthNavLoginComponent,
-        logout: AuthNavLogoutComponent,
-        booking: BookingNavComponent,
+        'auth-nav': AuthNavComponent,
+        'user-nav': UserNavComponent,
+        'booking-nav': BookingNavComponent,
     },
     methods: {
         onFlashSuccess: function(message) {
