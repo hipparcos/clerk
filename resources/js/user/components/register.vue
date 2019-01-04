@@ -60,8 +60,8 @@
 </template>
 
 <script>
-import api from './../../user/api.js'
-import { AUTH_REQUEST } from '../actions.js'
+import api from './../api.js'
+import { AUTH_REQUEST } from '../../auth/actions.js'
 
 export default {
     data: function() {

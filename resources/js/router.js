@@ -14,6 +14,7 @@ const routes = [
 ]
 
 import auth from './auth/routes.js'
+import user from './user/routes.js'
 import booking from './booking/routes.js'
 
 export default new VueRouter({
@@ -21,6 +22,7 @@ export default new VueRouter({
     routes: _.flatten([
         routes,
         auth.routes,
+        user.routes,
         booking.routes,
     ]),
 })

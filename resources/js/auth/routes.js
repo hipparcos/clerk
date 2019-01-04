@@ -1,6 +1,5 @@
 import store from './store.js'
 
-import RegisterComponent from './components/register.vue'
 import LoginComponent    from './components/login.vue'
 
 const ifAuthenticated = function(to, from, next) {
@@ -20,15 +19,6 @@ const ifNotAuthenticated = function(to, from, next) {
 }
 
 const routes = [
-    {
-        path: '/register',
-        name: 'register',
-        component: RegisterComponent,
-        beforeEnter: ifNotAuthenticated,
-        meta: {
-            displayName: 'Register',
-        },
-    },
     {
         path: '/login',
         name: 'login',
