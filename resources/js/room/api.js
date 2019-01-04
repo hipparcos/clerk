@@ -3,7 +3,10 @@ import axios from 'axios'
 /**
  * Room is a clerk room.
  */
-const Room = function(id, name) {
+const Room = function({
+        id = undefined,
+        name = ''
+    }) {
     this.id = id
     this.name = name
 }
@@ -28,7 +31,7 @@ const getRooms = function() {
         })
             .then(resp => {
                 let data = resp.data.data
-                let rooms = data.map(r => new Room(r.id, r.attributes.name))
+                let rooms = data.map(r => new Room({id: r.id, name: r.attributes.name}))
                 resolve(rooms)
             })
             .catch(err => {
