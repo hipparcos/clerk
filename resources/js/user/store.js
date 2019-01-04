@@ -1,4 +1,3 @@
-import axios from 'axios'
 import Vue from 'vue'
 
 import { USER_REQUEST, USER_ERROR, USER_SUCCESS } from './actions.js'
@@ -8,7 +7,7 @@ import api from './api.js'
 
 const state = {
     status: '',
-    profile: {}
+    profile: {},
 }
 
 const getters = {

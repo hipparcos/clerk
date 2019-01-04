@@ -60,8 +60,7 @@
 </template>
 
 <script>
-import axios from 'axios'
-
+import api from './../../user/api.js'
 import { AUTH_REQUEST } from '../actions.js'
 
 export default {
@@ -84,28 +83,13 @@ export default {
     },
     methods: {
         submit: function() {
-            // Clear.
             this.clearErrors()
-            // Request.
-            axios({
-                method: 'post',
-                url: '/api/register',
-                data: {
-                    data: {
-                        type: "user",
-                        attributes: {
-                            name: this.name,
-                            email: this.email,
-                            password: this.password,
-                            password_confirmation: this.password_confirmation,
-                        }
-                    }
-                }
-            })
-                .then(function (response) {
+            api.register(this.name, this.email, this.password, this.password_confirmation)
+                .then(function (user) {
                     let { email, password } = this
+                    // Log in.
                     this.$store.dispatch(AUTH_REQUEST, { email, password })
-                        .then(function(response) {
+                        .then(function(token) {
                             this.clear()
                             this.$router.push('/', function() {
                                 this.$emit('flash-success', 'Registration completed.')
@@ -116,7 +100,7 @@ export default {
                         }.bind(this));
                 }.bind(this))
                 .catch(function (error) {
-                    let data = error.response.data
+                    let data = error.data
                     this.errors.message
                         = data.message
                     if ('data.attributes.name' in data.errors) {
