@@ -5,14 +5,24 @@ import err from '../error/lib.js'
 /**
  * User is a clerk user.
  */
-const User = function({
-        id = undefined,
-        name = '',
-        email = '',
-    }) {
-    this.id = id
-    this.name = name
-    this.email = email
+class User {
+    constructor({
+            id = undefined,
+            name = '',
+            email = '',
+        }) {
+        this.id = id
+        this.name = name
+        this.email = email
+    }
+
+    static fromAPI(data) {
+        return new User({
+            id: data.id,
+            name: data.attributes.name,
+            email: data.attributes.email
+        })
+    }
 }
 
 /**
@@ -45,12 +55,7 @@ const profile = function() {
             url: '/api/profile'
         })
             .then(resp => {
-                let data = resp.data.data
-                resolve(new User({
-                    id: data.id,
-                    name: data.attributes.name,
-                    email: data.attributes.email
-                }))
+                resolve(User.fromAPI(resp.data.data))
             })
             .catch(err => {
                 reject(new UserError({
@@ -88,12 +93,7 @@ const register = function(name, email, password, password_confirmation) {
             }
         })
             .then(resp => {
-                let data = resp.data.data
-                resolve(new User({
-                    id: data.id,
-                    name: data.attributes.name,
-                    email: data.attributes.email
-                }))
+                resolve(User.fromAPI(resp.data.data))
             })
             .catch(err => {
                 reject(new UserError({
