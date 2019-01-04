@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+import err from '../error/lib.js'
+
 /**
  * Room is a clerk room.
  */
@@ -23,9 +25,16 @@ class Room {
 /**
  * RoomError contain the description of a getRooms error.
  */
-const RoomError = function(status, data) {
-    this.status = status
-    this.data = data
+class RoomError extends err.APIError {
+    constructor({
+        message = 'room.api: error',
+        status = 0,
+        data = {},
+    }) {
+        super({ message, status, data, fields: {
+            'name': 'data.attributes.name',
+        }})
+    }
 }
 
 /**
@@ -44,10 +53,11 @@ const all = function() {
                 resolve(rooms)
             })
             .catch(err => {
-                reject(new RoomError(
-                    err.response.status,
-                    err.response.data
-                ))
+                reject(new RoomError({
+                    message: 'room.api.all: api call error',
+                    status: err.response.status,
+                    data: err.response.data,
+                }))
             })
     })
 }
