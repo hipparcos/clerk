@@ -34,10 +34,7 @@ class Booking {
             duration: data.attributes.duration,
         })
         let roomData = data.relationships.room.data
-        booking.room = new room.Room({
-            id: roomData.id,
-            name: roomData.attributes.name,
-        })
+        booking.room = room.Room.fromAPI(roomData)
         let userData = data.relationships.user.data
         booking.user = user.User.fromAPI(userData)
         return booking

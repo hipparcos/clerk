@@ -3,12 +3,21 @@ import axios from 'axios'
 /**
  * Room is a clerk room.
  */
-const Room = function({
-        id = undefined,
-        name = ''
-    }) {
-    this.id = id
-    this.name = name
+class Room {
+    constructor({
+            id = undefined,
+            name = ''
+        }) {
+        this.id = id
+        this.name = name
+    }
+
+    static fromAPI(data) {
+        return new Room({
+            id: data.id,
+            name: data.attributes.name,
+        })
+    }
 }
 
 /**
@@ -31,7 +40,7 @@ const all = function() {
         })
             .then(resp => {
                 let data = resp.data.data
-                let rooms = data.map(r => new Room({id: r.id, name: r.attributes.name}))
+                let rooms = data.map(r => new Room.fromAPI(r))
                 resolve(rooms)
             })
             .catch(err => {
