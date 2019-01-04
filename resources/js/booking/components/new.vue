@@ -98,8 +98,8 @@ import moment from 'moment'
 import axios from 'axios'
 import DatePicker from 'vue2-datepicker'
 
-import { ROOMS_REQUEST } from '../room/actions.js'
-import lib from './lib.js'
+import { ROOMS_REQUEST } from '../../room/actions.js'
+import lib from '../lib.js'
 
 export default {
     components: { DatePicker },

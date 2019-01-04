@@ -50,7 +50,7 @@
 <script>
 import AuthNavComponent from './auth/components/nav.vue'
 import UserNavComponent from './user/components/nav.vue'
-import BookingNavComponent from './booking/nav.vue'
+import BookingNavComponent from './booking/components/nav.vue'
 
 export default {
     props: {

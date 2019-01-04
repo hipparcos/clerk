@@ -112,7 +112,7 @@ import _ from 'lodash'
 import axios from 'axios'
 import moment from 'moment'
 import DatePicker from 'vue2-datepicker'
-import ButtonConfirmed from '../ui/button-confirmed.vue'
+import ButtonConfirmed from '../../ui/button-confirmed.vue'
 
 const copy = (obj) => JSON.parse(JSON.stringify(obj))
 
