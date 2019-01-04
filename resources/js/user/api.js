@@ -1,25 +1,25 @@
 import axios from 'axios'
 
 /**
- * user is a clerk user.
+ * User is a clerk user.
  */
-const user = function(id, name, email) {
+const User = function(id, name, email) {
     this.id = id
     this.name = name
     this.email = email
 }
 
 /**
- * error contain the description of a log in error.
+ * UserError contain the description of a log in error.
  */
-const error = function(status, data) {
+const UserError = function(status, data) {
     this.status = status
     this.data = data
 }
 
 /**
  * profile returns the profile of the current user.
- * @returns {Promise}.then(user).catch(error)
+ * @returns {Promise}.then(User).catch(UserError)
  */
 const profile = function() {
     return new Promise((resolve, reject) => {
@@ -29,14 +29,14 @@ const profile = function() {
         })
             .then(resp => {
                 let data = resp.data.data
-                resolve(new user(
+                resolve(new User(
                     data.id,
                     data.attributes.name,
                     data.attributes.email
                 ))
             })
             .catch(err => {
-                reject(new error(
+                reject(new UserError(
                     err.response.status,
                     err.response.data
                 ))
@@ -50,7 +50,7 @@ const profile = function() {
  * @param {string} email
  * @param {string} password
  * @param {string} password_confirmation
- * @returns {Promise}.then(user).catch(error)
+ * @returns {Promise}.then(User).catch(UserError)
  */
 const register = function(name, email, password, password_confirmation) {
     return new Promise((resolve, reject) => {
@@ -71,14 +71,14 @@ const register = function(name, email, password, password_confirmation) {
         })
             .then(resp => {
                 let data = resp.data.data
-                resolve(new user(
+                resolve(new User(
                     data.id,
                     data.attributes.name,
                     data.attributes.email
                 ))
             })
             .catch(err => {
-                reject(new error(
+                reject(new UserError(
                     err.response.status,
                     err.response.data
                 ))
@@ -88,7 +88,8 @@ const register = function(name, email, password, password_confirmation) {
 
 export default {
     // data.
-    user,
+    User,
+    UserError,
     // api calls.
     profile,
     register,

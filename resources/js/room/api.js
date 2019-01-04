@@ -1,24 +1,24 @@
 import axios from 'axios'
 
 /**
- * room is a clerk room.
+ * Room is a clerk room.
  */
-const room = function(id, name) {
+const Room = function(id, name) {
     this.id = id
     this.name = name
 }
 
 /**
- * error contain the description of a getRooms error.
+ * RoomError contain the description of a getRooms error.
  */
-const error = function(status, data) {
+const RoomError = function(status, data) {
     this.status = status
     this.data = data
 }
 
 /**
  * getRooms returns a list of all rooms.
- * @returns {Promise}.then([room]).catch(error)
+ * @returns {Promise}.then([Room]).catch(RoomError)
  */
 const getRooms = function() {
     return new Promise((resolve, reject) => {
@@ -28,11 +28,11 @@ const getRooms = function() {
         })
             .then(resp => {
                 let data = resp.data.data
-                let rooms = data.map(r => new room(r.id, r.attributes.name))
+                let rooms = data.map(r => new Room(r.id, r.attributes.name))
                 resolve(rooms)
             })
             .catch(err => {
-                reject(new error(
+                reject(new RoomError(
                     err.response.status,
                     err.response.data
                 ))
@@ -42,8 +42,8 @@ const getRooms = function() {
 
 export default {
     // data.
-    room,
-    error,
+    Room,
+    RoomError,
     // api calls.
     getRooms,
 }
