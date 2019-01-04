@@ -26,7 +26,7 @@
                                 >
                                 <option disabled selected value="0">Select a room...</option>
                                 <option v-for="r in rooms" :key="r.id" :value="r.id">
-                                    {{ r.attributes.name }}
+                                    {{ r.name }}
                                 </option>
                             </select>
                         </div>

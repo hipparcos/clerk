@@ -11,7 +11,7 @@
                             >
                             <option disabled selected value="0">Select a room...</option>
                             <option v-for="r in rooms" :key="r.id" :value="r.id">
-                                {{ r.attributes.name }}
+                                {{ r.name }}
                             </option>
                         </select>
                     </span>
@@ -178,7 +178,7 @@ export default {
     watch: {
         'booking.relationships.room.data.id': function(id) {
             this.booking.relationships.room.data.attributes.name =
-                this.rooms.filter(r => r.id == id)[0].attributes.name
+                this.rooms.filter(r => r.id == id)[0].name
         },
     },
     methods: {

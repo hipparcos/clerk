@@ -1,5 +1,4 @@
-import axios from 'axios'
-
+import api from './api.js'
 import { ROOMS_REQUEST, ROOMS_SUCCESS, ROOMS_ERROR } from './actions.js'
 
 const state = {
@@ -15,14 +14,11 @@ const getters = {
 const actions = {
     [ROOMS_REQUEST]: ({commit, dispatch}) => {
         commit(ROOMS_REQUEST)
-        axios({
-            method: 'get',
-            url: '/api/rooms'
-        })
-            .then(resp => {
-                commit(ROOMS_SUCCESS, resp)
+        api.getRooms()
+            .then(rooms => {
+                commit(ROOMS_SUCCESS, rooms)
             })
-            .catch(resp => {
+            .catch(err => {
                 commit(ROOMS_ERROR)
             })
     },
@@ -32,9 +28,9 @@ const mutations = {
     [ROOMS_REQUEST]: (state) => {
         state.status = 'loading'
     },
-    [ROOMS_SUCCESS]: (state, resp) => {
+    [ROOMS_SUCCESS]: (state, rooms) => {
         state.status = 'success'
-        state.rooms = resp.data.data
+        state.rooms = rooms
     },
     [ROOMS_ERROR]: (state) => {
         state.status = 'error'
