@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+import err from '../error/lib.js'
+
 /**
  * User is a clerk user.
  */
@@ -16,38 +18,19 @@ const User = function({
 /**
  * UserError contain the description of a log in error.
  */
-class UserError extends Error {
-    constructor(message, status, data) {
-        super(message)
-        this.status = status
-        this.data = data
-        // User field <=> api field.
-        this.fields = {
+class UserError extends err.APIError {
+    constructor({
+        message = 'user.api: error',
+        status = 0,
+        data = {},
+    }) {
+        super({ message, status, data, fields: {
+            // User properties <=> api field.
             'name': 'data.attributes.name',
             'email': 'data.attributes.email',
             'password': 'data.attributes.password',
             'password_confirmation': 'data.attributes.password_confirmation',
-        }
-    }
-
-    description() {
-        if ('message' in this.data) {
-            return this.data.message
-        }
-    }
-
-    hasErrors(field) {
-        let containErrors = this.data && ('errors' in this.data)
-        return containErrors
-            && (!field || (
-                field in this.fields && this.fields[field] in this.data.errors))
-    }
-
-    errorsFor(field) {
-        if (this.hasErrors(field)) {
-            return this.data.errors[this.fields[field]]
-        }
-        return []
+        }})
     }
 }
 
@@ -70,10 +53,11 @@ const profile = function() {
                 }))
             })
             .catch(err => {
-                reject(new UserError(
-                    err.response.status,
-                    err.response.data
-                ))
+                reject(new UserError({
+                    message: 'user.api.profile: api call error',
+                    status: err.response.status,
+                    data: err.response.data,
+                }))
             })
     })
 }
@@ -112,11 +96,11 @@ const register = function(name, email, password, password_confirmation) {
                 }))
             })
             .catch(err => {
-                reject(new UserError(
-                    "user.api.register: api call error",
-                    err.response.status,
-                    err.response.data,
-                ))
+                reject(new UserError({
+                    message: "user.api.register: api call error",
+                    status: err.response.status,
+                    data: err.response.data,
+                }))
             })
     })
 }

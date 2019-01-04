@@ -70,7 +70,7 @@ export default {
             email: "",
             password: "",
             password_confirmation: "",
-            errors: new api.UserError(),
+            errors: new api.UserError({}),
             showErrors: true,
         }
     },
@@ -105,7 +105,7 @@ export default {
             this.clearErrors()
         },
         clearErrors: function() {
-            this.$set(this.$data, 'errors', new api.UserError())
+            this.$set(this.$data, 'errors', new api.UserError({}))
             this.showErrors = false
         }
     }
