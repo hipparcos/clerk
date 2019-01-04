@@ -109,7 +109,6 @@
 
 <script>
 import _ from 'lodash'
-import axios from 'axios'
 import moment from 'moment'
 import DatePicker from 'vue2-datepicker'
 import ButtonConfirmed from '../../ui/button-confirmed.vue'
@@ -227,16 +226,13 @@ export default {
                 }.bind(this));
         },
         remove: function() {
-            axios({
-                method: 'delete',
-                url: '/api/bookings/' + this.booking.id,
-            })
-                .then(function(response) {
+            api.remove(this.booking.id)
+                .then(function() {
                     this.$emit('delete', this.booking)
                 }.bind(this))
-                .catch(function(error) {
-                    console.log("Can't delete booking "+ this.booking.id + ".")
-                }.bind(this))
+                .catch(function(err) {
+                    console.log(err)
+                })
         },
         reset: function() {
             this.editMode = false

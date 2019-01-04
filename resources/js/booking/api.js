@@ -203,6 +203,30 @@ const all = function(date) {
     })
 }
 
+/**
+ * remove deletes a booking from the backend.
+ * @param {Number} booking is
+ * @returns {Promise}.then().catch(BookingError)
+ */
+const remove = function(id) {
+    return new Promise((resolve, reject) => {
+        axios({
+            method: 'delete',
+            url: `/api/bookings/${id}`,
+        })
+            .then(resp => {
+                resolve()
+            })
+            .catch(err => {
+                reject(new BookingError(
+                    "booking.api.remove: api call error",
+                    err.response.status,
+                    err.response.data
+                ))
+            })
+    })
+}
+
 export default {
     // data.
     Booking,
@@ -211,5 +235,6 @@ export default {
     all,
     create,
     update,
+    remove,
 }
 
