@@ -1,17 +1,17 @@
 <template>
     <form class="register-form">
-        <div v-if="errors.message" class="notification is-danger">
-            <button class="delete" @click.prevent="errors.message = ''"></button>
-            <h6 class="title is-6">{{ errors.message }}</h6>
+        <div v-if="showErrors && errors.hasErrors()" class="notification is-danger">
+            <button class="delete" @click.prevent="showErrors = false"></button>
+            <h6 class="title is-6">{{ errors.description() }}</h6>
         </div>
         <div class="field">
             <label class="label">Name</label>
             <div class="control">
                 <input class="input" type="text" placeholder="Name"
                     v-model="name"
-                    v-bind:class="{ 'is-danger': errors.fields.name.length > 0 }">
-                <ul v-if="errors.fields.name.length > 0" class="help is-danger">
-                    <li v-for="err in errors.fields.name">{{ err }}</li>
+                    v-bind:class="{ 'is-danger': errors.hasErrors('name')}">
+                <ul v-if="errors.hasErrors('name')" class="help is-danger">
+                    <li v-for="err in errors.errorsFor('name')">{{ err }}</li>
                 </ul>
             </div>
         </div>
@@ -20,9 +20,9 @@
             <div class="control">
                 <input class="input" type="email" placeholder="Email"
                     v-model="email"
-                    v-bind:class="{ 'is-danger': errors.fields.email.length > 0 }">
-                <ul v-if="errors.fields.email.length > 0" class="help is-danger">
-                    <li v-for="err in errors.fields.email">{{ err }}</li>
+                    v-bind:class="{ 'is-danger': errors.hasErrors('email') }">
+                <ul v-if="errors.hasErrors('email')" class="help is-danger">
+                    <li v-for="err in errors.errorsFor('email')">{{ err }}</li>
                 </ul>
             </div>
         </div>
@@ -31,9 +31,9 @@
             <div class="control">
                 <input class="input" type="password" placeholder="Password"
                     v-model="password"
-                    v-bind:class="{ 'is-danger': errors.fields.password.length > 0 }">
-                <ul v-if="errors.fields.password.length > 0" class="help is-danger">
-                    <li v-for="err in errors.fields.password">{{ err }}</li>
+                    v-bind:class="{ 'is-danger': errors.hasErrors('password') }">
+                <ul v-if="errors.hasErrors('password')" class="help is-danger">
+                    <li v-for="err in errors.errorsFor('password')">{{ err }}</li>
                 </ul>
             </div>
         </div>
@@ -42,9 +42,9 @@
             <div class="control">
                 <input class="input" type="password" placeholder="Password confirmation"
                     v-model="password_confirmation"
-                    v-bind:class="{ 'is-danger': errors.fields.password_confirmation.length > 0 }">
-                <ul v-if="errors.fields.password_confirmation.length > 0" class="help is-danger">
-                    <li v-for="err in errors.fields.password_confirmation">{{ err }}</li>
+                    v-bind:class="{ 'is-danger': errors.hasErrors('password_confirmation')}">
+                <ul v-if="errors.hasErrors('password_confirmation')" class="help is-danger">
+                    <li v-for="err in errors.errorsFor('password_confirmation')">{{ err }}</li>
                 </ul>
             </div>
         </div>
@@ -70,15 +70,8 @@ export default {
             email: "",
             password: "",
             password_confirmation: "",
-            errors: {
-                message: "",
-                fields: {
-                    name: [],
-                    email: [],
-                    password: [],
-                    password_confirmation: [],
-                },
-            },
+            errors: new api.UserError(),
+            showErrors: true,
         }
     },
     methods: {
@@ -100,25 +93,8 @@ export default {
                         }.bind(this));
                 }.bind(this))
                 .catch(function (error) {
-                    let data = error.data
-                    this.errors.message
-                        = data.message
-                    if ('data.attributes.name' in data.errors) {
-                        this.errors.fields.name
-                            = data.errors['data.attributes.name']
-                    }
-                    if ('data.attributes.email' in data.errors) {
-                        this.errors.fields.email
-                            = data.errors['data.attributes.email']
-                    }
-                    if ('data.attributes.password' in data.errors) {
-                        this.errors.fields.password
-                            = data.errors['data.attributes.password']
-                    }
-                    if ('data.attributes.password_confirmation' in data.errors) {
-                        this.errors.fields.password_confirmation
-                            = data.errors['data.attributes.password_confirmation']
-                    }
+                    this.$set(this.$data, 'errors', error)
+                    this.showErrors = true
                 }.bind(this));
         },
         clear: function() {
@@ -129,11 +105,8 @@ export default {
             this.clearErrors()
         },
         clearErrors: function() {
-            this.errors.message = ""
-            this.errors.fields.name = []
-            this.errors.fields.email = []
-            this.errors.fields.password = []
-            this.errors.fields.password_confirmation = []
+            this.$set(this.$data, 'errors', new api.UserError())
+            this.showErrors = false
         }
     }
 }
