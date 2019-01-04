@@ -3,7 +3,11 @@ import axios from 'axios'
 /**
  * User is a clerk user.
  */
-const User = function(id, name, email) {
+const User = function({
+        id = undefined,
+        name = '',
+        email = '',
+    }) {
     this.id = id
     this.name = name
     this.email = email
@@ -29,11 +33,11 @@ const profile = function() {
         })
             .then(resp => {
                 let data = resp.data.data
-                resolve(new User(
-                    data.id,
-                    data.attributes.name,
-                    data.attributes.email
-                ))
+                resolve(new User({
+                    id: data.id,
+                    name: data.attributes.name,
+                    email: data.attributes.email
+                }))
             })
             .catch(err => {
                 reject(new UserError(
@@ -71,11 +75,11 @@ const register = function(name, email, password, password_confirmation) {
         })
             .then(resp => {
                 let data = resp.data.data
-                resolve(new User(
-                    data.id,
-                    data.attributes.name,
-                    data.attributes.email
-                ))
+                resolve(new User({
+                    id: data.id,
+                    name: data.attributes.name,
+                    email: data.attributes.email
+                }))
             })
             .catch(err => {
                 reject(new UserError(
