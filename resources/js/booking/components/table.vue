@@ -43,9 +43,9 @@
                 <booking-tr
                     v-for="booking in bookings"
                     :key="booking.id"
-                    :initialBooking="booking"
-                    @booking-update="onUpdate"
-                    @booking-delete="onDelete"
+                    :booking="booking"
+                    @update="onUpdate"
+                    @delete="onDelete"
                     @errors="onErrors"
                     >
                 </booking-tr>
@@ -59,10 +59,11 @@
 
 <script>
 import _ from 'lodash'
-import axios from 'axios'
 import moment from 'moment'
 import DatePicker from 'vue2-datepicker'
 import BookingTrComponent from './table-row.vue'
+
+import api from '../api.js'
 
 const toMoment = (year, month, day) => {
     if (year && month && day) {
@@ -82,17 +83,17 @@ export default {
         this.debounceGetBookings = _.debounce(this.getBookings, 500)
         // Sorters
         this.roomSorter = (l, r) => {
-            let lroom = l.relationships.room.data.attributes.name
-            let rroom = r.relationships.room.data.attributes.name
+            let lroom = l.room.name
+            let rroom = r.room.name
             return lroom > rroom
         }
         this.userSorter = (l, r) => {
-            let luser = l.relationships.user.data.attributes.name
-            let ruser = r.relationships.user.data.attributes.name
+            let luser = l.user.name
+            let ruser = r.user.name
             return luser > ruser
         }
         this.timeSorter = (l, r) => {
-            return r.attributes.start.isBefore(l.attributes.start)
+            return r.start.isBefore(l.start)
         }
     },
     beforeRouteEnter: function(to, from, next) {
@@ -146,21 +147,14 @@ export default {
     methods: {
         getBookings: function() {
             this.status = "loading"
-            axios({
-                method: 'get',
-                url: '/api/bookings/' +
-                    this.selectedDate.format('YYYY/MM/DD'),
-            })
-                .then(function(response) {
-                    this.bookings = response.data.data
-                    this.bookings.map(b => b.attributes.start = moment(b.attributes.start))
+            api.all(this.selectedDate)
+                .then(function(bookings) {
+                    this.bookings = bookings
                     this.sortBookings(this.timeSorter)
                     this.status = "success"
                 }.bind(this))
                 .catch(function(error) {
-                    this.$emit('flash-error', 'Error getting bookings: <br>'
-                        + error.response.status + ' ' + error.response.data
-                        )
+                    console.log('Error getting bookings.')
                     this.status = "error"
                 }.bind(this))
         },
@@ -169,15 +163,13 @@ export default {
             this.bookings.sort(this.sorter)
         },
         onUpdate: function(booking) {
-            let idx = this.bookings.findIndex(b => b.id == booking.id)
-            let newStart = moment(this.bookings[idx].attributes.start)
-            // If the date has been changed, remove the booking.
-            let today = this.date.clone()
-            if (newStart.isBefore(today.startOf('day')) || newStart.isAfter(today.endOf('day'))) {
-                this.onDelete(booking)
-            } else {
-                booking.attributes.start = moment(booking.attributes.start)
-                this.bookings[idx] = booking
+            // Remove the booking.
+            this.onDelete(booking)
+            // If the booking is the same day as selectedDate, add it back to bookings.
+            let today = this.selectedDate.clone()
+            if (booking.start.isAfter(today.startOf('day'))
+                    && booking.start.isBefore(today.endOf('day'))) {
+                this.bookings.push(booking)
                 this.sortBookings()
             }
         },

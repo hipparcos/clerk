@@ -7,7 +7,7 @@
                         :class="{ 'is-danger': errors.fields.room.length > 0 }"
                         >
                         <select
-                            v-model="booking.relationships.room.data.id"
+                            v-model="room"
                             >
                             <option disabled selected value="0">Select a room...</option>
                             <option v-for="r in rooms" :key="r.id" :value="r.id">
@@ -18,7 +18,7 @@
                 </span>
             </template>
             <template v-else>
-                {{ booking.relationships.room.data.attributes.name }}
+                {{ booking.room.name }}
             </template>
         </td>
         <td>
@@ -29,7 +29,7 @@
                         :time-picker-options="startTimePickerOptions"
                         :not-before="today"
                         :class="{ 'is-danger': errors.fields.start.length > 0 }"
-                        v-model="booking.attributes.start"
+                        v-model="start"
                         ></date-picker>
                 </span>
             </template>
@@ -42,20 +42,20 @@
                 <span class="control">
                     <input class="input is-small" type="text" ref="duration"
                         size="4" maxlength="4" style="width: 4em;"
-                        v-model="booking.attributes.duration"
+                        v-model="duration"
                         @keyup.enter="edit"
                         :class="{ 'is-danger': errors.fields.duration.length > 0 }"
                         >
                 </span>
             </template>
             <template v-else>
-                {{ booking.attributes.duration }}
+                {{ booking.duration }}
             </template>
         </td>
-        <td>{{ booking.relationships.user.data.attributes.name }}</td>
-        <td>{{ booking.relationships.user.data.attributes.email }}</td>
+        <td>{{ booking.user.name }}</td>
+        <td>{{ booking.user.email }}</td>
         <td>
-            <span class="buttons" v-if="booking.relationships.user.data.id == $store.getters.getProfile.id">
+            <span class="buttons" v-if="booking.user.id == $store.getters.getProfile.id">
                 <a class="button is-small"
                     :class="{
                         'is-link': editMode && !override,
@@ -88,11 +88,11 @@
                         <div class="box">
                         <div class="content">
                             Booking in
-                            <strong>{{ booking.relationships.room.data.attributes.name }}</strong>
+                            <strong>{{ booking.room.name }}</strong>
                             <br>
-                            From {{ start.calendar() }}
-                            to {{ end.calendar() }}
-                            ({{ booking.attributes.duration }} minutes)
+                            From {{ booking.start.calendar() }}
+                            to {{ booking.end.calendar() }}
+                            ({{ booking.duration }} minutes)
                         </div>
                         </div>
                     </template>
@@ -114,6 +114,9 @@ import moment from 'moment'
 import DatePicker from 'vue2-datepicker'
 import ButtonConfirmed from '../../ui/button-confirmed.vue'
 
+import api from '../api.js'
+import room from '../../room/api.js'
+
 const copy = (obj) => JSON.parse(JSON.stringify(obj))
 
 export default {
@@ -122,7 +125,7 @@ export default {
         'button-confirmed': ButtonConfirmed,
     },
     props: {
-        initialBooking: Object,
+        booking: Object,
     },
     created: function() {
         this.updateRooms = _.debounce(function() {
@@ -131,8 +134,10 @@ export default {
     },
     data: function() {
         return {
+            start: this.booking.start,
+            duration: this.booking.duration,
+            room: this.booking.room.id,
             editMode: false,
-            booking: copy(this.initialBooking),
             override: false,
             errors: {
                 message: "",
@@ -157,14 +162,8 @@ export default {
             }
             return this.$store.getters.getRooms
         },
-        start: function() {
-            return moment(this.booking.attributes.start)
-        },
-        end: function() {
-            return this.start.clone().add(this.booking.attributes.duration, 'minutes')
-        },
         startTime: function() {
-            return this.start.format('h:mm a')
+            return this.booking.start.format('h:mm a')
         },
         today: function() {
             let d = new Date()
@@ -176,52 +175,36 @@ export default {
         },
     },
     watch: {
-        'booking.relationships.room.data.id': function(id) {
-            this.booking.relationships.room.data.attributes.name =
-                this.rooms.filter(r => r.id == id)[0].name
+        booking: function() {
+            this.reset()
         },
     },
     methods: {
         cancel: function() {
             this.editMode = false
-            this.$set(this.$data, 'booking', copy(this.initialBooking))
-            this.clear()
+            this.reset()
         },
         edit: function() {
             if (!this.editMode) {
+                this.reset()
                 this.editMode = true
                 return
             }
-            axios({
-                method: 'patch',
-                url: '/api/bookings/' + this.booking.id,
-                data: {
-                    data: {
-                        type: "booking",
-                        id: this.booking.id,
-                        attributes: {
-                            start: this.booking.attributes.start,
-                            duration: this.booking.attributes.duration,
-                        },
-                        relationships: {
-                            room: {
-                                data: { id: this.booking.relationships.room.data.id }
-                            }
-                        },
-                    },
-                    meta: {
-                        overrideUserCollision: this.override
-                    }
-                }
+            let booking = new api.Booking({
+                id: this.booking.id,
+                start: this.start,
+                duration: this.duration,
+                room: new room.Room({
+                    id: this.room,
+                })
             })
-                .then(function (response) {
-                    this.$emit('booking-update', this.booking)
-                    this.editMode = false
-                    this.clear()
+            api.update(booking, this.override)
+                .then(function (booking) {
+                    this.$emit('update', booking)
+                    this.reset()
                 }.bind(this))
                 .catch(function (error) {
-                    console.log("Can't edit booking "+ this.booking.id + ".")
-                    let data = error.response.data
+                    let data = error.data
                     this.errors.message
                         = data.message
                     if ('data.relationships.room.data.id' in data.errors) {
@@ -238,7 +221,7 @@ export default {
                     }
                     this.$emit('errors', this.errors)
                     // If conflict, try to override.
-                    if (error.response.status == 409) {
+                    if (error.status == 409) {
                         this.override = true
                     }
                 }.bind(this));
@@ -249,11 +232,18 @@ export default {
                 url: '/api/bookings/' + this.booking.id,
             })
                 .then(function(response) {
-                    this.$emit('booking-delete', this.booking)
+                    this.$emit('delete', this.booking)
                 }.bind(this))
                 .catch(function(error) {
                     console.log("Can't delete booking "+ this.booking.id + ".")
                 }.bind(this))
+        },
+        reset: function() {
+            this.editMode = false
+            this.start = this.booking.start
+            this.duration = this.booking.duration
+            this.room = this.booking.room.id
+            this.clear()
         },
         clear: function() {
             this.override = false

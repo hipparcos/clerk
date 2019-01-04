@@ -18,10 +18,33 @@ class Booking {
         this.id = id
         this.start = start
         this.duration = duration
-        this.end = this.start.clone().add(duration, 'minutes')
         // Relationships.
         this.room = room
         this.user = user
+    }
+
+    clone() {
+        return JSON.parse(JSON.stringify(this))
+    }
+
+    static fromAPI(data) {
+        let booking = new Booking({
+            id: data.id,
+            start: data.attributes.start,
+            duration: data.attributes.duration,
+        })
+        let roomData = data.relationships.room.data
+        booking.room = new room.Room({
+            id: roomData.id,
+            name: roomData.attributes.name,
+        })
+        let userData = data.relationships.user.data
+        booking.user = new user.User({
+            id: userData.id,
+            name: userData.attributes.name,
+            email: userData.attributes.email,
+        })
+        return booking
     }
 
     get start() {
@@ -32,6 +55,24 @@ class Booking {
             this._start = newStart
         } else {
             this._start = moment(newStart)
+        }
+        this.updateEnd()
+    }
+
+    get duration() {
+        return this._duration
+    }
+    set duration(newDuration) {
+        this._duration = newDuration
+        this.updateEnd()
+    }
+
+    get end() {
+        return this._end
+    }
+    updateEnd() {
+        if (this.start && this.duration) {
+            this._end = this.start.clone().add(this.duration, 'minutes')
         }
     }
 
@@ -66,10 +107,12 @@ class BookingError extends Error {
 }
 
 /**
- * create creates a booking in the backend.
+ * save saves a booking in the backend.
+ * @param {Booking} booking
+ * @param {Boolean} override overrides user collision
  * @returns {Promise}.then(Booking).catch(BookingError)
  */
-const create = function(booking, override) {
+const save = function(booking, override) {
     return new Promise((resolve, reject) => {
         if (!(booking instanceof Booking)) {
             reject(
@@ -79,10 +122,11 @@ const create = function(booking, override) {
             )
         }
         axios({
-            method: 'post',
-            url: '/api/bookings',
+            method: (booking.id) ? 'patch' : 'post',
+            url: '/api/bookings' + ((booking.id) ? `/${booking.id}` : ''),
             data: {
                 data: {
+                    id: booking.id,
                     type: "booking",
                     attributes: {
                         start: booking.start,
@@ -101,22 +145,7 @@ const create = function(booking, override) {
         })
             .then(resp => {
                 let data = resp.data.data
-                let booking = new Booking({
-                    id: data.id,
-                    start: data.attributes.start,
-                    duration: data.attributes.duration,
-                })
-                let roomData = data.relationships.room.data
-                booking.room = new room.Room({
-                    id: roomData.id,
-                    name: roomData.attributes.name,
-                })
-                let userData = data.relationships.user.data
-                booking.user = new user.User({
-                    id: userData.id,
-                    name: userData.attributes.name,
-                    email: userData.attributes.email,
-                })
+                let booking = Booking.fromAPI(data)
                 resolve(booking)
             })
             .catch(err => {
@@ -129,11 +158,58 @@ const create = function(booking, override) {
     })
 }
 
+/**
+ * creates creates a booking in the backend.
+ * @param {Booking} booking
+ * @param {Boolean} override overrides user collision
+ * @returns {Promise}.then(Booking).catch(BookingError)
+ */
+const create = function(booking, override) {
+    booking.id = undefined
+    return save(booking, override)
+}
+
+/**
+ * update updates a booking in the backend.
+ * @param {Booking} booking
+ * @param {Boolean} override overrides user collision
+ * @returns {Promise}.then(Booking).catch(BookingError)
+ */
+const update = save
+
+/**
+ * all retrieves all bookings from the backend.
+ * @param {moment} date
+ * @returns {Promise}.then([Booking]).catch(BookingError)
+ */
+const all = function(date) {
+    return new Promise((resolve, reject) => {
+        axios({
+            method: 'get',
+            url: '/api/bookings' + ((date) ? date.format('/YYYY/MM/DD') : ''),
+        })
+            .then(resp => {
+                let data = resp.data.data
+                let bookings = data.map(b => Booking.fromAPI(b))
+                resolve(bookings)
+            })
+            .catch(err => {
+                reject(new BookingError(
+                    "booking.api.all: api call error",
+                    err.response.status,
+                    err.response.data
+                ))
+            })
+    })
+}
+
 export default {
     // data.
     Booking,
     BookingError,
     // api calls.
+    all,
     create,
+    update,
 }
 

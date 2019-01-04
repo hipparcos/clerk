@@ -99,7 +99,7 @@ import DatePicker from 'vue2-datepicker'
 
 import { ROOMS_REQUEST } from '../../room/actions.js'
 import api from '../api.js'
-import roomApi from '../../room/api.js'
+import room from '../../room/api.js'
 import lib from '../lib.js'
 
 export default {
@@ -172,7 +172,7 @@ export default {
             let booking = new api.Booking({
                 start: this.start,
                 duration: this.duration,
-                room: new roomApi.Room({
+                room: new room.Room({
                     id: this.room,
                 })
             })
