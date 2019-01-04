@@ -95,10 +95,11 @@
 <script>
 import _ from 'lodash'
 import moment from 'moment'
-import axios from 'axios'
 import DatePicker from 'vue2-datepicker'
 
 import { ROOMS_REQUEST } from '../../room/actions.js'
+import api from '../api.js'
+import roomApi from '../../room/api.js'
 import lib from '../lib.js'
 
 export default {
@@ -167,38 +168,24 @@ export default {
     },
     methods: {
         submit: function() {
-            // Clear.
             this.clearErrors()
-            // Request.
-            axios({
-                method: 'post',
-                url: '/api/bookings',
-                data: {
-                    data: {
-                        type: "booking",
-                        attributes: {
-                            start: this.start,
-                            duration: this.duration,
-                        },
-                        relationships: {
-                            room: {
-                                data: { id: this.room }
-                            }
-                        },
-                    },
-                    meta: {
-                        overrideUserCollision: this.override
-                    }
-                }
+            let booking = new api.Booking({
+                start: this.start,
+                duration: this.duration,
+                room: new roomApi.Room({
+                    id: this.room,
+                })
             })
-                .then(function (response) {
+            api.create(booking, this.override)
+                .then(function (booking) {
                     let date = moment(this.start).format('/YYYY/MM/DD')
                     this.$router.push('/bookings' + date, function() {
                         this.$emit('flash-success', 'Booking saved.')
                     }.bind(this))
                 }.bind(this))
                 .catch(function (error) {
-                    let data = error.response.data
+                    console.log(error)
+                    let data = error.data
                     this.errors.message
                         = data.message
                     if ('data.relationships.room.data.id' in data.errors) {
