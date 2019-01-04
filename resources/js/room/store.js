@@ -14,7 +14,7 @@ const getters = {
 const actions = {
     [ROOMS_REQUEST]: ({commit, dispatch}) => {
         commit(ROOMS_REQUEST)
-        api.getRooms()
+        api.all()
             .then(rooms => {
                 commit(ROOMS_SUCCESS, rooms)
             })

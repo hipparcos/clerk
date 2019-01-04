@@ -20,10 +20,10 @@ const RoomError = function(status, data) {
 }
 
 /**
- * getRooms returns a list of all rooms.
+ * all returns a list of all rooms.
  * @returns {Promise}.then([Room]).catch(RoomError)
  */
-const getRooms = function() {
+const all = function() {
     return new Promise((resolve, reject) => {
         axios({
             method: 'get',
@@ -48,6 +48,6 @@ export default {
     Room,
     RoomError,
     // api calls.
-    getRooms,
+    all,
 }
 
