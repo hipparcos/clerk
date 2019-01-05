@@ -85,16 +85,7 @@
 
                     <template slot="message">
                         Do you really want to delete this booking?
-                        <div class="box">
-                        <div class="content">
-                            Booking in
-                            <strong>{{ booking.room.name }}</strong>
-                            <br>
-                            From {{ booking.start.calendar() }}
-                            to {{ booking.end.calendar() }}
-                            ({{ booking.duration }} minutes)
-                        </div>
-                        </div>
+                        <booking-box :booking="booking"></booking-box>
                     </template>
 
                     <span>Delete</span>
@@ -110,8 +101,10 @@
 <script>
 import _ from 'lodash'
 import moment from 'moment'
+
 import DatePicker from 'vue2-datepicker'
 import ButtonConfirmed from '../../ui/button-confirmed.vue'
+import BookingBox from './box.vue'
 
 import api from '../api.js'
 import room from '../../room/api.js'
@@ -119,7 +112,7 @@ import room from '../../room/api.js'
 const copy = (obj) => JSON.parse(JSON.stringify(obj))
 
 export default {
-    components: { DatePicker, ButtonConfirmed, },
+    components: { DatePicker, ButtonConfirmed, BookingBox, },
     props: {
         booking: Object,
     },
