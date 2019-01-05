@@ -9,9 +9,10 @@
                 <input class="input" type="text" placeholder="Name"
                     v-model="name"
                     v-bind:class="{ 'is-danger': errors.hasErrors('name')}">
-                <ul v-if="errors.hasErrors('name')" class="help is-danger">
-                    <li v-for="err in errors.errorsFor('name')">{{ err }}</li>
-                </ul>
+                <errors-for-field
+                    :errors="errors"
+                    field="name"
+                    ></errors-for-field>
             </div>
         </div>
         <div class="field">
@@ -20,9 +21,10 @@
                 <input class="input" type="email" placeholder="Email"
                     v-model="email"
                     v-bind:class="{ 'is-danger': errors.hasErrors('email') }">
-                <ul v-if="errors.hasErrors('email')" class="help is-danger">
-                    <li v-for="err in errors.errorsFor('email')">{{ err }}</li>
-                </ul>
+                <errors-for-field
+                    :errors="errors"
+                    field="email"
+                    ></errors-for-field>
             </div>
         </div>
         <div class="field">
@@ -31,9 +33,10 @@
                 <input class="input" type="password" placeholder="Password"
                     v-model="password"
                     v-bind:class="{ 'is-danger': errors.hasErrors('password') }">
-                <ul v-if="errors.hasErrors('password')" class="help is-danger">
-                    <li v-for="err in errors.errorsFor('password')">{{ err }}</li>
-                </ul>
+                <errors-for-field
+                    :errors="errors"
+                    field="password"
+                    ></errors-for-field>
             </div>
         </div>
         <div class="field">
@@ -42,9 +45,10 @@
                 <input class="input" type="password" placeholder="Password confirmation"
                     v-model="password_confirmation"
                     v-bind:class="{ 'is-danger': errors.hasErrors('password_confirmation')}">
-                <ul v-if="errors.hasErrors('password_confirmation')" class="help is-danger">
-                    <li v-for="err in errors.errorsFor('password_confirmation')">{{ err }}</li>
-                </ul>
+                <errors-for-field
+                    :errors="errors"
+                    field="password_confirmation"
+                    ></errors-for-field>
             </div>
         </div>
         <div class="field is-grouped">
@@ -63,9 +67,10 @@ import api from './../api.js'
 import { AUTH_REQUEST } from '../../auth/actions.js'
 
 import ErrorsList from '../../error/components/errors.vue'
+import ErrorsForField from '../../error/components/errorsForField.vue'
 
 export default {
-    components: { ErrorsList, },
+    components: { ErrorsList, ErrorsForField, },
     data: function() {
         return {
             name: "",
