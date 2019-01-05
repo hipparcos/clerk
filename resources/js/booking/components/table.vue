@@ -37,7 +37,6 @@
                     v-for="booking in bookings"
                     :key="booking.id"
                     :booking="booking"
-                    @update="onUpdate"
                     @delete="onDelete"
                     @errors="onErrors"
                     >
@@ -130,21 +129,6 @@ export default {
         sortBookings: function(sorter) {
             this.sorter = sorter || this.sorter || this.timeSorter
             this.$store.dispatch(BOOKINGS_SORT, { sorter: this.sorter })
-        },
-        onUpdate: function(booking) {
-            this.$emit('flash', {
-                type: 'success',
-                message: 'Booking updated.',
-            })
-            // Remove the booking.
-            this.remove(booking.id)
-            // If the booking is the same day as selectedDate, add it back to bookings.
-            let selectedDay = this.selectedDate.clone()
-            if (booking.start.isAfter(selectedDay.startOf('day'))
-             && booking.start.isBefore(selectedDay.endOf('day'))) {
-                this.bookings.push(booking)
-                this.sortBookings()
-            }
         },
         onDelete: function(booking) {
             this.$emit('flash', {

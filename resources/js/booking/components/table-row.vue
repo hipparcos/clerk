@@ -106,6 +106,7 @@ import DatePicker from 'vue2-datepicker'
 import ButtonConfirmed from '../../ui/button-confirmed.vue'
 import BookingBox from './box.vue'
 
+import { BOOKINGS_UPDATE } from '../actions.js'
 import api from '../api.js'
 import room from '../../room/api.js'
 
@@ -175,12 +176,16 @@ export default {
                     id: this.room,
                 })
             })
-            api.update(booking, this.override)
+            this.$store.dispatch(BOOKINGS_UPDATE, { booking, override: this.override })
                 .then(function (booking) {
-                    this.$emit('update', booking)
                     this.reset()
+                    this.$emit('flash', {
+                        type: 'success',
+                        message: 'Booking updated.',
+                    })
                 }.bind(this))
                 .catch(function (errors) {
+                    console.log(errors)
                     this.$set(this.$data, 'errors', errors)
                     this.$emit('errors', this.errors)
                     // If conflict, try to override.
