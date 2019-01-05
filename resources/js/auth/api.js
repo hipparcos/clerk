@@ -6,9 +6,18 @@ import err from '../error/lib.js'
 /**
  * Token is the result of an authentication request.
  */
-const Token = function(token, expires) {
-    this.access_token = token
-    this.expires_in = expires
+class Token {
+    constructor(token, expires) {
+        this.access_token = token
+        this.expires_in = expires
+    }
+
+    static fromAPI(data) {
+        return new Token(
+            data.access_token,
+            data.expires_in
+        )
+    }
 }
 
 /**
@@ -51,10 +60,7 @@ const login = function(email, password) {
             }
         })
             .then(resp => {
-                resolve(new Token(
-                    resp.data.access_token,
-                    resp.data.expires_in
-                ))
+                resolve(new Token.fromAPI(resp.data))
             })
             .catch(err => {
                 reject(new AuthError({
