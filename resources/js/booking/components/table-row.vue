@@ -6,14 +6,7 @@
                     <span class="select is-small"
                         :class="{ 'is-danger': errors.hasErrors('room') }"
                         >
-                        <select
-                            v-model="room"
-                            >
-                            <option disabled selected value="0">Select a room...</option>
-                            <option v-for="r in rooms" :key="r.id" :value="r.id">
-                                {{ r.name }}
-                            </option>
-                        </select>
+                        <room-select v-model="room"></room-select>
                     </span>
                 </span>
             </template>
@@ -105,6 +98,7 @@ import moment from 'moment'
 import DatePicker from 'vue2-datepicker'
 import ButtonConfirmed from '../../ui/button-confirmed.vue'
 import BookingBox from './box.vue'
+import RoomSelect from '../../room/components/select.vue'
 
 import { BOOKINGS_UPDATE, BOOKINGS_DELETE } from '../actions.js'
 import api from '../api.js'
@@ -113,14 +107,9 @@ import room from '../../room/api.js'
 const copy = (obj) => JSON.parse(JSON.stringify(obj))
 
 export default {
-    components: { DatePicker, ButtonConfirmed, BookingBox, },
+    components: { DatePicker, ButtonConfirmed, BookingBox, RoomSelect },
     props: {
         booking: Object,
-    },
-    created: function() {
-        this.updateRooms = _.debounce(function() {
-            this.$store.dispatch(ROOMS_REQUEST)
-        }.bind(this), 1000)
     },
     data: function() {
         return {
@@ -139,12 +128,6 @@ export default {
         }
     },
     computed: {
-        rooms: function() {
-            if (!this.$store.getters.areRoomsLoaded) {
-                this.updateRooms()
-            }
-            return this.$store.getters.getRooms
-        },
         startTime: function() {
             return this.booking.start.format('h:mm a')
         },
@@ -177,7 +160,7 @@ export default {
                 })
             })
             this.$store.dispatch(BOOKINGS_UPDATE, { booking, override: this.override })
-                .then(function (booking) {
+                .then(function(booking) {
                     this.reset()
                     this.$emit('flash', {
                         type: 'success',
@@ -196,7 +179,7 @@ export default {
         },
         remove: function() {
             this.$store.dispatch(BOOKINGS_DELETE, { id: this.booking.id })
-                .then(function() {
+                .then(function(id) {
                     this.$emit('flash', {
                         type: 'success',
                         message: 'Booking deleted.',

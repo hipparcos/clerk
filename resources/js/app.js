@@ -24,8 +24,6 @@ const app = new Vue({
         if (store.getters.isAuthenticated) {
             // Load user profile.
             store.dispatch(USER_REQUEST)
-            // Load list of rooms.
-            store.dispatch(ROOMS_REQUEST)
         }
     },
     components: {

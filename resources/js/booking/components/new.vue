@@ -14,14 +14,7 @@
                         <div class="select is-fullwidth"
                             v-bind:class="{ 'is-danger': errors.hasErrors('room') }"
                             >
-                            <select
-                                v-model="room"
-                                >
-                                <option disabled selected value="0">Select a room...</option>
-                                <option v-for="r in rooms" :key="r.id" :value="r.id">
-                                    {{ r.name }}
-                                </option>
-                            </select>
+                            <room-select v-model="room"></room-select>
                         </div>
                     </div>
                 </div>
@@ -91,21 +84,18 @@ import moment from 'moment'
 import DatePicker from 'vue2-datepicker'
 
 import ErrorsList from '../../error/components/errors.vue'
+import RoomSelect from '../../room/components/select.vue'
 
 import { BOOKINGS_CREATE, BOOKINGS_SET_DATE } from '../actions.js'
-import { ROOMS_REQUEST } from '../../room/actions.js'
 import api from '../api.js'
 import room from '../../room/api.js'
 import lib from '../lib.js'
 
 export default {
-    components: { DatePicker, ErrorsList, },
+    components: { DatePicker, ErrorsList, RoomSelect },
     props: {
     },
     created: function() {
-        this.updateRooms = _.debounce(function() {
-            this.$store.dispatch(ROOMS_REQUEST)
-        }.bind(this), 1000)
         // Force set to trigger update.
         this.start = this.startData
     },
@@ -125,12 +115,6 @@ export default {
         }
     },
     computed: {
-        rooms: function() {
-            if (!this.$store.getters.areRoomsLoaded) {
-                this.updateRooms()
-            }
-            return this.$store.getters.getRooms
-        },
         start: {
             get: function() {
                 return this.startData

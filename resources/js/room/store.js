@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 import api from './api.js'
 import { ROOMS_REQUEST, ROOMS_SUCCESS, ROOMS_ERROR } from './actions.js'
 
@@ -8,20 +10,23 @@ const state = {
 
 const getters = {
     getRooms: state => state.rooms,
-    areRoomsLoaded: state => !!state.rooms.length,
+    areRoomsLoaded: state => state.status === 'success',
+    areRoomsLoading: state => state.status === 'loading',
 }
 
 const actions = {
     [ROOMS_REQUEST]: ({commit, dispatch}) => {
         return new Promise((resolve, reject) => {
-            commit(ROOMS_REQUEST)
-            api.all()
-                .then(rooms => {
-                    commit(ROOMS_SUCCESS, rooms)
-                })
-                .catch(err => {
-                    commit(ROOMS_ERROR)
-                })
+            if (!state.status !== 'loading') {
+                commit(ROOMS_REQUEST)
+                api.all()
+                    .then(rooms => {
+                        commit(ROOMS_SUCCESS, rooms)
+                    })
+                    .catch(err => {
+                        commit(ROOMS_ERROR)
+                    })
+            }
         })
     },
 }
