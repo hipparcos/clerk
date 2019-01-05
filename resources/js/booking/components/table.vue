@@ -18,7 +18,7 @@
                 </div>
             </div>
         </div>
-        <p v-if="status == 'loading'" class="has-text-centered has-text-weight-bold">
+        <p v-if="$store.getters.areBookingsLoading" class="has-text-centered has-text-weight-bold">
             Loading bookings...
         </p>
         <table v-else-if="bookings.length > 0" class="table container">
@@ -58,6 +58,8 @@ import BookingTr from './table-row.vue'
 import ErrorsList from '../../error/components/errors.vue'
 
 import api from '../api.js'
+import store from '../store.js'
+import { BOOKINGS_SET_DATE, BOOKINGS_SORT, } from '../actions.js'
 
 const toMoment = (year, month, day) => {
     if (year && month && day) {
@@ -70,8 +72,6 @@ export default {
     components: { BookingTr, DatePicker, ErrorsList, },
     props: [ 'year', 'month', 'day' ],
     created: function() {
-        this.getBookings()
-        this.debounceGetBookings = _.debounce(this.getBookings, 500)
         // Sorters
         this.roomSorter = (l, r) => {
             let lroom = l.room.name
@@ -86,29 +86,33 @@ export default {
         this.timeSorter = (l, r) => {
             return r.start.isBefore(l.start)
         }
-    },
-    beforeRouteEnter: function(to, from, next) {
-        next(vm => {
-            vm.date = toMoment(vm.year, vm.month, vm.day),
-            vm.debounceGetBookings()
-        })
+        // Set selected date from props.
+        this.selectedDate = toMoment(this.year, this.month, this.day)
     },
     data: function() {
         return {
-            date: toMoment(this.year, this.month, this.day),
-            bookings: [],
-            status: "loading",
             sorter: this.timeSorter,
             errors: new api.BookingError({}),
         }
     },
     computed: {
+        bookings: function() {
+            return this.$store.getters.getBookings
+        },
         selectedDate: {
             get: function() {
-                return this.date
+                return this.$store.getters.getSelectedDate
             },
             set: function(d) {
-                this.date = moment(d)
+                let self = this
+                let date = moment(d)
+                this.$store.dispatch(BOOKINGS_SET_DATE, { date })
+                    .then(bookings => {
+                        self.sortBookings()
+                    })
+                    .catch(err => {
+                        console.log('Error getting bookings.')
+                    })
             },
         },
         prettySelectedDate: function() {
@@ -122,29 +126,10 @@ export default {
             });
         },
     },
-    watch: {
-        date: function() {
-            this.status = "loading"
-            this.debounceGetBookings()
-        },
-    },
     methods: {
-        getBookings: function() {
-            this.status = "loading"
-            api.all(this.selectedDate)
-                .then(function(bookings) {
-                    this.bookings = bookings
-                    this.sortBookings(this.timeSorter)
-                    this.status = "success"
-                }.bind(this))
-                .catch(function(error) {
-                    console.log('Error getting bookings.')
-                    this.status = "error"
-                }.bind(this))
-        },
         sortBookings: function(sorter) {
             this.sorter = sorter || this.sorter || this.timeSorter
-            this.bookings.sort(this.sorter)
+            this.$store.dispatch(BOOKINGS_SORT, { sorter: this.sorter })
         },
         onUpdate: function(booking) {
             this.$emit('flash', {
