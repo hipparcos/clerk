@@ -147,18 +147,29 @@ export default {
             this.bookings.sort(this.sorter)
         },
         onUpdate: function(booking) {
+            this.$emit('flash', {
+                type: 'success',
+                message: 'Booking updated.',
+            })
             // Remove the booking.
-            this.onDelete(booking)
+            this.remove(booking.id)
             // If the booking is the same day as selectedDate, add it back to bookings.
-            let today = this.selectedDate.clone()
-            if (booking.start.isAfter(today.startOf('day'))
-                    && booking.start.isBefore(today.endOf('day'))) {
+            let selectedDay = this.selectedDate.clone()
+            if (booking.start.isAfter(selectedDay.startOf('day'))
+             && booking.start.isBefore(selectedDay.endOf('day'))) {
                 this.bookings.push(booking)
                 this.sortBookings()
             }
         },
         onDelete: function(booking) {
-            this.bookings = this.bookings.filter(b => b.id != booking.id)
+            this.$emit('flash', {
+                type: 'success',
+                message: 'Booking deleted.',
+            })
+            this.remove(booking.id)
+        },
+        remove: function(id) {
+            this.bookings = this.bookings.filter(b => b.id != id)
         },
         onErrors: function(errors) {
             this.$set(this.$data, 'errors', errors)

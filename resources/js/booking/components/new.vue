@@ -161,7 +161,7 @@ export default {
                     this.$router.push('/bookings' + date, function() {
                         this.$emit('flash', {
                             type: 'success',
-                            message: 'Booking saved.',
+                            message: 'Booking created.',
                         })
                     }.bind(this))
                 }.bind(this))
