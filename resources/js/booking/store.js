@@ -8,6 +8,8 @@ import {
     BOOKINGS_SUCCESS,
     BOOKINGS_ERROR,
     BOOKINGS_SORT,
+    BOOKINGS_CREATE,
+    BOOKINGS_PUSH,
 } from './actions.js'
 
 import api from './api.js'
@@ -16,6 +18,7 @@ const state = {
     status: '',
     date: moment(),
     bookings: [],
+    sorter: undefined,
 }
 
 const getters = {
@@ -65,6 +68,20 @@ const actions = {
             commit(BOOKINGS_SORT, sorter)
         }
     },
+    [BOOKINGS_CREATE]: ({commit, dispatch}, { booking, override }) => {
+        return new Promise((resolve, reject) => {
+            api.create(booking, override)
+                .then(booking => {
+                    commit(BOOKINGS_PUSH, booking)
+                    commit(BOOKINGS_SORT)
+                    resolve(booking)
+                })
+                .catch(err => {
+                    commit(BOOKINGS_ERROR, err)
+                    reject(err)
+                })
+        })
+    },
 }
 
 const mutations = {
@@ -85,9 +102,21 @@ const mutations = {
         state.status = 'error'
     },
     [BOOKINGS_SORT]: (state, sorter) => {
-        let bookings = state.bookings.sort(sorter)
-        Vue.set(state, 'bookings', bookings)
+        state.sorter = sorter || state.sorter
+        if (state.sorter) {
+            let bookings = state.bookings.sort(state.sorter)
+            Vue.set(state, 'bookings', bookings)
+        }
     },
+    [BOOKINGS_PUSH]: (state, booking) => {
+        if (booking.start.isSame(state.date, 'day')
+         || booking.end.isSame(state.date, 'day')) {
+            let bookings = state.bookings
+            bookings.push(booking)
+            Vue.set(state, 'bookings', bookings)
+        }
+    },
+
 }
 
 export default {

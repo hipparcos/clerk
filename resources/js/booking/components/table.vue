@@ -111,7 +111,7 @@ export default {
                         self.sortBookings()
                     })
                     .catch(err => {
-                        console.log('Error getting bookings.')
+                        console.log(err)
                     })
             },
         },

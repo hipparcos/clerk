@@ -92,6 +92,7 @@ import DatePicker from 'vue2-datepicker'
 
 import ErrorsList from '../../error/components/errors.vue'
 
+import { BOOKINGS_CREATE, BOOKINGS_SET_DATE } from '../actions.js'
 import { ROOMS_REQUEST } from '../../room/actions.js'
 import api from '../api.js'
 import room from '../../room/api.js'
@@ -105,11 +106,13 @@ export default {
         this.updateRooms = _.debounce(function() {
             this.$store.dispatch(ROOMS_REQUEST)
         }.bind(this), 1000)
+        // Force set to trigger update.
+        this.start = this.startData
     },
     data: function() {
         return {
             room: 0,
-            start: lib.nextSlot(),
+            startData: lib.nextSlot(),
             durationData: lib.slot,
             override: false,
             errors: new api.BookingError({}),
@@ -127,6 +130,15 @@ export default {
                 this.updateRooms()
             }
             return this.$store.getters.getRooms
+        },
+        start: {
+            get: function() {
+                return this.startData
+            },
+            set: function(newStart) {
+                this.startData = moment(newStart)
+                this.$store.dispatch(BOOKINGS_SET_DATE, { date: moment(this.startData) })
+            },
         },
         duration: {
             get: function() {
@@ -155,7 +167,7 @@ export default {
                     id: this.room,
                 })
             })
-            api.create(booking, this.override)
+            this.$store.dispatch(BOOKINGS_CREATE, { booking, override: this.override })
                 .then(function (booking) {
                     let date = moment(this.start).format('/YYYY/MM/DD')
                     this.$router.push('/bookings' + date, function() {
