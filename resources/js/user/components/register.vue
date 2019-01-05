@@ -1,9 +1,8 @@
 <template>
     <form class="register-form">
-        <div v-if="showErrors && errors.hasErrors()" class="notification is-danger">
-            <button class="delete" @click.prevent="showErrors = false"></button>
-            <h6 class="title is-6">{{ errors.description() }}</h6>
-        </div>
+        <errors-list
+            :errors="errors"
+            ></errors-list>
         <div class="field">
             <label class="label">Name</label>
             <div class="control">
@@ -63,7 +62,10 @@
 import api from './../api.js'
 import { AUTH_REQUEST } from '../../auth/actions.js'
 
+import ErrorsList from '../../error/components/errors.vue'
+
 export default {
+    components: { ErrorsList, },
     data: function() {
         return {
             name: "",
@@ -71,7 +73,6 @@ export default {
             password: "",
             password_confirmation: "",
             errors: new api.UserError({}),
-            showErrors: true,
         }
     },
     methods: {
@@ -94,7 +95,6 @@ export default {
                 }.bind(this))
                 .catch(function (error) {
                     this.$set(this.$data, 'errors', error)
-                    this.showErrors = true
                 }.bind(this));
         },
         clear: function() {
@@ -106,7 +106,6 @@ export default {
         },
         clearErrors: function() {
             this.$set(this.$data, 'errors', new api.UserError({}))
-            this.showErrors = false
         }
     }
 }
