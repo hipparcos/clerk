@@ -4,7 +4,7 @@
             <template v-if="editMode">
                 <span class="control">
                     <span class="select is-small"
-                        :class="{ 'is-danger': errors.fields.room.length > 0 }"
+                        :class="{ 'is-danger': errors.hasErrors('room') }"
                         >
                         <select
                             v-model="room"
@@ -28,7 +28,7 @@
                         class="inplace"
                         :time-picker-options="startTimePickerOptions"
                         :not-before="today"
-                        :class="{ 'is-danger': errors.fields.start.length > 0 }"
+                        :class="{ 'is-danger': errors.hasErrors('start') }"
                         v-model="start"
                         ></date-picker>
                 </span>
@@ -44,7 +44,7 @@
                         size="4" maxlength="4" style="width: 4em;"
                         v-model="duration"
                         @keyup.enter="edit"
-                        :class="{ 'is-danger': errors.fields.duration.length > 0 }"
+                        :class="{ 'is-danger': errors.hasErrors('duration') }"
                         >
                 </span>
             </template>
@@ -119,10 +119,7 @@ import room from '../../room/api.js'
 const copy = (obj) => JSON.parse(JSON.stringify(obj))
 
 export default {
-    components: {
-        DatePicker,
-        'button-confirmed': ButtonConfirmed,
-    },
+    components: { DatePicker, ButtonConfirmed, },
     props: {
         booking: Object,
     },
@@ -138,14 +135,7 @@ export default {
             room: this.booking.room.id,
             editMode: false,
             override: false,
-            errors: {
-                message: "",
-                fields: {
-                    room: [],
-                    start: [],
-                    duration: [],
-                },
-            },
+            errors: new api.BookingError({}),
             // DatePicker
             startTimePickerOptions:{
                 start: '08:00',
@@ -165,12 +155,7 @@ export default {
             return this.booking.start.format('h:mm a')
         },
         today: function() {
-            let d = new Date()
-            d.setHours(0)
-            d.setMinutes(0)
-            d.setSeconds(0)
-            d.setMilliseconds(0)
-            return d
+            return moment().startOf('day')
         },
     },
     watch: {
@@ -202,25 +187,11 @@ export default {
                     this.$emit('update', booking)
                     this.reset()
                 }.bind(this))
-                .catch(function (error) {
-                    let data = error.data
-                    this.errors.message
-                        = data.message
-                    if ('data.relationships.room.data.id' in data.errors) {
-                        this.errors.fields.room
-                            = data.errors['data.relationships.room.data.id']
-                    }
-                    if ('data.attributes.start' in data.errors) {
-                        this.errors.fields.start
-                            = data.errors['data.attributes.start']
-                    }
-                    if ('data.attributes.duration' in data.errors) {
-                        this.errors.fields.duration
-                            = data.errors['data.attributes.duration']
-                    }
+                .catch(function (errors) {
+                    this.$set(this.$data, 'errors', errors)
                     this.$emit('errors', this.errors)
                     // If conflict, try to override.
-                    if (error.status == 409) {
+                    if (errors.status == 409) {
                         this.override = true
                     }
                 }.bind(this));
@@ -239,17 +210,11 @@ export default {
             this.start = this.booking.start
             this.duration = this.booking.duration
             this.room = this.booking.room.id
-            this.clear()
-        },
-        clear: function() {
             this.override = false
             this.clearErrors()
         },
         clearErrors: function() {
-            this.errors.message = ""
-            this.errors.fields.room = []
-            this.errors.fields.start = []
-            this.errors.fields.duration = []
+            this.$set(this.$data, 'errors', new api.BookingError({}))
             this.$emit('errors', this.errors)
         },
     },

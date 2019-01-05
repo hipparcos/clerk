@@ -1,16 +1,9 @@
 <template>
     <div>
-        <div v-if="errors.message" class="notification is-danger">
-            <button class="delete" @click.prevent="errors.message = ''"></button>
-            <h6 class="title is-6">{{ errors.message }}</h6>
-            <div v-if="hasErrors" class="content">
-                <ul>
-                    <template v-for="f in errors.fields">
-                        <li v-for="err in f">{{ err }}</li>
-                    </template>
-                </ul>
-            </div>
-        </div>
+        <errors-list
+            :errors="errors"
+            :list-errors="true"
+            ></errors-list>
         <div class="field is-horizontal">
             <div class="field-label is-normal">
                 <label class="label">Date</label>
@@ -61,7 +54,8 @@
 import _ from 'lodash'
 import moment from 'moment'
 import DatePicker from 'vue2-datepicker'
-import BookingTrComponent from './table-row.vue'
+import BookingTr from './table-row.vue'
+import ErrorsList from '../../error/components/errors.vue'
 
 import api from '../api.js'
 
@@ -73,10 +67,7 @@ const toMoment = (year, month, day) => {
 }
 
 export default {
-    components: {
-        'booking-tr': BookingTrComponent,
-        DatePicker,
-    },
+    components: { BookingTr, DatePicker, ErrorsList, },
     props: [ 'year', 'month', 'day' ],
     created: function() {
         this.getBookings()
@@ -108,10 +99,7 @@ export default {
             bookings: [],
             status: "loading",
             sorter: this.timeSorter,
-            errors: {
-                message: "",
-                fields: {},
-            },
+            errors: new api.BookingError({}),
         }
     },
     computed: {
@@ -132,10 +120,6 @@ export default {
                 nextWeek : '[on] dddd',
                 sameElse : '[on the] DD/MM/YYYY'
             });
-        },
-        hasErrors: function() {
-            return Object.values(this.errors.fields)
-                .reduce(function(acc, f) { return acc + f.length }, 0) > 0
         },
     },
     watch: {
@@ -177,8 +161,7 @@ export default {
             this.bookings = this.bookings.filter(b => b.id != booking.id)
         },
         onErrors: function(errors) {
-            this.errors.message = errors.message
-            this.$set(this.errors, 'fields', errors.fields)
+            this.$set(this.$data, 'errors', errors)
         }
     },
 }

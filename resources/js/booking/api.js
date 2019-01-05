@@ -1,6 +1,7 @@
 import axios from 'axios'
 import moment from 'moment'
 
+import err from '../error/lib.js'
 import user from '../user/api.js'
 import room from '../room/api.js'
 
@@ -91,11 +92,18 @@ class Booking {
 /**
  * BookingError contain the description of booking error.
  */
-class BookingError extends Error {
-    constructor(message, status, data) {
-        super(message)
-        this.status = status
-        this.data = data
+class BookingError extends err.APIError {
+    constructor({
+        message = 'booking.api: error',
+        status = 0,
+        data = {},
+    }) {
+        super({ message, status, data, fields: {
+            // User properties <=> api field.
+            'start': 'data.attributes.start',
+            'duration': 'data.attributes.duration',
+            'room': 'data.relationships.room.data.id',
+        }})
     }
 }
 
@@ -142,11 +150,11 @@ const save = function(booking, override) {
                 resolve(booking)
             })
             .catch(err => {
-                reject(new BookingError(
-                    "booking.api.create: api call error",
-                    err.response.status,
-                    err.response.data
-                ))
+                reject(new BookingError({
+                    message: "booking.api.create: api call error",
+                    status: err.response.status,
+                    data: err.response.data,
+                }))
             })
     })
 }
@@ -187,11 +195,11 @@ const all = function(date) {
                 resolve(bookings)
             })
             .catch(err => {
-                reject(new BookingError(
-                    "booking.api.all: api call error",
-                    err.response.status,
-                    err.response.data
-                ))
+                reject(new BookingError({
+                    message: "booking.api.all: api call error",
+                    status: err.response.status,
+                    data: err.response.data,
+                }))
             })
     })
 }
@@ -211,11 +219,11 @@ const remove = function(id) {
                 resolve()
             })
             .catch(err => {
-                reject(new BookingError(
-                    "booking.api.remove: api call error",
-                    err.response.status,
-                    err.response.data
-                ))
+                reject(new BookingError({
+                    message: "booking.api.remove: api call error",
+                    status: err.response.status,
+                    data: err.response.data,
+                }))
             })
     })
 }

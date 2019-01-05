@@ -1,16 +1,9 @@
 <template>
     <form class="booking-form">
-        <div v-if="errors.message" class="notification is-danger">
-            <button class="delete" @click.prevent="errors.message = ''"></button>
-            <h6 class="title is-6">{{ errors.message }}</h6>
-            <div v-if="hasErrors" class="content">
-                <ul>
-                    <li v-for="err in errors.fields.room">{{ err }}</li>
-                    <li v-for="err in errors.fields.start">{{ err }}</li>
-                    <li v-for="err in errors.fields.duration">{{ err }}</li>
-                </ul>
-            </div>
-        </div>
+        <errors-list
+            :errors="errors"
+            :list-errors="true"
+            ></errors-list>
         <div class="field is-horizontal">
             <div class="field-label is-normal">
                 <label class="label">Room</label>
@@ -19,7 +12,7 @@
                 <div class="field">
                     <div class="control">
                         <div class="select is-fullwidth"
-                            v-bind:class="{ 'is-danger': errors.fields.room.length > 0 }"
+                            v-bind:class="{ 'is-danger': errors.hasErrors('room') }"
                             >
                             <select
                                 v-model="room"
@@ -42,7 +35,7 @@
                 <div class="field">
                     <div class="control is-fullwidth">
                         <date-picker type="datetime" lang="en" format="DD-MM-YYYY H:mm"
-                            v-bind:class="{ 'is-danger': errors.fields.start.length > 0 }"
+                            v-bind:class="{ 'is-danger': errors.hasErrors('start') }"
                             :time-picker-options="startTimePickerOptions"
                             :not-before="today"
                             :width="'23em'"
@@ -62,7 +55,7 @@
                         <input class="input" type="text"
                             maxlength="4" style="max-width: 4em;"
                             v-model="duration"
-                            v-bind:class="{ 'is-danger': errors.fields.duration.length > 0 }">
+                            v-bind:class="{ 'is-danger': errors.hasErrors('duration') }">
                     </div>
                 </div>
             </div>
@@ -97,13 +90,15 @@ import _ from 'lodash'
 import moment from 'moment'
 import DatePicker from 'vue2-datepicker'
 
+import ErrorsList from '../../error/components/errors.vue'
+
 import { ROOMS_REQUEST } from '../../room/actions.js'
 import api from '../api.js'
 import room from '../../room/api.js'
 import lib from '../lib.js'
 
 export default {
-    components: { DatePicker },
+    components: { DatePicker, ErrorsList, },
     props: {
     },
     created: function() {
@@ -117,14 +112,7 @@ export default {
             start: lib.nextSlot(),
             durationData: lib.slot,
             override: false,
-            errors: {
-                message: "",
-                fields: {
-                    room: [],
-                    start: [],
-                    duration: [],
-                },
-            },
+            errors: new api.BookingError({}),
             // DatePicker
             startTimePickerOptions:{
                 start: '08:00',
@@ -154,16 +142,7 @@ export default {
             }
         },
         today: function() {
-            let d = new Date()
-            d.setHours(0)
-            d.setMinutes(0)
-            d.setSeconds(0)
-            d.setMilliseconds(0)
-            return d
-        },
-        hasErrors: function() {
-            return Object.values(this.errors.fields)
-                .reduce(function(acc, f) { return acc + f.length }, 0) > 0
+            return moment().startOf('day')
         },
     },
     methods: {
@@ -187,24 +166,9 @@ export default {
                     }.bind(this))
                 }.bind(this))
                 .catch(function (error) {
-                    console.log(error)
-                    let data = error.data
-                    this.errors.message
-                        = data.message
-                    if ('data.relationships.room.data.id' in data.errors) {
-                        this.errors.fields.room
-                            = data.errors['data.relationships.room.data.id']
-                    }
-                    if ('data.attributes.start' in data.errors) {
-                        this.errors.fields.start
-                            = data.errors['data.attributes.start']
-                    }
-                    if ('data.attributes.duration' in data.errors) {
-                        this.errors.fields.duration
-                            = data.errors['data.attributes.duration']
-                    }
+                    this.$set(this.$data, 'errors', error)
                     // If conflict, try to override.
-                    if (error.response.status == 409) {
+                    if (error.status == 409) {
                         this.override = true
                     }
                 }.bind(this));
@@ -217,10 +181,7 @@ export default {
             this.clearErrors()
         },
         clearErrors: function() {
-            this.errors.message = ""
-            this.errors.fields.room = []
-            this.errors.fields.start = []
-            this.errors.fields.duration = []
+            this.$set(this.$data, 'errors', new api.BookingError({}))
         }
     }
 }
