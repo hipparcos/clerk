@@ -64,6 +64,7 @@ class StoreBooking extends FormRequest
                 'data.relationships.room.data.id',
                 'This room is already in use at that time.'
             );
+            $validator->errors()->add('meta.overridable', false);
             throw (new ValidationException($validator))->status(409);
         }
     }
@@ -82,6 +83,7 @@ class StoreBooking extends FormRequest
                 'data.attributes.start',
                 'You already have a booking at that time. You may override this warning.'
             );
+            $validator->errors()->add('meta.overridable', true);
             throw (new ValidationException($validator))->status(409);
         }
     }
