@@ -106,7 +106,7 @@ import DatePicker from 'vue2-datepicker'
 import ButtonConfirmed from '../../ui/button-confirmed.vue'
 import BookingBox from './box.vue'
 
-import { BOOKINGS_UPDATE } from '../actions.js'
+import { BOOKINGS_UPDATE, BOOKINGS_DELETE } from '../actions.js'
 import api from '../api.js'
 import room from '../../room/api.js'
 
@@ -195,9 +195,12 @@ export default {
                 }.bind(this));
         },
         remove: function() {
-            api.remove(this.booking.id)
+            this.$store.dispatch(BOOKINGS_DELETE, { id: this.booking.id })
                 .then(function() {
-                    this.$emit('delete', this.booking)
+                    this.$emit('flash', {
+                        type: 'success',
+                        message: 'Booking deleted.',
+                    })
                 }.bind(this))
                 .catch(function(err) {
                     console.log(err)

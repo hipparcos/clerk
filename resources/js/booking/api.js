@@ -216,7 +216,7 @@ const remove = function(id) {
             url: `/api/bookings/${id}`,
         })
             .then(resp => {
-                resolve()
+                resolve(id)
             })
             .catch(err => {
                 reject(new BookingError({

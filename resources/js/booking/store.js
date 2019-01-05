@@ -10,6 +10,7 @@ import {
     BOOKINGS_SORT,
     BOOKINGS_CREATE,
     BOOKINGS_UPDATE,
+    BOOKINGS_DELETE,
     BOOKINGS_PUSH,
     BOOKINGS_REMOVE,
 } from './actions.js'
@@ -88,10 +89,23 @@ const actions = {
         return new Promise((resolve, reject) => {
             api.update(booking, override)
                 .then(booking => {
-                    commit(BOOKINGS_REMOVE, booking)
+                    commit(BOOKINGS_REMOVE, booking.id)
                     commit(BOOKINGS_PUSH, booking)
                     commit(BOOKINGS_SORT)
                     resolve(booking)
+                })
+                .catch(err => {
+                    commit(BOOKINGS_ERROR, err)
+                    reject(err)
+                })
+        })
+    },
+    [BOOKINGS_DELETE]: ({commit, dispatch}, { id }) => {
+        return new Promise((resolve, reject) => {
+            api.remove(id)
+                .then(id => {
+                    commit(BOOKINGS_REMOVE, id)
+                    resolve(id)
                 })
                 .catch(err => {
                     commit(BOOKINGS_ERROR, err)
@@ -133,8 +147,8 @@ const mutations = {
             Vue.set(state, 'bookings', bookings)
         }
     },
-    [BOOKINGS_REMOVE]: (state, booking) => {
-        let bookings = state.bookings.filter(b => b.id != booking.id)
+    [BOOKINGS_REMOVE]: (state, id) => {
+        let bookings = state.bookings.filter(b => b.id != id)
         Vue.set(state, 'bookings', bookings)
     },
 

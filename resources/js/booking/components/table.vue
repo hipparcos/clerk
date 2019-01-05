@@ -37,7 +37,6 @@
                     v-for="booking in bookings"
                     :key="booking.id"
                     :booking="booking"
-                    @delete="onDelete"
                     @errors="onErrors"
                     >
                 </booking-tr>
@@ -129,16 +128,6 @@ export default {
         sortBookings: function(sorter) {
             this.sorter = sorter || this.sorter || this.timeSorter
             this.$store.dispatch(BOOKINGS_SORT, { sorter: this.sorter })
-        },
-        onDelete: function(booking) {
-            this.$emit('flash', {
-                type: 'success',
-                message: 'Booking deleted.',
-            })
-            this.remove(booking.id)
-        },
-        remove: function(id) {
-            this.bookings = this.bookings.filter(b => b.id != id)
         },
         onErrors: function(errors) {
             this.$set(this.$data, 'errors', errors)
