@@ -53,7 +53,10 @@ export default {
                 .then(function(token) {
                     this.clear()
                     this.$router.push('/', function() {
-                        this.$emit('flash-success', 'You are now logged in.')
+                        this.$emit('flash', {
+                            type: 'success',
+                            message: 'You are now logged in.'
+                        })
                     }.bind(this))
                 }.bind(this))
                 .catch(function (error) {

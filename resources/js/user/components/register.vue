@@ -91,11 +91,17 @@ export default {
                         .then(function(token) {
                             this.clear()
                             this.$router.push('/', function() {
-                                this.$emit('flash-success', 'Registration completed.')
+                                this.$emit('flash', {
+                                    type: 'success',
+                                    message: 'Registration completed.',
+                                })
                             }.bind(this))
                         }.bind(this))
                         .catch(function (error) {
-                            console.log("Fail to log in after registration.")
+                            this.$emit('flash', {
+                                type: 'error',
+                                message: 'Fail to log in after registration.',
+                            })
                         }.bind(this));
                 }.bind(this))
                 .catch(function (error) {

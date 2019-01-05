@@ -32,13 +32,21 @@ const app = new Vue({
         'clerk-nav': NavComponent,
     },
     data: {
-        flashSuccessData: "",
+        flash: '',
+        flashClass: 'is-info',
     },
     methods: {
-        onFlashSuccess: function(message) {
-            this.flashSuccessData = message
+        onFlash: function({type, message}) {
+            // class.
+            this.flashClass = 'is-info'
+            switch (type) {
+                case 'success': this.flashClass = 'is-success'; break;
+                case 'error': this.flashClass = 'is-danger'; break;
+            }
+            // content.
+            this.flash = message
             setTimeout(function() {
-                this.flashSuccessData = ''
+                this.flash = ''
             }.bind(this), 5000);
         },
     }

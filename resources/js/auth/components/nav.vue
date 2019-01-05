@@ -27,11 +27,17 @@ export default {
             this.$store.dispatch(AUTH_LOGOUT)
                 .then(function(response) {
                     this.$router.push('/', function() {
-                        this.$emit('flash-success', 'You are now logged out.')
+                        this.$emit('flash', {
+                            type: 'success',
+                            message: 'You are now logged out.',
+                        })
                     }.bind(this))
                 }.bind(this))
                 .catch(function (error) {
-                    console.log("Fail to log out.")
+                    this.$emit('flash', {
+                        type: 'error',
+                        message: 'Fail to log out.',
+                    })
                 }.bind(this));
         }
     }

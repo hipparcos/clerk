@@ -15,20 +15,20 @@
             <!-- navbar -->
             <clerk-nav
                 app="{{ config('app.name', 'clerk') }}"
-                v-on:flash-success="onFlashSuccess"
+                v-on:flash="onFlash"
                 ></clerk-nav>
             <!-- flash -->
-            <div v-if="flashSuccessData" class="container notification is-success">
-                <button class="delete" @click.prevent="flashSuccessData = ''"></button>
-                <p>@{{ flashSuccessData }}</p>
+            <div v-if="flash" class="container notification" :class="flashClass">
+                <button class="delete" @click.prevent="flash = ''"></button>
+                <p>@{{ flash }}</p>
             </div>
             <!-- top view -->
             <router-view class="container" name="top"
-                v-on:flash-success="onFlashSuccess"
+                v-on:flash="onFlash"
                 ></router-view>
             <!-- main view -->
             <router-view class="container"
-                v-on:flash-success="onFlashSuccess"
+                v-on:flash="onFlash"
                 ></router-view>
         </div>
         <script src="js/app.js"></script>

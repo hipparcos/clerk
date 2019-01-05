@@ -37,10 +37,10 @@
 
             <div class="navbar-end">
                 <user-nav
-                    v-on:flash-success="onFlashSuccess"
+                    v-on:flash="onFlash"
                     ></user-nav>
                 <auth-nav
-                    v-on:flash-success="onFlashSuccess"
+                    v-on:flash="onFlash"
                     ></auth-nav>
             </div>
         </div>
@@ -67,8 +67,8 @@ export default {
         'booking-nav': BookingNavComponent,
     },
     methods: {
-        onFlashSuccess: function(message) {
-            this.$emit('flash-success', message)
+        onFlash: function(flash) {
+            this.$emit('flash', flash)
         },
     }
 }

@@ -180,7 +180,10 @@ export default {
                 .then(function (booking) {
                     let date = moment(this.start).format('/YYYY/MM/DD')
                     this.$router.push('/bookings' + date, function() {
-                        this.$emit('flash-success', 'Booking saved.')
+                        this.$emit('flash', {
+                            type: 'success',
+                            message: 'Booking saved.',
+                        })
                     }.bind(this))
                 }.bind(this))
                 .catch(function (error) {
