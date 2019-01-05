@@ -50,10 +50,8 @@
         <td>
             <span class="buttons" v-if="booking.user.id == $store.getters.getProfile.id">
                 <a class="button is-small"
-                    :class="{
-                        'is-link': editMode && !override,
-                        'is-warning': editMode && override
-                    }"
+                    :class="submitClass"
+                    :disabled="submitState"
                     @click.prevent="edit"
                     >
                     <span>Edit</span>
@@ -116,6 +114,7 @@ export default {
             start: this.booking.start,
             duration: this.booking.duration,
             room: this.booking.room.id,
+            roomCausingConflict: 0,
             editMode: false,
             override: false,
             errors: new api.BookingError({}),
@@ -133,6 +132,23 @@ export default {
         },
         today: function() {
             return moment().startOf('day')
+        },
+        submitClass: function() {
+            if (!this.editMode) {
+                return ['is-link', 'is-outlined']
+            }
+            if (this.errors.conflict()) {
+                if (!this.errors.isOverridable()
+                    && this.room == this.roomCausingConflict) {
+                    return ['is-danger']
+                }
+                return ['is-warning']
+            }
+            return ['is-link']
+        },
+        submitState: function() {
+            return this.errors.conflict() && !this.errors.isOverridable()
+                && this.room == this.roomCausingConflict
         },
     },
     watch: {
@@ -172,8 +188,12 @@ export default {
                     this.$set(this.$data, 'errors', errors)
                     this.$emit('errors', this.errors)
                     // If conflict, try to override.
-                    if (errors.status == 409) {
-                        this.override = true
+                    if (errors.conflict()) {
+                        if (errors.isOverridable()) {
+                            this.override = true
+                        } else {
+                            this.roomCausingConflict = booking.room.id
+                        }
                     }
                 }.bind(this));
         },
@@ -194,6 +214,7 @@ export default {
             this.start = this.booking.start
             this.duration = this.booking.duration
             this.room = this.booking.room.id
+            this.roomCausingConflict = 0
             this.override = false
             this.clearErrors()
         },

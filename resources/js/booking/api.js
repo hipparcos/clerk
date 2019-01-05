@@ -105,6 +105,16 @@ class BookingError extends err.APIError {
             'room': 'data.relationships.room.data.id',
         }})
     }
+
+    conflict() {
+        return this.status == 409
+    }
+
+    isOverridable() {
+        return this.hasErrors
+            && ('meta.overridable' in this.data.errors)
+            && this.data.errors['meta.overridable'][0] === true
+    }
 }
 
 /**

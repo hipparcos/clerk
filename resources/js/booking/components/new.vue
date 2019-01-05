@@ -61,10 +61,8 @@
                     <div class="control">
                         <button
                             class="button"
-                            :class="{
-                                'is-link': !override,
-                                'is-warning': override
-                            }"
+                            :class="submitClass"
+                            :disabled="submitState"
                             @click.prevent="submit">
                             Book
                         </button>
@@ -93,8 +91,6 @@ import lib from '../lib.js'
 
 export default {
     components: { DatePicker, ErrorsList, RoomSelect },
-    props: {
-    },
     created: function() {
         // Force set to trigger update.
         this.start = this.startData
@@ -102,6 +98,7 @@ export default {
     data: function() {
         return {
             room: 0,
+            roomCausingConflict: 0,
             startData: lib.nextSlot(),
             durationData: lib.slot,
             override: false,
@@ -140,6 +137,20 @@ export default {
         today: function() {
             return moment().startOf('day')
         },
+        submitClass: function() {
+            if (this.errors.conflict()) {
+                if (!this.errors.isOverridable()
+                    && this.room == this.roomCausingConflict) {
+                    return { 'is-danger': true }
+                }
+                return { 'is-warning': true }
+            }
+            return { 'is-link': true }
+        },
+        submitState: function() {
+            return this.errors.conflict() && !this.errors.isOverridable()
+                && this.room == this.roomCausingConflict
+        },
     },
     methods: {
         submit: function() {
@@ -164,13 +175,18 @@ export default {
                 .catch(function (error) {
                     this.$set(this.$data, 'errors', error)
                     // If conflict, try to override.
-                    if (error.status == 409) {
-                        this.override = true
+                    if (error.conflict()) {
+                        if (error.isOverridable()) {
+                            this.override = true
+                        } else {
+                            this.roomCausingConflict = booking.room.id
+                        }
                     }
                 }.bind(this));
         },
         clear: function() {
             this.room = 0
+            this.roomCausingConflict = 0
             this.start = lib.nextSlot()
             this.duration = lib.slot
             this.override = false
