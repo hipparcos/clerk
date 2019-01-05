@@ -17,15 +17,19 @@ const getters = {
 
 const actions = {
     [USER_REQUEST]: ({commit, dispatch}) => {
-        commit(USER_REQUEST)
-        api.profile()
-            .then(user => {
-                commit(USER_SUCCESS, user)
-            })
-            .catch(err => {
-                commit(USER_ERROR)
-                dispatch(AUTH_LOGOUT)
-            })
+        return new Promise((resolve, reject) => {
+            commit(USER_REQUEST)
+            api.profile()
+                .then(user => {
+                    commit(USER_SUCCESS, user)
+                    resolve(user)
+                })
+                .catch(err => {
+                    commit(USER_ERROR)
+                    dispatch(AUTH_LOGOUT)
+                    reject(err)
+                })
+        })
     },
 }
 
