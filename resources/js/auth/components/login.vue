@@ -1,10 +1,8 @@
 <template>
     <form class="register-form">
-        <div v-if="errors.message" class="notification is-danger">
-            <button class="delete" @click.prevent="errors.message = ''"></button>
-            <p class="strong">{{ errors.message }}</p>
-            <p v-if="errors.hint"><strong>Hint:</strong> {{ errors.hint }}</p>
-        </div>
+        <errors-list :errors="errors">
+            <p v-if="errors.hint()"><strong>Hint:</strong> {{ errors.hint() }}</p>
+        </errors-list>
         <div class="field">
             <label class="label">Email</label>
             <div class="control">
@@ -30,17 +28,18 @@
 </template>
 
 <script>
+import api from '../api.js'
 import { AUTH_REQUEST } from '../actions.js'
 
+import ErrorsList from '../../error/components/errors.vue'
+
 export default {
+    components: { ErrorsList, },
     data: function() {
         return {
             email: "",
             password: "",
-            errors: {
-                message: "",
-                hint: "",
-            },
+            errors: new api.AuthError({}),
         }
     },
     methods: {
@@ -60,9 +59,7 @@ export default {
                     }.bind(this))
                 }.bind(this))
                 .catch(function (error) {
-                    let data = error.data
-                    this.errors.message = data.message
-                    this.errors.hint = data.hint.replace('username', 'email')
+                    this.$set(this.$data, 'errors', error)
                 }.bind(this));
         },
         clear: function() {
@@ -71,7 +68,7 @@ export default {
             this.clearErrors()
         },
         clearErrors: function() {
-            this.errors.message = ""
+            this.$set(this.$data, 'errors', new api.AuthError({}))
         }
     }
 }

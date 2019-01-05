@@ -1,6 +1,8 @@
 import axios from 'axios'
 import config from './config.js'
 
+import err from '../error/lib.js'
+
 /**
  * Token is the result of an authentication request.
  */
@@ -12,9 +14,20 @@ const Token = function(token, expires) {
 /**
  * AuthError contain the description of a log in error.
  */
-const AuthError = function(status, data) {
-    this.status = status
-    this.data = data
+class AuthError extends err.APIError {
+    constructor({
+        message = 'auth.api: error',
+        status = 0,
+        data = {},
+    }) {
+        super({ message, status, data, fields: {}})
+    }
+
+    hint() {
+        if ('hint' in this.data) {
+            return this.data.hint.replace('username', 'email')+'.'
+        }
+    }
 }
 
 /**
@@ -44,10 +57,11 @@ const login = function(email, password) {
                 ))
             })
             .catch(err => {
-                reject(new AuthError(
-                    err.response.status,
-                    err.response.data
-                ))
+                reject(new AuthError({
+                    message: 'auth.api.login: api call error',
+                    status: err.response.status,
+                    data: err.response.data,
+                }))
             })
     })
 }
