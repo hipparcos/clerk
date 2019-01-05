@@ -13,14 +13,16 @@ const getters = {
 
 const actions = {
     [ROOMS_REQUEST]: ({commit, dispatch}) => {
-        commit(ROOMS_REQUEST)
-        api.all()
-            .then(rooms => {
-                commit(ROOMS_SUCCESS, rooms)
-            })
-            .catch(err => {
-                commit(ROOMS_ERROR)
-            })
+        return new Promise((resolve, reject) => {
+            commit(ROOMS_REQUEST)
+            api.all()
+                .then(rooms => {
+                    commit(ROOMS_SUCCESS, rooms)
+                })
+                .catch(err => {
+                    commit(ROOMS_ERROR)
+                })
+        })
     },
 }
 
