@@ -40,7 +40,7 @@ const app = new Vue({
             // class.
             this.flashClass = 'is-info'
             switch (type) {
-                case 'success': this.flashClass = 'is-success'; break;
+                case 'success': this.flashClass = 'is-primary'; break;
                 case 'error': this.flashClass = 'is-danger'; break;
             }
             // content.
