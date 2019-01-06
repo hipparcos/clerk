@@ -37,10 +37,18 @@ export default {
             type: lib.Event,
         },
     },
+    data: function() {
+        return {
+            offset: 0, // correct height when event starts before the grid.
+        }
+    },
     computed: {
         top: function() {
             let diff = this.event.start.diff(this.from, this.unit)
-            return this.slotHeight * (diff / this.step)
+            let realTop = this.slotHeight * (diff / this.step)
+            let top = (realTop > 0) ? realTop : 0
+            this.offset = top - realTop
+            return top
         },
         height: function() {
             return this.slotHeight * (this.event.duration / this.step)
@@ -48,7 +56,7 @@ export default {
         style: function() {
             return {
                 top: this.top + 'px',
-                height: this.height + 'px',
+                height: this.height - this.offset + 'px',
                 // TODO define background color.
                 background: '#3273dc',
             }
