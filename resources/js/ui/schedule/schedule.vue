@@ -22,6 +22,7 @@
                     :step="step"
                     :unit="unit"
                     :format="format"
+                    :style="style"
                     >
                 </schedule-group>
             </ul>
@@ -82,6 +83,17 @@ export default {
                     type: lib.Event,
                 },
             },
+        },
+    },
+    computed: {
+        style: function() {
+            let width = 0;
+            if (this.groups.length > 0) {
+                width = 100 / this.groups.length
+            }
+            return {
+                'width': width+'%',
+            }
         },
     },
 }
