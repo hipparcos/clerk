@@ -2,12 +2,12 @@ import moment from 'moment'
 
 class Event {
     constructor({
-        name = '',
+        id = 0,
         start = null,
         duration = 0,
         data = {},
     }) {
-        this.name = name
+        this.id = id
         this.start = start
         this.duration = duration
         this.data = data

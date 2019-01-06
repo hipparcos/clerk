@@ -4,7 +4,7 @@
         <ul>
             <schedule-event
                 v-for="event in filteredEvents"
-                :key="event.name"
+                :key="event.id"
                 :event="event"
                 :slot-height="slotHeight"
                 :from="from"

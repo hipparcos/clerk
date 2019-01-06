@@ -54,7 +54,7 @@ export default {
             events = events.map(events => {
                 return events.map(b => {
                     return new schedule.Event({
-                        name: 'Booking #' + b.id,
+                        id: b.id,
                         start: b.start,
                         duration: b.duration,
                         data: b,
