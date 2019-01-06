@@ -1,6 +1,6 @@
 import auth from '../auth/routes.js'
 
-import BookingIndexComponent from './components/table.vue'
+import BookingIndexComponent from './components/index.vue'
 import BookingNewComponent   from './components/new.vue'
 
 const routes = [

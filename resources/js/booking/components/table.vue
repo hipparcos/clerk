@@ -1,165 +1,76 @@
 <template>
-    <div>
-        <errors-list
-            :errors="errors"
-            :list-errors="true"
-            ></errors-list>
-        <div class="field is-horizontal has-addons has-addons-centered">
-            <p class="control">
-                <a class="button is-static">
-                    Date
-                </a>
-            </p>
-            <p class="control">
-                <date-picker type="date" lang="en" format="DD-MM-YYYY"
-                    v-model="selectedDate"
-                    ></date-picker>
-            </p>
-            <p class="control">
-                <a class="button"
-                    @click.prevent="onRefresh"
-                    :class="{ 'is-loading': $store.getters.areBookingsLoading }">
-                    <span class="icon"><i class="fas fa-sync-alt"></i></span>
-                </a>
-            </p>
-        </div>
-        <p v-if="$store.getters.areBookingsLoading" class="has-text-centered has-text-weight-bold">
-            Loading bookings...
-        </p>
-        <table v-else-if="bookings.length > 0" class="table container">
-            <thead>
-                <tr>
-                    <th><a @click.prevent="sortBookings(roomSorter)">
-                        Room
-                        <span v-if="sorter == roomSorter" class="icon"><i class="fas fa-chevron-circle-down"></i></span>
-                    </a></th>
-                    <th><a @click.prevent="sortBookings(timeSorter)">
-                        Start
-                        <span v-if="sorter == timeSorter" class="icon"><i class="fas fa-chevron-circle-down"></i></span>
-                    </a></th>
-                    <th>Duration</th>
-                    <th><a @click.prevent="sortBookings(userSorter)">
-                        User
-                        <span v-if="sorter == userSorter" class="icon"><i class="fas fa-chevron-circle-down"></i></span>
-                    </a></th>
-                    <th>Email</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <booking-tr
-                    v-for="booking in bookings"
-                    :key="booking.id"
-                    :booking="booking"
-                    @errors="onErrors"
-                    @flash="onFlash"
-                    >
-                </booking-tr>
-            </tbody>
-        </table>
-        <p v-else class="has-text-centered has-text-weight-bold">
-            No bookings {{ prettySelectedDate }}.
-        </p>
-    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th><a @click.prevent="sortBookings(roomSorter)">
+                    Room
+                    <span v-if="sorter == roomSorter" class="icon"><i class="fas fa-chevron-circle-down"></i></span>
+                </a></th>
+                <th><a @click.prevent="sortBookings(timeSorter)">
+                    Start
+                    <span v-if="sorter == timeSorter" class="icon"><i class="fas fa-chevron-circle-down"></i></span>
+                </a></th>
+                <th>Duration</th>
+                <th><a @click.prevent="sortBookings(userSorter)">
+                    User
+                    <span v-if="sorter == userSorter" class="icon"><i class="fas fa-chevron-circle-down"></i></span>
+                </a></th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <booking-tr
+                v-for="booking in bookings"
+                :key="booking.id"
+                :booking="booking"
+                @errors="onErrors"
+                @flash="onFlash"
+                >
+            </booking-tr>
+        </tbody>
+    </table>
 </template>
 
 <script>
-import _ from 'lodash'
-import moment from 'moment'
-import DatePicker from 'vue2-datepicker'
 import BookingTr from './table-row.vue'
-import ErrorsList from '../../error/components/errors.vue'
 
 import api from '../api.js'
-import store from '../store.js'
+import lib from '../lib.js'
 import { BOOKINGS_SET_DATE, BOOKINGS_REQUEST, BOOKINGS_SORT, } from '../actions.js'
 
-const toMoment = (year, month, day) => {
-    if (year && month && day) {
-        return moment(`${year}-${month}-${day}`)
-    }
-    return moment()
-}
-
 export default {
-    components: { BookingTr, DatePicker, ErrorsList, },
-    props: [ 'year', 'month', 'day' ],
-    created: function() {
-        // Sorters
-        this.roomSorter = (l, r) => {
-            let lroom = l.room.name
-            let rroom = r.room.name
-            return lroom.localeCompare(rroom)
-        }
-        this.userSorter = (l, r) => {
-            let luser = l.user.name
-            let ruser = r.user.name
-            return luser.localeCompare(ruser)
-        }
-        this.timeSorter = (l, r) => {
-            return l.start.isBefore(r.start) ? -1 : 1
-        }
-        // Set selected date from props.
-        this.selectedDate = toMoment(this.year, this.month, this.day)
+    components: { BookingTr },
+    props: {
+        bookings: {
+            type: Array,
+            required: true,
+            $each: {
+                type: api.Booking,
+            },
+        },
     },
-    data: function() {
-        return {
-            sorter: this.timeSorter,
-            errors: new api.BookingError({}),
-        }
+    created: function() {
+        this.roomSorter = lib.roomSorter
+        this.userSorter = lib.userSorter
+        this.timeSorter = lib.timeSorter
     },
     computed: {
-        bookings: function() {
-            return this.$store.getters.getBookings
-        },
-        selectedDate: {
-            get: function() {
-                return this.$store.getters.getSelectedDate
-            },
-            set: function(d) {
-                let self = this
-                let date = moment(d)
-                this.$store.dispatch(BOOKINGS_SET_DATE, { date })
-                    .then(bookings => {
-                        self.sortBookings()
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
-            },
-        },
-        prettySelectedDate: function() {
-            return moment(this.selectedDate).calendar(null,{
-                lastDay : '[yesterday]',
-                sameDay : '[today]',
-                nextDay : '[tomorrow]',
-                lastWeek : '[on last] dddd',
-                nextWeek : '[on] dddd',
-                sameElse : '[on the] DD/MM/YYYY'
-            });
-        },
+        sorter: function() {
+            return this.$store.state.sorter
+        }
     },
     methods: {
         sortBookings: function(sorter) {
-            this.sorter = sorter || this.sorter || this.timeSorter
-            this.$store.dispatch(BOOKINGS_SORT, { sorter: this.sorter })
+            this.$store.dispatch(BOOKINGS_SORT, { sorter })
                 .catch(err => console.log(err))
         },
         onErrors: function(errors) {
-            this.$set(this.$data, 'errors', errors)
+            this.$emit('errors', errors)
         },
         onFlash: function(flash) {
             this.$emit('flash', flash)
         },
-        onRefresh: function() {
-            this.$store.dispatch(BOOKINGS_REQUEST)
-        },
     },
 }
 </script>
-
-<style>
-.has-addons .mx-input {
-    border-radius: 0;
-}
-</style>
