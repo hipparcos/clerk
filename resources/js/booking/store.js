@@ -66,7 +66,7 @@ const actions = {
                 })
         })
     },
-    [BOOKINGS_SORT]: ({commit, dispatch}, { sorter }) => {
+    [BOOKINGS_SORT]: ({commit, dispatch, getters}, { sorter }) => {
         if (getters.areBookingsLoaded) {
             commit(BOOKINGS_SORT, sorter)
         }
@@ -127,7 +127,7 @@ const mutations = {
     },
     [BOOKINGS_SUCCESS]: (state, bookings) => {
         state.status = 'success'
-        Vue.set(state, 'bookings', bookings)
+        state.bookings = bookings
     },
     [BOOKINGS_ERROR]: (state, err) => {
         state.status = 'error'
@@ -136,7 +136,7 @@ const mutations = {
         state.sorter = sorter || state.sorter
         if (state.sorter) {
             let bookings = state.bookings.sort(state.sorter)
-            Vue.set(state, 'bookings', bookings)
+            state.bookings = bookings
         }
     },
     [BOOKINGS_PUSH]: (state, booking) => {
@@ -144,12 +144,12 @@ const mutations = {
          || booking.end.isSame(state.date, 'day')) {
             let bookings = state.bookings
             bookings.push(booking)
-            Vue.set(state, 'bookings', bookings)
+            state.bookings = bookings
         }
     },
     [BOOKINGS_REMOVE]: (state, id) => {
         let bookings = state.bookings.filter(b => b.id != id)
-        Vue.set(state, 'bookings', bookings)
+        state.bookings = bookings
     },
 
 }
