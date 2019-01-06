@@ -15,6 +15,13 @@
                     v-model="selectedDate"
                     ></date-picker>
             </p>
+            <p class="control">
+                <a class="button"
+                    @click.prevent="onRefresh"
+                    :class="{ 'is-loading': $store.getters.areBookingsLoading }">
+                    <span class="icon"><i class="fas fa-sync-alt"></i></span>
+                </a>
+            </p>
         </div>
         <p v-if="$store.getters.areBookingsLoading" class="has-text-centered has-text-weight-bold">
             Loading bookings...
@@ -56,7 +63,7 @@ import ErrorsList from '../../error/components/errors.vue'
 
 import api from '../api.js'
 import store from '../store.js'
-import { BOOKINGS_SET_DATE, BOOKINGS_SORT, } from '../actions.js'
+import { BOOKINGS_SET_DATE, BOOKINGS_REQUEST, BOOKINGS_SORT, } from '../actions.js'
 
 const toMoment = (year, month, day) => {
     if (year && month && day) {
@@ -134,13 +141,15 @@ export default {
         onFlash: function(flash) {
             this.$emit('flash', flash)
         },
+        onRefresh: function() {
+            this.$store.dispatch(BOOKINGS_REQUEST)
+        },
     },
 }
 </script>
 
 <style>
 .has-addons .mx-input {
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
+    border-radius: 0;
 }
 </style>
