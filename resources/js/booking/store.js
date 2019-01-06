@@ -16,12 +16,13 @@ import {
 } from './actions.js'
 
 import api from './api.js'
+import lib from './lib.js'
 
 const state = {
     status: '',
     date: moment(),
     bookings: [],
-    sorter: undefined,
+    sorter: lib.timeSorter,
 }
 
 const getters = {
@@ -58,6 +59,7 @@ const actions = {
             api.all(state.date)
                 .then(bookings => {
                     commit(BOOKINGS_SUCCESS, bookings)
+                    dispatch(BOOKINGS_SORT, {})
                     resolve(bookings)
                 })
                 .catch(err => {
@@ -134,10 +136,8 @@ const mutations = {
     },
     [BOOKINGS_SORT]: (state, sorter) => {
         state.sorter = sorter || state.sorter
-        if (state.sorter) {
-            let bookings = state.bookings.sort(state.sorter)
-            state.bookings = bookings
-        }
+        let bookings = state.bookings.sort(state.sorter)
+        state.bookings = bookings
     },
     [BOOKINGS_PUSH]: (state, booking) => {
         if (booking.start.isSame(state.date, 'day')
