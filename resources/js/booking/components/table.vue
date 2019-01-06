@@ -4,19 +4,17 @@
             :errors="errors"
             :list-errors="true"
             ></errors-list>
-        <div class="field is-horizontal">
-            <div class="field-label is-normal">
-                <label class="label">Date</label>
-            </div>
-            <div class="field-body">
-                <div class="field">
-                    <p class="control">
-                        <date-picker type="date" lang="en" format="DD-MM-YYYY"
-                            v-model="selectedDate"
-                            ></date-picker>
-                    </p>
-                </div>
-            </div>
+        <div class="field is-horizontal has-addons has-addons-centered">
+            <p class="control">
+                <a class="button is-static">
+                    Date
+                </a>
+            </p>
+            <p class="control">
+                <date-picker type="date" lang="en" format="DD-MM-YYYY"
+                    v-model="selectedDate"
+                    ></date-picker>
+            </p>
         </div>
         <p v-if="$store.getters.areBookingsLoading" class="has-text-centered has-text-weight-bold">
             Loading bookings...
@@ -139,3 +137,13 @@ export default {
     },
 }
 </script>
+
+<style>
+.has-addons .mx-input {
+    height: 2.25em;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}
+</style>

@@ -202,5 +202,6 @@ export default {
 <style>
 .booking-form {
     max-width: 26em;
+    margin-bottom: 1em;
 }
 </style>
