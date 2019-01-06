@@ -4,11 +4,12 @@ import moment from 'moment'
 import err from '../error/lib.js'
 import user from '../user/api.js'
 import room from '../room/api.js'
+import schedule from '../ui/schedule/lib.js'
 
 /**
  * Booking is a clerk booking.
  */
-class Booking {
+class Booking extends schedule.Event {
     constructor({
             id = undefined,
             start = moment(),
@@ -16,6 +17,7 @@ class Booking {
             room = {},
             user = {},
         }) {
+        super({ id, start, duration })
         this.id = id
         this.start = start
         this.duration = duration

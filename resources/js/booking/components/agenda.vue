@@ -7,22 +7,22 @@
         >
         <template slot-scope="{ event }">
             <strong class="has-text-white">
-                From {{ event.data.start.format('h:mm a') }}
-                to {{ event.data.end.format('h:mm a') }}
-            </strong> in {{ event.data.room.name }}
-            <span v-if="event.data.duration <= 30">
-                by {{ event.data.user.name }}
+                From {{ event.start.format('h:mm a') }}
+                to {{ event.end.format('h:mm a') }}
+            </strong> in {{ event.room.name }}
+            <span v-if="event.duration <= 30">
+                by {{ event.user.name }}
             </span>
-            <div v-else-if="event.data.duration >= 30">
+            <div v-else-if="event.duration >= 30">
                 <span class="icon is-small">
                     <i class="fas fa-user"></i>
                 </span>
-                {{ event.data.user.name }}
+                {{ event.user.name }}
                 <br>
                 <span class="icon is-small">
                     <i class="fas fa-envelope"></i>
                 </span>
-                {{ event.data.user.email }}
+                {{ event.user.email }}
             </div>
         </template>
     </schedule>
@@ -71,16 +71,6 @@ export default {
             let events = _.fill(Array(this.groups.length), [])
             this.groups.forEach((g, idx) => {
                 events[idx] = this.bookings.filter(b => g == b.room.name)
-            })
-            events = events.map(events => {
-                return events.map(b => {
-                    return new schedule.Event({
-                        id: b.id,
-                        start: b.start,
-                        duration: b.duration,
-                        data: b,
-                    })
-                })
             })
             return events
         }

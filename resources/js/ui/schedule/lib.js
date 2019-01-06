@@ -5,12 +5,10 @@ class Event {
         id = 0,
         start = null,
         duration = 0,
-        data = {},
     }) {
         this.id = id
         this.start = start
         this.duration = duration
-        this.data = data
     }
 
     get start() {

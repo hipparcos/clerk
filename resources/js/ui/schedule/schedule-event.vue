@@ -38,9 +38,6 @@ export default {
         },
     },
     computed: {
-        end: function() {
-            return this.event.start.clone().add(this.event.duration, this.unit)
-        },
         top: function() {
             let diff = this.event.start.diff(this.from, this.unit)
             return this.slotHeight * (diff / this.step)
