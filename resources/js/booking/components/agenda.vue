@@ -1,5 +1,7 @@
 <template>
     <schedule
+        :from="from"
+        :to="to"
         :groups="groups"
         :events="events"
         ></schedule>
@@ -27,6 +29,14 @@ export default {
         },
     },
     computed: {
+        from: function() {
+            return this.$store.getters.getSelectedDate.clone()
+                .startOf('day').hours(8)
+        },
+        to: function() {
+            return this.$store.getters.getSelectedDate.clone()
+                .startOf('day').hours(18)
+        },
         groups: function() {
             if (!this.$store.getters.areRoomsLoaded) {
                 this.$store.dispatch(ROOMS_REQUEST)
