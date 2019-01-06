@@ -140,9 +140,6 @@ export default {
 
 <style>
 .has-addons .mx-input {
-    height: 2.25em;
-    font-size: 1rem;
-    line-height: 1.5;
     border-bottom-left-radius: 0;
     border-top-left-radius: 0;
 }

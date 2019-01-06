@@ -1,1 +1,8 @@
 @import './node_modules/bulma/bulma.sass';
+
+/* Make vue2-datepicker bulma-ish. */
+.mx-input {
+    height: 2.25em !important;
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+}
