@@ -80,15 +80,15 @@ export default {
         this.roomSorter = (l, r) => {
             let lroom = l.room.name
             let rroom = r.room.name
-            return lroom > rroom
+            return lroom.localeCompare(rroom)
         }
         this.userSorter = (l, r) => {
             let luser = l.user.name
             let ruser = r.user.name
-            return luser > ruser
+            return luser.localeCompare(ruser)
         }
         this.timeSorter = (l, r) => {
-            return r.start.isBefore(l.start)
+            return l.start.isBefore(r.start) ? -1 : 1
         }
         // Set selected date from props.
         this.selectedDate = toMoment(this.year, this.month, this.day)
@@ -134,6 +134,7 @@ export default {
         sortBookings: function(sorter) {
             this.sorter = sorter || this.sorter || this.timeSorter
             this.$store.dispatch(BOOKINGS_SORT, { sorter: this.sorter })
+                .catch(err => console.log(err))
         },
         onErrors: function(errors) {
             this.$set(this.$data, 'errors', errors)
