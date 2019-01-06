@@ -38,6 +38,9 @@ import lib from '../lib.js'
 import schedule from '../../ui/schedule/lib.js'
 import { ROOMS_REQUEST } from '../../room/actions.js'
 
+
+const colors = ['#618da1', '#513e63', '#b1c4be', '#f7bd7f'];
+
 export default {
     components: { schedule: ScheduleComponent },
     props: {
@@ -71,6 +74,10 @@ export default {
             let events = _.fill(Array(this.groups.length), [])
             this.groups.forEach((g, idx) => {
                 events[idx] = this.bookings.filter(b => g == b.room.name)
+                let color = colors[idx % this.groups.length]
+                events[idx].forEach(e => {
+                    e.background = color
+                })
             })
             return events
         }
