@@ -12,6 +12,9 @@
                 :unit="unit"
                 :format="format"
                 >
+                <template slot-scope="{ event }">
+                    <slot :event="event"></slot>
+                </template>
             </schedule-event>
         </ul>
     </li>

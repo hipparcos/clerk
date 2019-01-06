@@ -24,6 +24,9 @@
                     :format="format"
                     :style="style"
                     >
+                    <template slot-scope="{ event }">
+                        <slot :event="event"></slot>
+                    </template>
                 </schedule-group>
             </ul>
         </div> <!-- .events -->

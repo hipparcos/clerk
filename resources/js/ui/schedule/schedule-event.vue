@@ -2,9 +2,7 @@
     <li class="single-event"
         :style="style"
         >
-        {{ event.name }}
-        {{ event.start.format(format) }}
-        {{ end.format(format) }}
+        <slot :event="event"></slot>
     </li>
 </template>
 
