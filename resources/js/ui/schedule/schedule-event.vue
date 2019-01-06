@@ -27,7 +27,7 @@ export default {
         },
         format: {
             type: String,
-            default: 'H:mm',
+            default: 'h:mm a',
         },
         slotHeight: {
             type: Number,
@@ -80,10 +80,11 @@ export default {
     margin-right: 5%;
 }
 
-.schedule .events .single-event a {
+.schedule .events .single-event {
     display: block;
     height: 100%;
-    padding: .8em;
+    padding: .375em .8em;
+    font-size: 0.75rem;
 }
 
 @media only screen and (min-width: 550px) {

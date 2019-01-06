@@ -4,7 +4,28 @@
         :to="to"
         :groups="groups"
         :events="events"
-        ></schedule>
+        >
+        <template slot-scope="{ event }">
+            <strong class="has-text-white">
+                From {{ event.data.start.format('h:mm a') }}
+                to {{ event.data.end.format('h:mm a') }}
+            </strong> in {{ event.data.room.name }}
+            <span v-if="event.data.duration <= 30">
+                by {{ event.data.user.name }}
+            </span>
+            <div v-else-if="event.data.duration >= 30">
+                <span class="icon is-small">
+                    <i class="fas fa-user"></i>
+                </span>
+                {{ event.data.user.name }}
+                <br>
+                <span class="icon is-small">
+                    <i class="fas fa-envelope"></i>
+                </span>
+                {{ event.data.user.email }}
+            </div>
+        </template>
+    </schedule>
 </template>
 
 <script>
