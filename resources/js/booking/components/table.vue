@@ -57,8 +57,8 @@ export default {
     },
     computed: {
         sorter: function() {
-            return this.$store.state.sorter
-        }
+            return this.$store.state.booking.sorter
+        },
     },
     methods: {
         sortBookings: function(sorter) {
