@@ -1,9 +1,11 @@
 <template>
     <div>
+        <!-- errors -->
         <errors-list
             :errors="errors"
             :list-errors="true"
             ></errors-list>
+        <!-- date filtering -->
         <div class="field is-horizontal has-addons has-addons-centered">
             <p class="control">
                 <a class="button is-static">
@@ -23,6 +25,28 @@
                 </a>
             </p>
         </div>
+        <!-- tabs -->
+        <div class="tabs is-centered">
+            <ul>
+                <li :class="{ 'is-active': component == 'booking-table' }">
+                    <a @click.prevent="component = 'booking-table'">
+                        <span class="icon is-small">
+                            <i class="fas fa-list-ul" aria-hidden="true"></i>
+                        </span>
+                        <span>List view</span>
+                    </a>
+                </li>
+                <li :class="{ 'is-active': component == 'booking-agenda' }">
+                    <a @click.prevent="component = 'booking-agenda'">
+                        <span class="icon is-small">
+                            <i class="fas fa-calendar" aria-hidden="true"></i>
+                        </span>
+                        <span>Agenda view</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- list of bookings -->
         <p v-if="$store.getters.areBookingsLoading" class="has-text-centered has-text-weight-bold">
             Loading bookings...
         </p>
