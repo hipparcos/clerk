@@ -22,6 +22,7 @@
                         :time-picker-options="startTimePickerOptions"
                         :not-before="today"
                         :class="{ 'is-danger': errors.hasErrors('start') }"
+                        :width="145"
                         v-model="start"
                         ></date-picker>
                 </span>
@@ -228,7 +229,10 @@ export default {
 
 <style>
 .inplace .mx-input {
-    height: 1.8em;
+    font-size: 0.75rem !important;
+}
+.inplace .mx-calendar-icon {
+    height: 1.125em !important;
 }
 
 .box {
