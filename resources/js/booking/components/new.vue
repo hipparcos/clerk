@@ -47,13 +47,16 @@
                 <label class="label">Duration</label>
             </div>
             <div class="field-body">
-                <div class="field">
-                    <div class="control">
+                <div class="field has-addons">
+                    <p class="control">
                         <input class="input" type="text"
                             maxlength="4" style="max-width: 4em;"
                             v-model="duration"
                             v-bind:class="{ 'is-danger': errors.hasErrors('duration') }">
-                    </div>
+                    </p>
+                    <p class="control">
+                        <a class="button is-static">minutes</a>
+                    </p>
                 </div>
             </div>
         </div>

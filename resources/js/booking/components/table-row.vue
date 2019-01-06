@@ -33,17 +33,22 @@
         </td>
         <td>
             <template v-if="editMode">
-                <span class="control">
+                <span class="field has-addons">
+                    <span class="control">
                     <input class="input is-small" type="text" ref="duration"
                         size="4" maxlength="4" style="width: 4em;"
                         v-model="duration"
                         @keyup.enter="edit"
                         :class="{ 'is-danger': errors.hasErrors('duration') }"
                         >
+                    </span>
+                    <span class="control">
+                        <a class="button is-small is-static">minutes</a>
+                    </span>
                 </span>
             </template>
             <template v-else>
-                {{ booking.duration }}
+                {{ booking.duration }} min
             </template>
         </td>
         <td>{{ booking.user.name }}</td>
