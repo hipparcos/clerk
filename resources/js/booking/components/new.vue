@@ -4,6 +4,28 @@
             :errors="errors"
             :list-errors="true"
             ></errors-list>
+        <div class="message is-link">
+        <div class="message-header">
+            <p>Book a room</p>
+        </div>
+        <div class="message-body">
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Date</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <date-picker type="datetime" lang="en" format="DD-MM-YYYY H:mm"
+                            v-bind:class="{ 'is-danger': errors.hasErrors('start') }"
+                            :time-picker-options="startTimePickerOptions"
+                            :not-before="today"
+                            v-model="start"
+                            ></date-picker>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="field is-horizontal">
             <div class="field-label is-normal">
                 <label class="label">Room</label>
@@ -11,29 +33,11 @@
             <div class="field-body">
                 <div class="field">
                     <div class="control">
-                        <div class="select is-fullwidth"
+                        <div class="select"
                             v-bind:class="{ 'is-danger': errors.hasErrors('room') }"
                             >
                             <room-select v-model="room"></room-select>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="field is-horizontal">
-            <div class="field-label is-normal">
-                <label class="label">Date</label>
-            </div>
-            <div class="field-body">
-                <div class="field">
-                    <div class="control is-fullwidth">
-                        <date-picker type="datetime" lang="en" format="DD-MM-YYYY H:mm"
-                            v-bind:class="{ 'is-danger': errors.hasErrors('start') }"
-                            :time-picker-options="startTimePickerOptions"
-                            :not-before="today"
-                            :width="'23em'"
-                            v-model="start"
-                            ></date-picker>
                     </div>
                 </div>
             </div>
@@ -73,6 +77,8 @@
                 </div>
             </div>
         </div>
+        </div> <!-- .message-body -->
+        </div> <!-- .message -->
     </form>
 </template>
 
@@ -203,5 +209,28 @@ export default {
 .booking-form {
     max-width: 26em;
     margin-bottom: 1em;
+}
+
+.booking-form .field-body {
+    max-width: 16em;
+}
+
+.booking-form .field-body div.select {
+   width: 14em;
+}
+.booking-form .field-body div.select select {
+    width: 14em;
+    padding-right: 2.5em;
+}
+.booking-form .field-body div.select::after {
+    right: 0.75em;
+}
+
+.booking-form .field-body .mx-datepicker {
+    width: 16em;
+}
+.booking-form .field-body .mx-input {
+    width: 14em;
+    padding-right: 30px;
 }
 </style>
