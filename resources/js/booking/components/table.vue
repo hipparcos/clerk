@@ -29,10 +29,19 @@
         <table v-else-if="bookings.length > 0" class="table container">
             <thead>
                 <tr>
-                    <th><a @click.prevent="sortBookings(roomSorter)">Room</a></th>
-                    <th><a @click.prevent="sortBookings(timeSorter)">Start</a></th>
+                    <th><a @click.prevent="sortBookings(roomSorter)">
+                        Room
+                        <span v-if="sorter == roomSorter" class="icon"><i class="fas fa-chevron-circle-down"></i></span>
+                    </a></th>
+                    <th><a @click.prevent="sortBookings(timeSorter)">
+                        Start
+                        <span v-if="sorter == timeSorter" class="icon"><i class="fas fa-chevron-circle-down"></i></span>
+                    </a></th>
                     <th>Duration</th>
-                    <th><a @click.prevent="sortBookings(userSorter)">User</a></th>
+                    <th><a @click.prevent="sortBookings(userSorter)">
+                        User
+                        <span v-if="sorter == userSorter" class="icon"><i class="fas fa-chevron-circle-down"></i></span>
+                    </a></th>
                     <th>Email</th>
                     <th>Actions</th>
                 </tr>
