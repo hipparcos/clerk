@@ -87,12 +87,12 @@ listed in order of priority.
         - [x] GET /bookings/{id}: implement booking viewing;
         - [x] PUT /bookings/{id}: implement booking modification (user.id must match booking.user.id);
         - [x] DELETE /bookings/{id}: implement booking deletion (user.id must match booking.user.id);
-- [ ] Frontend:
+- [x] Frontend:
     - [x] Configure node.js, add required dependancies (vue.js, vue-router, axios, bulma);
     - [x] Create a base layout;
     - [x] Configure vue-router;
-    - [ ] /:
-        - [ ] Create a timetable view of all bookings.
+    - [x] /:
+        - [x] Create a timetable view of all bookings.
     - [x] /register:
         - [x] Create registration form;
         - [x] Display registration errors.
