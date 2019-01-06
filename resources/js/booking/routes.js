@@ -35,6 +35,18 @@ const routes = [
             displayName: 'View bookings',
         },
     },
+    {
+        path: '/bookings/agenda',
+        name: 'bookings.index.agenda',
+        component: BookingIndexComponent,
+        beforeEnter: auth.ifAuthenticated,
+        props: {
+            agenda: true,
+        },
+        meta: {
+            displayName: 'View bookings',
+        },
+    },
 ]
 
 export default {

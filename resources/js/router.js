@@ -6,11 +6,7 @@ Vue.use(VueRouter)
 const root = { template: '<p></p>' }
 
 const routes = [
-    {
-        path: '/',
-        name: 'root',
-        component: root
-    },
+    { path: '/', redirect: '/bookings/agenda' },
 ]
 
 import auth from './auth/routes.js'

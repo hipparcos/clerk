@@ -82,14 +82,33 @@ const toMoment = (year, month, day) => {
 
 export default {
     components: { BookingTable, BookingAgenda, DatePicker, ErrorsList },
-    props: [ 'year', 'month', 'day' ],
+    props: {
+        year: {
+            required: false,
+        },
+        month: {
+            required: false,
+        },
+        day: {
+            required: false,
+        },
+        agenda: {
+            type: Boolean,
+            default: false,
+            required: false,
+        },
+    },
     created: function() {
         // Set selected date from props.
         this.selectedDate = toMoment(this.year, this.month, this.day)
     },
     data: function() {
+        let component = 'booking-table'
+        if (this.agenda) {
+            component = 'booking-agenda'
+        }
         return {
-            component: 'booking-table',
+            component: component,
             errors: new api.BookingError({}),
         }
     },
