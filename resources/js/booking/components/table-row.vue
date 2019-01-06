@@ -19,6 +19,7 @@
                 <span class="control">
                     <date-picker type="datetime" lang="en" format="DD-MM-YYYY H:mm"
                         class="inplace"
+                        :clearable="false"
                         :time-picker-options="startTimePickerOptions"
                         :not-before="today"
                         :class="{ 'is-danger': errors.hasErrors('start') }"

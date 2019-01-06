@@ -18,6 +18,7 @@
                     <div class="control">
                         <date-picker type="datetime" lang="en" format="DD-MM-YYYY H:mm"
                             v-bind:class="{ 'is-danger': errors.hasErrors('start') }"
+                            :clearable="false"
                             :time-picker-options="startTimePickerOptions"
                             :not-before="today"
                             v-model="start"
@@ -127,7 +128,7 @@ export default {
             },
             set: function(newStart) {
                 this.startData = moment(newStart)
-                this.$store.dispatch(BOOKINGS_SET_DATE, { date: moment(this.startData) })
+                this.$store.dispatch(BOOKINGS_SET_DATE, { date: this.startData })
             },
         },
         duration: {

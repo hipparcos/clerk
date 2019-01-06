@@ -13,7 +13,7 @@
                 </a>
             </p>
             <p class="control">
-                <date-picker type="date" lang="en" format="DD-MM-YYYY"
+                <date-picker type="date" lang="en" format="DD-MM-YYYY" :clearable="false"
                     v-model="selectedDate"
                     ></date-picker>
             </p>
