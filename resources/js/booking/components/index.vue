@@ -65,8 +65,9 @@
 import moment from 'moment'
 
 import DatePicker from 'vue2-datepicker'
-import BookingTable from './table.vue'
 import ErrorsList from '../../error/components/errors.vue'
+import BookingTable from './table.vue'
+import BookingAgenda from './agenda.vue'
 
 import api from '../api.js'
 import store from '../store.js'
@@ -80,7 +81,7 @@ const toMoment = (year, month, day) => {
 }
 
 export default {
-    components: { BookingTable, DatePicker, ErrorsList },
+    components: { BookingTable, BookingAgenda, DatePicker, ErrorsList },
     props: [ 'year', 'month', 'day' ],
     created: function() {
         // Set selected date from props.
