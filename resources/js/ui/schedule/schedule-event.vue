@@ -57,8 +57,7 @@ export default {
             return {
                 top: this.top + 'px',
                 height: this.height - this.offset + 'px',
-                // TODO define background color.
-                background: '#3273dc',
+                background: this.event.background || '#3273dc',
             }
         },
     },
