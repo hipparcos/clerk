@@ -2,16 +2,16 @@
     <li class="single-event"
         :style="style"
         >
-        <a href="#0">
-            {{ name }}
-            {{ start.format(format) }}
-            {{ end.format(format) }}
-        </a>
+        {{ event.name }}
+        {{ event.start.format(format) }}
+        {{ end.format(format) }}
     </li>
 </template>
 
 <script>
 import moment from 'moment'
+
+import lib from './lib.js'
 
 export default {
     props: {
@@ -35,34 +35,27 @@ export default {
             type: Number,
             default: 50,
         },
-        name: {
-            type: String,
-            default: 'event',
-        },
-        start: {
-            type: Object,
-        },
-        duration: {
-            type: Number,
-            default: 60,
+        event: {
+            type: lib.Event,
         },
     },
     computed: {
         end: function() {
-            return this.start.clone().add(this.duration, this.unit)
+            return this.event.start.clone().add(this.event.duration, this.unit)
         },
         top: function() {
-            let diff = this.start.diff(this.from, this.unit)
+            let diff = this.event.start.diff(this.from, this.unit)
             return this.slotHeight * (diff / this.step)
         },
         height: function() {
-            return this.slotHeight * (this.duration / this.step)
+            return this.slotHeight * (this.event.duration / this.step)
         },
         style: function() {
             return {
                 top: this.top + 'px',
                 height: this.height + 'px',
-                background: '#443453',
+                // TODO define background color.
+                background: '#3273dc',
             }
         },
     },

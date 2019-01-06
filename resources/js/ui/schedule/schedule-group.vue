@@ -5,7 +5,7 @@
             <schedule-event
                 v-for="event in filteredEvents"
                 :key="event.name"
-                v-bind="event"
+                :event="event"
                 :slot-height="slotHeight"
                 :from="from"
                 :step="step"
@@ -54,9 +54,9 @@ export default {
         },
         events: {
             type: Array,
-            default: [],
-            validator: function(value) {
-                return value.every(lib.validateEvent)
+            default: () => [],
+            $each: {
+                type: lib.Event,
             },
         },
     },

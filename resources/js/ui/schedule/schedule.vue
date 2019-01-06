@@ -44,11 +44,11 @@ export default {
     },
     props: {
         from: {
-            type: Object,
+            type: moment,
             default: () => moment().startOf('day').hours(8),
         },
         to: {
-            type: Object,
+            type: moment,
             default: () => moment().startOf('day').hours(18),
         },
         step: {
@@ -65,7 +65,7 @@ export default {
         },
         groups: {
             type: Array,
-            default: [],
+            default: () => [],
             validator: function(value) {
                 return value.every(function(elem) {
                     return typeof elem === "string"
@@ -74,11 +74,13 @@ export default {
         },
         events: {
             type: Array,
-            default: [],
-            validator: function(value) {
-                return value.every(function(arr) {
-                    return Array.isArray(arr) && arr.every(lib.validateEvent)
-                })
+            default: () => [],
+            $each: {
+                type: Array,
+                default: () => [],
+                $each: {
+                    type: lib.Event,
+                },
             },
         },
     },
