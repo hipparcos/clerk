@@ -87,23 +87,23 @@ listed in order of priority.
         - [x] GET /bookings/{id}: implement booking viewing;
         - [x] PUT /bookings/{id}: implement booking modification (user.id must match booking.user.id);
         - [x] DELETE /bookings/{id}: implement booking deletion (user.id must match booking.user.id);
-- [ ] Frontend: (as it is a SPA, every form/table will be implemented in its own component)
+- [ ] Frontend:
     - [x] Configure node.js, add required dependancies (vue.js, vue-router, axios, bulma);
     - [x] Create a base layout;
     - [x] Configure vue-router;
     - [ ] /:
-        - [ ] Create a timetable view of all bookings (obfuscated except for the one from the current user).
+        - [ ] Create a timetable view of all bookings.
     - [x] /register:
         - [x] Create registration form;
         - [x] Display registration errors.
     - [x] /login:
         - [x] Create login form;
         - [x] Display login errors.
-    - [ ] /bookings:
-        - [ ] Create a table of bookings;
-        - [ ] Add a control to delete a booking;
-        - [ ] Add a control to modify a booking (in-place editing ?).
-    - [ ] /bookings/new:
-        - [ ] Create booking form.
+    - [x] /bookings:
+        - [x] Create a table of bookings;
+        - [x] Add a control to delete a booking;
+        - [x] Add a control to modify a booking (in place editing).
+    - [x] /bookings/new:
+        - [x] Create booking form.
 - [ ] Deployment:
     - [ ] Create a Dockerfile to deploy the application.
