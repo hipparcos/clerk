@@ -4,7 +4,7 @@
             <router-link to="/bookings" class="button is-outlined">
                 View today's bookings
             </router-link>
-            <router-link to="/bookings/new" class="button is-primary">
+            <router-link to="/bookings/new" class="button is-link">
                 <strong>Book a room</strong>
             </router-link>
         </div>
