@@ -1,14 +1,15 @@
+@import './node_modules/bulma/bulma.sass';
 
-// Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
+/* Make vue2-datepicker bulma-ish. */
+.mx-input {
+    height: 2.25em !important;
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+}
+.mx-calendar-icon {
+    height: 1.5em !important;
+}
 
-// Variables
-@import 'variables';
-
-// Bootstrap
-@import '~bootstrap/scss/bootstrap';
-
-.navbar-laravel {
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+.message .mx-calendar a {
+    text-decoration: none !important;
 }

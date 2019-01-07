@@ -45,65 +45,84 @@ listed in order of priority.
     - Docker.
 
 ## Implementation
+### Deploy (local demo)
+To deploy the local demo of this app, you will need:
+- make;
+- npm;
+- composer;
+- docker-compose && docker.
+
+Run the following steps:
+```bash
+git clone https://github.com/hipparcos/clerk.git
+cd clerk
+git checkout tags/v1.0.0-alpha
+make deploy-demo
+```
+The app should be accessible through [http://127.0.0.1:8080](http://127.0.0.1:8080).
+You can register a new user or connect with the test user:
+- email: test@domain.local
+- password: test
+
 ### Model
-- user:
-    - user.id, INT, PK
-    - user.name, VARCHAR(255)
-    - user.email, VARCHAR(320)
-    - user.hash, VARCHAR(60), result of password_hash using BCRYPT
-- room:
-    - room.id, INT, PK
-    - room.name, VARCHAR(255)
-- booking:
-    - booking.id, INT, PK
-    - user.id#, FK
-    - room.id#, FK
-    - booking.start, DATETIME
-    - booking.end, DATETIME
+- users:
+    - users.id, INT, PK
+    - users.name, VARCHAR(255)
+    - users.email, VARCHAR(320)
+    - users.passwort, VARCHAR(60), result of password_hash using BCRYPT
+- rooms:
+    - rooms.id, INT, PK
+    - rooms.name, VARCHAR(255), UNIQUE
+- bookings:
+    - bookings.id, INT, PK
+    - users.id#, FK, ON DELETE CASCADE
+    - rooms.id#, FK, ON DELETE CASCADE
+    - bookings.start, DATETIME
+    - bookings.end, DATETIME
 
 ### TODO
-- [ ] Backend:
+- [x] Backend:
     - [x] Create a Laravel project.
-- [ ] Backend/Model:
-    - [ ] User:
-        - [ ] Create migration (create table + insert test user);
-        - [ ] Implement user creation;
-        - [ ] Implement user authentification.
-    - [ ] Room:
-        - [ ] Create migration (create table + insert rooms);
-    - [ ] Booking:
-        - [ ] Create migration (create table);
-        - [ ] Implement booking creation/modification:
-            - [ ] Block meeting collisions for the same room;
-            - [ ] Block meeting collisions for the same user (overridable).
-- [ ] Backend/API:
-    - [ ] User:
-        - [ ] POST /register: implement user creation;
-        - [ ] POST /login: implement user authentification;
-        - [ ] Implement user authentification middleware.
-    - [ ] Booking: (restricted to authenticated users)
-        - [ ] GET /bookings: implement booking listing for a user;
-        - [ ] POST /bookings: implement booking creation;
-        - [ ] GET /bookings/{id}: implement booking viewing;
-        - [ ] PUT /bookings/{id}: implement booking modification (user.id must match booking.user.id);
-        - [ ] DELETE /bookings/{id}: implement booking deletion (user.id must match booking.user.id);
-- [ ] Frontend: (as it is a SPA, every form/table will be implemented in its own component)
-    - [ ] Configure node.js, add required dependancies (vue.js, vue-router, bulma);
-    - [ ] Create a base layout;
-    - [ ] Configure vue-router;
-    - [ ] /:
-        - [ ] Create a timetable view of all bookings (obfuscated except for the one from the current user).
-    - [ ] /register:
-        - [ ] Create registration form;
-        - [ ] Display registration errors.
-    - [ ] /login:
-        - [ ] Create login form;
-        - [ ] Display login errors.
-    - [ ] /bookings:
-        - [ ] Create a table of bookings;
-        - [ ] Add a control to delete a booking;
-        - [ ] Add a control to modify a booking (in-place editing ?).
-    - [ ] /bookings/new:
-        - [ ] Create booking form.
+- [x] Backend/Model:
+    - [x] User: (use default Laravel authentification scaffolding)
+        - [x] Create migration (create table + insert test user);
+        - [x] Implement user creation;
+        - [x] Implement user authentification.
+    - [x] Room:
+        - [x] Create migration (create table + insert rooms);
+    - [x] Booking:
+        - [x] Create migration (create table);
+        - [x] Implement booking creation/modification:
+            - [x] Block meeting collisions for the same room;
+            - [x] Block meeting collisions for the same user (overridable).
+- [x] Backend/API:
+    - [x] User:
+        - [x] POST /register: implement user creation;
+        - [x] POST /login: implement user authentification (Passport);
+        - [x] Implement user authentification middleware (Passport).
+    - [x] Booking: (restricted to authenticated users)
+        - [x] GET /bookings: implement booking listing for a given day (or today);
+        - [x] POST /bookings: implement booking creation;
+        - [x] GET /bookings/{id}: implement booking viewing;
+        - [x] PUT /bookings/{id}: implement booking modification (user.id must match booking.user.id);
+        - [x] DELETE /bookings/{id}: implement booking deletion (user.id must match booking.user.id);
+- [x] Frontend:
+    - [x] Configure node.js, add required dependancies (vue.js, vue-router, axios, bulma);
+    - [x] Create a base layout;
+    - [x] Configure vue-router;
+    - [x] /:
+        - [x] Create a timetable view of all bookings.
+    - [x] /register:
+        - [x] Create registration form;
+        - [x] Display registration errors.
+    - [x] /login:
+        - [x] Create login form;
+        - [x] Display login errors.
+    - [x] /bookings:
+        - [x] Create a table of bookings;
+        - [x] Add a control to delete a booking;
+        - [x] Add a control to modify a booking (in place editing).
+    - [x] /bookings/new:
+        - [x] Create booking form.
 - [ ] Deployment:
     - [ ] Create a Dockerfile to deploy the application.

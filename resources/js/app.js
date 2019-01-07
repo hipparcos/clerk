@@ -1,33 +1,51 @@
+import axios from 'axios'
+import Vue from 'vue'
 
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
+import router from './router.js'
+import store from './store.js'
+import { USER_REQUEST } from './user/actions.js'
+import { ROOMS_REQUEST } from './room/actions.js'
 
-require('./bootstrap');
-
-window.Vue = require('vue');
-
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
-
-// const files = require.context('./', true, /\.vue$/i)
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key)))
-
-Vue.component('example-component', require('./components/ExampleComponent.vue'));
-
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
+import NavComponent from './nav.vue'
 
 const app = new Vue({
-    el: '#app'
-});
+    router: router,
+    store: store,
+    created: function () {
+        axios.interceptors.response.use(undefined, function (err) {
+            return new Promise(function (resolve, reject) {
+                if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
+                    this.$store.dispatch(AUTH_LOGOUT)
+                    this.$router.push('/login')
+                }
+                throw err;
+            });
+        });
+        if (store.getters.isAuthenticated) {
+            // Load user profile.
+            store.dispatch(USER_REQUEST)
+        }
+    },
+    components: {
+        'clerk-nav': NavComponent,
+    },
+    data: {
+        flash: '',
+        flashClass: 'is-info',
+    },
+    methods: {
+        onFlash: function({type, message}) {
+            // class.
+            this.flashClass = 'is-info'
+            switch (type) {
+                case 'success': this.flashClass = 'is-primary'; break;
+                case 'error': this.flashClass = 'is-danger'; break;
+            }
+            // content.
+            this.flash = message
+            setTimeout(function() {
+                this.flash = ''
+            }.bind(this), 5000);
+        },
+    }
+}).$mount('#app')
