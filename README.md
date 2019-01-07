@@ -45,6 +45,25 @@ listed in order of priority.
     - Docker.
 
 ## Implementation
+### Deploy (local demo)
+To deploy the local demo of this app, you will need:
+- make;
+- npm;
+- composer;
+- docker-compose && docker.
+
+Run the following steps:
+```bash
+git clone https://github.com/hipparcos/clerk.git
+cd clerk
+git checkout tags/v1.0.0-alpha
+make deploy-demo
+```
+The app should be accessible through [http://127.0.0.1:8080](http://127.0.0.1:8080).
+You can register a new user or connect with the test user:
+- email: test@domain.local
+- password: test
+
 ### Model
 - users:
     - users.id, INT, PK

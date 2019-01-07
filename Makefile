@@ -6,15 +6,20 @@ token_file:=token
 .PHONY: all
 all: exec # do nothing by default.
 
-# deploy-dev configures laravel test environment.
+# deploy-demo configures laravel demo environment.
 # @require composer
 # @require npm
-deploy-dev:
+# @require docker-compose
+deploy-demo:
 	composer install
 	npm install
-	sed 's/homestead/clerk/' .env.example > .env
-	php artisan key:generate
-	php artisan passport:keys
+	npm run development
+	cp .env.example .env
+	$(clerk_dev) build
+	$(clerk_dev) up -d && sleep 10
+	$(clerk_dev) exec app php artisan key:generate
+	$(clerk_dev) exec app php artisan passport:keys
+	$(clerk_dev) exec app php artisan migrate --seed
 
 # exec executes a command on a container then exit.
 # @param container app, web, database; default: app
