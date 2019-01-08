@@ -48,7 +48,7 @@ export default {
         instants: function() {
             let instants = []
             for (let i = this.from.clone();
-                 i.isBefore(this.to);
+                 i.isSameOrBefore(this.to);
                  i.add(this.step, this.unit)) {
                 instants.push(i.clone())
             }
