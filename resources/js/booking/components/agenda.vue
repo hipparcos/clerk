@@ -40,11 +40,12 @@
         :groups="groups"
         :events="events"
         >
-        <template slot-scope="{ event }">
+        <template slot-scope="{ event, smallViewportMode }">
             <strong class="has-text-white">
                 From {{ event.start.format('h:mm a') }}
                 to {{ event.end.format('h:mm a') }}
-            </strong> in {{ event.room.name }}
+            </strong>
+            <span v-if="!smallViewportMode">in {{ event.room.name }}</span>
             <span v-if="event.duration <= 30">
                 by {{ event.user.name }}
             </span>
