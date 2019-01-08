@@ -53,6 +53,10 @@ export default {
             type: String,
             default: 'minutes',
         },
+        slotHeight: {
+            type: Number,
+            default: 50,
+        },
         format: {
             type: String,
             default: 'H:mm',
@@ -68,11 +72,6 @@ export default {
                 type: lib.Event,
             },
         },
-    },
-    data: function() {
-        return {
-            slotHeight: 50,
-        }
     },
     beforeUpdate: function() {
         this.slotHeight = this.$refs.datum.clientHeight

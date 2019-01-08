@@ -11,6 +11,7 @@ An event can be a meeting, a group can be the day of a week, the timeline hours 
             :to="to"
             :step="step"
             :unit="unit"
+            :slot-height="slotHeight"
             :format="format"
             :width="groups.length"
             >
@@ -27,6 +28,7 @@ An event can be a meeting, a group can be the day of a week, the timeline hours 
                     :to="to"
                     :step="step"
                     :unit="unit"
+                    :slot-height="slotHeight"
                     :format="format"
                     :style="style"
                     >
@@ -68,6 +70,10 @@ export default {
         unit: {
             type: String,
             default: 'minutes',
+        },
+        slotHeight: {
+            type: Number,
+            default: 50,
         },
         format: {
             type: String,

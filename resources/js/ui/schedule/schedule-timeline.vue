@@ -7,7 +7,7 @@ Can be a list of hours, days...
 <template>
     <div class="timeline">
         <ul>
-            <li v-for="i in instants">
+            <li v-for="i in instants" :style="style">
                 <span>{{ i.format(format) }}</span>
             </li>
         </ul>
@@ -35,6 +35,10 @@ export default {
             type: String,
             default: 'minutes',
         },
+        slotHeight: {
+            type: Number,
+            default: 50,
+        },
         format: {
             type: String,
             default: 'H:mm',
@@ -53,6 +57,11 @@ export default {
                 instants.push(i.clone())
             }
             return instants
+        },
+        style: function() {
+            return {
+                height: this.slotHeight + 'px',
+            }
         },
     },
 }
@@ -75,7 +84,6 @@ export default {
     }
     .schedule .timeline li {
         position: relative;
-        height: 50px;
     }
     .schedule .timeline li::after {
         /* this is used to create the table horizontal lines */
