@@ -14,7 +14,7 @@ import lib from './lib.js'
 export default {
     props: {
         from: {
-            type: Object,
+            type: moment,
             default: () => moment().startOf('day').hours(8),
         },
         step: {

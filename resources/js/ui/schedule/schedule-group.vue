@@ -32,11 +32,11 @@ export default {
     },
     props: {
         from: {
-            type: Object,
+            type: moment,
             default: () => moment().startOf('day').hours(8),
         },
         to: {
-            type: Object,
+            type: moment,
             default: () => moment().startOf('day').hours(18),
         },
         step: {
