@@ -55,8 +55,8 @@ export default {
         },
         style: function() {
             return {
-                top: this.top + 'px',
-                height: this.height - this.offset + 'px',
+                top: this.top - 1 + 'px',
+                height: this.height - this.offset - 1 + 'px',
                 background: this.event.background || '#3273dc',
             }
         },
