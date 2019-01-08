@@ -5,7 +5,7 @@ The list of instants on the side of the schedule.
 Can be a list of hours, days...
 -->
 <template>
-    <div class="timeline">
+    <div class="timeline" v-if="!smallViewportMode">
         <ul>
             <li v-for="i in instants" :style="style">
                 <span>{{ i.format(format) }}</span>
@@ -46,6 +46,10 @@ export default {
         width: {
             type: Number,
             default: 1,
+        },
+        smallViewportMode: {
+            type: Boolean,
+            default: false,
         },
     },
     computed: {

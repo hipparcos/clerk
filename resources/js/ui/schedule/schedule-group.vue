@@ -17,6 +17,7 @@ Can be a day, a category...
                 :step="step"
                 :unit="unit"
                 :format="format"
+                :small-viewport-mode="smallViewportMode"
                 >
                 <template slot-scope="{ event }">
                     <slot :event="event"></slot>
@@ -61,6 +62,10 @@ export default {
             type: String,
             default: 'H:mm',
         },
+        smallViewportMode: {
+            type: Boolean,
+            default: false,
+        },
         group: {
             type: String,
             default: '',
@@ -73,18 +78,17 @@ export default {
             },
         },
     },
-    beforeUpdate: function() {
-        this.slotHeight = this.$refs.datum.clientHeight
-    },
     computed: {
         numberOfSlots: function() {
             let timespan = moment.duration(this.to.diff(this.from)).as(this.unit)
             return Math.ceil(timespan / this.step)
         },
         style: function() {
-            let height = this.numberOfSlots * this.slotHeight
-            return {
-                height: height + 'px'
+            if (!this.smallViewportMode) {
+                let height = this.numberOfSlots * this.slotHeight
+                return {
+                    height: height + 'px'
+                }
             }
         },
         filteredEvents: function() {

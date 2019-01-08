@@ -11,9 +11,7 @@ Some colors for events background:
 -->
 
 <template>
-    <li class="single-event"
-        :style="style"
-        >
+    <li class="single-event" :style="style">
         <slot :event="event"></slot>
     </li>
 </template>
@@ -45,6 +43,10 @@ export default {
             type: Number,
             default: 50,
         },
+        smallViewportMode: {
+            type: Boolean,
+            default: false,
+        },
         event: {
             type: lib.Event,
         },
@@ -66,11 +68,16 @@ export default {
             return this.slotHeight * (this.event.duration / this.step)
         },
         style: function() {
-            return {
-                top: this.top - 1 + 'px',
-                height: this.height - this.offset - 1 + 'px',
+            let style = {
                 background: this.event.background || '#3273dc',
             }
+            if (!this.smallViewportMode) {
+                Object.assign(style, {
+                    top: this.top - 1 + 'px',
+                    height: this.height - this.offset - 1 + 'px',
+                })
+            }
+            return style
         },
     },
 }

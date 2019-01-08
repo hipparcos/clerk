@@ -14,6 +14,7 @@ An event can be a meeting, a group can be the day of a week, the timeline hours 
             :slot-height="slotHeight"
             :format="format"
             :width="groups.length"
+            :small-viewport-mode="smallViewportMode"
             >
         </schedule-timeline>
 
@@ -31,9 +32,10 @@ An event can be a meeting, a group can be the day of a week, the timeline hours 
                     :slot-height="slotHeight"
                     :format="format"
                     :style="style"
+                    :small-viewport-mode="smallViewportMode"
                     >
                     <template slot-scope="{ event }">
-                        <slot :event="event"></slot>
+                        <slot :event="event" :small-viewport-mode="smallViewportMode"></slot>
                     </template>
                 </schedule-group>
             </ul>
@@ -100,16 +102,36 @@ export default {
             },
         },
     },
+    data: function() {
+        return {
+            windowWidth: 0,
+        }
+    },
     computed: {
+        smallViewportMode: function() {
+            return this.windowWidth < 800
+        },
         style: function() {
             let width = 0;
             if (this.groups.length > 0) {
-                width = 100 / this.groups.length
+                if (this.smallViewportMode) {
+                    width = 100
+                } else {
+                    width = 100 / this.groups.length
+                }
             }
             return {
                 'width': width+'%',
             }
         },
+    },
+    mounted: function() {
+        this.$nextTick(() => {
+            let self = this
+            window.addEventListener('resize', () => {
+                self.windowWidth = window.innerWidth
+            });
+        })
     },
 }
 </script>
