@@ -1,3 +1,9 @@
+<--
+Schedule main component.
+
+A schedule displays a list of events organised by groups and positioned on a timeline.
+An event can be a meeting, a group can be the day of a week, the timeline hours of each day.
+-->
 <template>
     <div class="schedule">
         <schedule-timeline

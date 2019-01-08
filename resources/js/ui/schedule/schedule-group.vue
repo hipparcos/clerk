@@ -1,3 +1,9 @@
+<--
+Schedule group component.
+
+A column in the schedule.
+Can be a day, a category...
+-->
 <template>
     <li class="events-group">
         <div class="top-info" refs="datum"><span>{{ group }}</span></div>

@@ -1,3 +1,9 @@
+<--
+Schedule timeline component.
+
+The list of instants on the side of the schedule.
+Can be a list of hours, days...
+-->
 <template>
     <div class="timeline">
         <ul>

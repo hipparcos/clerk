@@ -1,3 +1,15 @@
+<--
+Schedule single event component.
+
+A single event is displayed as a block relative to the top of the schedule.
+
+Some colors for events background:
+- blue: #577F92 (accent #618da1);
+- violet: #443453 (accent #513e63);
+- grey: #A2B9B2 (accent #b1c4be);
+- orange: #f6b067 (accent #f7bd7f);
+-->
+
 <template>
     <li class="single-event"
         :style="style"
