@@ -1,4 +1,39 @@
 <template>
+    <div class="agenda">
+    <div class="field is-horizontal has-addons has-addons-centered">
+        <p class="control">
+            <a class="button is-static">
+                From
+            </a>
+        </p>
+        <p class="control">
+            <date-picker type="time" lang="en"
+                format="HH:mm"
+                placeholder="Select time"
+                :clearable="false"
+                :time-picker-options="timePickerOptions"
+                :minute-step="step"
+                width="100"
+                v-model="from"
+                ></date-picker>
+        </p>
+        <p class="control">
+            <a class="button is-static">
+                To
+            </a>
+        </p>
+        <p class="control">
+            <date-picker type="time" lang="en"
+                format="HH:mm"
+                placeholder="Select time"
+                :clearable="false"
+                :time-picker-options="timePickerOptions"
+                :minute-step="step"
+                width="100"
+                v-model="to"
+                ></date-picker>
+        </p>
+    </div>
     <schedule
         :from="from"
         :to="to"
@@ -26,12 +61,15 @@
             </div>
         </template>
     </schedule>
+    </div>
 </template>
 
 <script>
 import _ from 'lodash'
+import moment from 'moment'
 
-import ScheduleComponent from '../../ui/schedule/schedule.vue'
+import DatePicker from 'vue2-datepicker'
+import Schedule from '../../ui/schedule/schedule.vue'
 
 import api from '../api.js'
 import lib from '../lib.js'
@@ -42,7 +80,7 @@ import { ROOMS_REQUEST } from '../../room/actions.js'
 const colors = ['#618da1', '#513e63', '#b1c4be', '#f7bd7f'];
 
 export default {
-    components: { schedule: ScheduleComponent },
+    components: { Schedule, DatePicker },
     props: {
         bookings: {
             type: Array,
@@ -52,14 +90,49 @@ export default {
             },
         },
     },
+    data: function() {
+        let step = 15
+        return {
+            fromData: this.$store.getters.getSelectedDate.clone()
+                .startOf('day').hours(8),
+            toData: this.$store.getters.getSelectedDate.clone()
+                .startOf('day').hours(18),
+            step: step,
+            timePickerOptions:{
+                start: '00:00',
+                step: '00:' + step,
+                start: '00:00',
+            },
+        }
+    },
     computed: {
-        from: function() {
-            return this.$store.getters.getSelectedDate.clone()
-                .startOf('day').hours(8)
+        from: {
+            get: function() {
+                return this.fromData
+            },
+            set: function(value) {
+                let from = this.$store.getters.getSelectedDate.clone().startOf('day')
+                let m = moment(value)
+                from.hours(m.hours())
+                from.minutes(m.minutes())
+                if (from.isBefore(this.toData)) {
+                    this.fromData = from
+                }
+            }
         },
-        to: function() {
-            return this.$store.getters.getSelectedDate.clone()
-                .startOf('day').hours(18)
+        to: {
+            get: function() {
+                return this.toData
+            },
+            set: function(value) {
+                let to = this.$store.getters.getSelectedDate.clone().startOf('day')
+                let m = moment(value)
+                to.hours(m.hours())
+                to.minutes(m.minutes())
+                if (to.isAfter(this.fromData)) {
+                    this.toData = to
+                }
+            }
         },
         groups: function() {
             if (!this.$store.getters.areRoomsLoaded) {
