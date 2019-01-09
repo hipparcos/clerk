@@ -217,6 +217,32 @@ const all = function(date) {
 }
 
 /**
+ * get retrieves a single booking from the API.
+ * @param {Number} id
+ * @returns {Promise}.then(Booking).catch(BookingError)
+ */
+const get = function(id) {
+    return new Promise((resolve, reject) => {
+        axios({
+            method: 'get',
+            url: '/api/bookings/' + id,
+        })
+            .then(resp => {
+                let data = resp.data.data
+                let booking = Booking.fromAPI(data)
+                resolve(booking)
+            })
+            .catch(err => {
+                reject(new BookingError({
+                    message: "booking.api.get: api call error",
+                    status: err.response.status,
+                    data: err.response.data,
+                }))
+            })
+    })
+}
+
+/**
  * remove deletes a booking from the backend.
  * @param {Number} booking is
  * @returns {Promise}.then().catch(BookingError)
@@ -246,6 +272,7 @@ export default {
     BookingError,
     // api calls.
     all,
+    get,
     create,
     update,
     remove,
