@@ -104,12 +104,12 @@ export default {
     },
     data: function() {
         return {
-            windowWidth: 0,
+            windowWidth: window.innerWidth,
         }
     },
     computed: {
         smallViewportMode: function() {
-            return this.windowWidth < 800
+            return this.windowWidth > 0 && this.windowWidth < 800
         },
         style: function() {
             let width = 0;
