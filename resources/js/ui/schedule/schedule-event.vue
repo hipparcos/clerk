@@ -108,7 +108,7 @@ export default {
 .schedule .events .single-event {
     display: block;
     height: 100%;
-    padding: .375em .8em;
+    padding: .15em .3em;
 }
 
 .schedule .events .single-event section.event-body {
@@ -136,9 +136,6 @@ export default {
         height: auto;
         max-width: none;
         margin-right: 0;
-    }
-    .schedule .events .single-event a {
-        padding: 1.2em;
     }
     .schedule .events .single-event:last-of-type {
         /* reset style */
