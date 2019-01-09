@@ -3,6 +3,9 @@ Schedule single event component.
 
 A single event is displayed as a block relative to the top of the schedule.
 
+To be styled, single event body must be encapsulated in:
+    section class="event-body"
+
 Some colors for events background:
 - blue: #577F92 (accent #618da1);
 - violet: #443453 (accent #513e63);
@@ -96,7 +99,6 @@ export default {
     margin-right: 20px;
     -webkit-transition: opacity .2s, background .2s;
     transition: opacity .2s, background .2s;
-    color: #ffffff;
 }
 
 .schedule .events .single-event:last-of-type {
@@ -107,6 +109,10 @@ export default {
     display: block;
     height: 100%;
     padding: .375em .8em;
+}
+
+.schedule .events .single-event section.event-body {
+    color: #ffffff;
     font-size: 0.75rem;
 }
 
