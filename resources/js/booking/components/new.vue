@@ -7,6 +7,8 @@
         <div class="message is-link">
         <div class="message-header">
             <p>Book a room</p>
+            <button class="delete" aria-label="delete"
+                @click.prevent="close"></button>
         </div>
         <div class="message-body">
         <div class="field is-horizontal">
@@ -192,6 +194,9 @@ export default {
             return this.errors.conflict() && !this.errors.isOverridable()
                 && this.room == this.roomCausingConflict
         },
+        thisDayBookingsURL: function() {
+            return moment(this.start).format('[/bookings]/YYYY/MM/DD')
+        },
     },
     methods: {
         submit: function() {
@@ -211,8 +216,7 @@ export default {
             }
             this.$store.dispatch(action, { booking, override: this.override })
                 .then(function (booking) {
-                    let date = moment(this.start).format('/YYYY/MM/DD')
-                    this.$router.push('/bookings' + date, function() {
+                    this.$router.push(this.thisDayBookingsURL, function() {
                         if (this.idData) {
                             this.$emit('flash', {
                                 type: 'success',
@@ -249,7 +253,10 @@ export default {
         },
         clearErrors: function() {
             this.$set(this.$data, 'errors', new api.BookingError({}))
-        }
+        },
+        close: function() {
+            this.$router.push(this.thisDayBookingsURL)
+        },
     }
 }
 </script>
