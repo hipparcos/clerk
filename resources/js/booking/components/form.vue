@@ -115,17 +115,26 @@ export default {
         // Force set to trigger update.
         this.start = this.startData
 
+        this.initFromBooking = function(booking) {
+            if (booking instanceof api.Booking) {
+                this.room = booking.room.id
+                this.start = booking.start // set this.start so BOOKINGS_SET_DATE is triggered.
+                this.duration = booking.duration
+            }
+        }
         this.updateBookingData = function(id) {
             id = Number(id)
             if (!id) {
                 return
             }
-            // Assume the booking is already loaded for now.
             let booking = this.$store.getters.getBookings.find(b => b.id == id)
-            if (booking) {
-                this.room = booking.room.id
-                this.start = booking.start // set this.start so BOOKINGS_SET_DATE is triggered.
-                this.duration = booking.duration
+            if (!booking) {
+                // This booking is not loaded yet, get it from the API.
+                api.get(id)
+                    .then(b => this.initFromBooking(b))
+                    .catch(err => console.log(err))
+            } else {
+                this.initFromBooking(booking)
             }
         }
     },
