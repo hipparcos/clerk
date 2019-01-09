@@ -24,7 +24,7 @@ const routes = [
             top: BookingNewComponent,
         },
         beforeEnter: auth.ifAuthenticated,
-        props: true,
+        props: { top: true },
         meta: {
             displayName: 'Edit a booking',
         },

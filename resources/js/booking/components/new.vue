@@ -112,9 +112,10 @@ export default {
 
         this.updateBookingData = function(id) {
             // Assume the booking is already loaded for now.
+            id = Number(id)
             let booking = this.$store.state.booking.bookings.find(b => b.id == id)
             if (booking) {
-                this.idData = Number(id)
+                this.idData = id
                 this.room = booking.room.id
                 this.startData = booking.start
                 this.duration = booking.duration
@@ -123,16 +124,16 @@ export default {
             }
         }
     },
-    beforeRouteLeave: function(to, from, next) {
-        this.clear()
-        next()
+    watch: {
+        id: function(newId) {
+            this.updateBookingData(newId)
+        },
     },
     beforeRouteEnter: function(to, from, next) {
-        next(vm => vm.updateBookingData(to.params.id))
-    },
-    beforeRouteUpdate: function(to, from, next) {
-        this.updateBookingData(to.params.id)
-        next()
+        // Needed to display initial data when editing.
+        next(vm => {
+            vm.updateBookingData(to.params.id)
+        })
     },
     data: function() {
         return {
