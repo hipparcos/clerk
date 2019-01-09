@@ -17,6 +17,19 @@ const routes = [
         },
     },
     {
+        path: '/bookings/:id/edit',
+        name: 'bookings.edit',
+        components: {
+            default: BookingIndexComponent,
+            top: BookingNewComponent,
+        },
+        beforeEnter: auth.ifAuthenticated,
+        props: true,
+        meta: {
+            displayName: 'Edit a booking',
+        },
+    },
+    {
         path: '/bookings',
         name: 'bookings.index',
         component: BookingIndexComponent,
