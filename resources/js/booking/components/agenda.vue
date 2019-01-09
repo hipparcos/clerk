@@ -42,8 +42,14 @@
         >
         <template slot-scope="{ event: booking, smallViewportMode }">
             <!-- delete button -->
-            <delete-button :booking="booking" classes="delete is-small" style="float: right;">
-            </delete-button>
+            <span style="float: right; line-height: 1 !important;">
+                <a class="icon is-small is-size-7 has-text-white"
+                    @click.prevent="$router.push('/bookings/'+booking.id+'/edit')">
+                    <i class="fas fa-pen"></i>
+                </a>
+                <delete-button :booking="booking" classes="delete is-small">
+                &nbsp;</delete-button>
+            </span>
             <section class="event-body">
             <!-- booking infos -->
                 <strong class="has-text-white">
