@@ -45,10 +45,11 @@
             <span style="float: right; line-height: 1 !important;">
                 <a class="icon is-small is-size-7 has-text-white"
                     @click.prevent="$router.push('/bookings/'+booking.id+'/edit')">
-                    <i class="fas fa-pen"></i>
+                    <i class="fas fa-edit"></i>
                 </a>
-                <delete-button :booking="booking" classes="delete is-small">
-                &nbsp;</delete-button>
+                <delete-button :booking="booking" classes="icon is-small is-size-7 has-text-white">
+                    <i class="fas fa-times"></i>
+                </delete-button>
             </span>
             <section class="event-body">
             <!-- booking infos -->
