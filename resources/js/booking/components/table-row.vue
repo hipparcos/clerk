@@ -34,19 +34,9 @@
         </td>
         <td>
             <template v-if="editMode">
-                <span class="field has-addons">
-                    <span class="control">
-                    <input class="input is-small" type="text" ref="duration"
-                        size="4" maxlength="4" style="width: 4em;"
-                        v-model="duration"
-                        @keyup.enter="edit"
-                        :class="{ 'is-danger': errors.hasErrors('duration') }"
-                        >
-                    </span>
-                    <span class="control">
-                        <a class="button is-small is-static">minutes</a>
-                    </span>
-                </span>
+                <duration-field v-model="duration"
+                    :has-errors="errors.hasErrors('duration')"
+                    classes="is-small"></duration-field>
             </template>
             <template v-else>
                 {{ booking.duration }} min
@@ -96,6 +86,7 @@ import DatePicker from 'vue2-datepicker'
 import DeleteButton from './delete-button.vue'
 import BookingBox from './box.vue'
 import RoomSelect from '../../room/components/select.vue'
+import DurationField from './duration-field.vue'
 
 import { BOOKINGS_UPDATE } from '../actions.js'
 import api from '../api.js'
@@ -104,7 +95,7 @@ import room from '../../room/api.js'
 const copy = (obj) => JSON.parse(JSON.stringify(obj))
 
 export default {
-    components: { DatePicker, DeleteButton, BookingBox, RoomSelect },
+    components: { DatePicker, DeleteButton, BookingBox, RoomSelect, DurationField },
     props: {
         booking: Object,
     },

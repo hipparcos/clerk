@@ -52,23 +52,8 @@
                 <label class="label">Duration</label>
             </div>
             <div class="field-body">
-                <div class="field has-addons">
-                    <p class="control">
-                        <input class="input" type="text"
-                            maxlength="4" style="max-width: 4.6em;"
-                            v-model="duration"
-                            v-bind:class="{ 'is-danger': errors.hasErrors('duration') }">
-                    </p>
-                    <p class="control">
-                        <a class="button" @click.prevent="incDuration">+</a>
-                    </p>
-                    <p class="control">
-                        <a class="button" @click.prevent="decDuration">-</a>
-                    </p>
-                    <p class="control">
-                        <a class="button is-static">minutes</a>
-                    </p>
-                </div>
+                <duration-field v-model="duration" width="4.6em"
+                    :has-errors="errors.hasErrors('duration')"></duration-field>
             </div>
         </div>
         <div class="field is-horizontal">
@@ -104,6 +89,7 @@ import DatePicker from 'vue2-datepicker'
 
 import ErrorsList from '../../error/components/errors.vue'
 import RoomSelect from '../../room/components/select.vue'
+import DurationField from './duration-field.vue'
 
 import { BOOKINGS_CREATE, BOOKINGS_UPDATE, BOOKINGS_SET_DATE } from '../actions.js'
 import api from '../api.js'
@@ -111,7 +97,7 @@ import room from '../../room/api.js'
 import lib from '../lib.js'
 
 export default {
-    components: { DatePicker, ErrorsList, RoomSelect },
+    components: { DatePicker, ErrorsList, RoomSelect, DurationField },
     props: {
         id: {
             required: false,
@@ -145,17 +131,6 @@ export default {
                 this.initFromBooking(booking)
             }
         }
-
-        // Round duration to the next slot value.
-        // @param {Number} duration
-        // @param {Function} rounding function to be used (default: Math.round)
-        this.roundToSlot = function(duration, roundFn = Math.round) {
-            duration = roundFn(duration / lib.slot) * lib.slot
-            if (duration == 0) {
-                return lib.slot
-            }
-            return duration
-        }
     },
     watch: {
         id: function(newId) {
@@ -173,7 +148,7 @@ export default {
             room: 0,
             roomCausingConflict: 0,
             startData: lib.nextSlot(),
-            durationData: lib.slot,
+            duration: lib.slot,
             override: false,
             errors: new api.BookingError({}),
             // DatePicker
@@ -197,19 +172,6 @@ export default {
                 this.$store.dispatch(BOOKINGS_SET_DATE, { date: this.startData })
             },
         },
-        duration: {
-            get: function() {
-                return this.durationData
-            },
-            set: function(value) {
-                value = Math.round(value)
-                if (value > 0) {
-                    this.durationData = value
-                } else {
-                    this.durationData = 0
-                }
-            }
-        },
         today: function() {
             return moment().startOf('day')
         },
@@ -232,22 +194,6 @@ export default {
         },
     },
     methods: {
-        incDuration: function() {
-            let roundedDuration = this.roundToSlot(this.duration, Math.ceil)
-            if (roundedDuration == this.duration) {
-                this.duration += lib.slot
-            } else {
-                this.duration = roundedDuration
-            }
-        },
-        decDuration: function() {
-            let roundedDuration = this.roundToSlot(this.duration, Math.floor)
-            if (roundedDuration == this.duration && this.duration >= 2 * lib.slot) {
-                this.duration -= lib.slot
-            } else {
-                this.duration = roundedDuration
-            }
-        },
         submit: function() {
             this.clearErrors()
             let booking = new api.Booking({
