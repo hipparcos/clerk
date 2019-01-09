@@ -81,7 +81,7 @@
                         </button>
                     </div>
                     <div class="control">
-                        <button class="button is-text" @click.prevent="clear">Clear</button>
+                        <button class="button is-text" @click.prevent="reset">Clear</button>
                     </div>
                 </div>
             </div>
@@ -116,33 +116,32 @@ export default {
         this.start = this.startData
 
         this.updateBookingData = function(id) {
-            // Assume the booking is already loaded for now.
             id = Number(id)
-            let booking = this.$store.state.booking.bookings.find(b => b.id == id)
+            if (!id) {
+                return
+            }
+            // Assume the booking is already loaded for now.
+            let booking = this.$store.getters.getBookings.find(b => b.id == id)
             if (booking) {
-                this.idData = id
                 this.room = booking.room.id
-                this.startData = booking.start
+                this.start = booking.start // set this.start so BOOKINGS_SET_DATE is triggered.
                 this.duration = booking.duration
-            } else {
-                this.clear()
             }
         }
     },
     watch: {
         id: function(newId) {
-            this.updateBookingData(newId)
+            this.reset(newId)
         },
     },
     beforeRouteEnter: function(to, from, next) {
         // Needed to display initial data when editing.
         next(vm => {
-            vm.updateBookingData(to.params.id)
+            vm.reset(to.params.id)
         })
     },
     data: function() {
         return {
-            idData: 0,
             room: 0,
             roomCausingConflict: 0,
             startData: lib.nextSlot(),
@@ -159,7 +158,7 @@ export default {
     },
     computed: {
         editMode: function() {
-            return !!this.idData
+            return !!this.id
         },
         start: {
             get: function() {
@@ -208,7 +207,7 @@ export default {
         submit: function() {
             this.clearErrors()
             let booking = new api.Booking({
-                id: this.idData,
+                id: this.id,
                 start: this.start,
                 duration: this.duration,
                 room: new room.Room({
@@ -248,12 +247,18 @@ export default {
                     }
                 }.bind(this));
         },
+        reset: function(id) {
+            this.clear()
+            id = Number(id) || this.id || 0
+            if (id) {
+                this.updateBookingData(id)
+            }
+        },
         clear: function() {
-            this.isData = 0
             this.room = 0
-            this.roomCausingConflict = 0
             this.start = lib.nextSlot()
             this.duration = lib.slot
+            this.roomCausingConflict = 0
             this.override = false
             this.clearErrors()
         },
