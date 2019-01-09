@@ -125,7 +125,7 @@ export default {
 @media only screen and (min-width: 800px) {
     .schedule .events .single-event {
         position: absolute;
-        z-index: 3;
+        /* z-index: 3; */
         /* top position and height will be set using js */
         width: calc(100% + 2px);
         left: -1px;

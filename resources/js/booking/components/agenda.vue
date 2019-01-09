@@ -40,26 +40,34 @@
         :groups="groups"
         :events="events"
         >
-        <template slot-scope="{ event, smallViewportMode }">
-            <strong class="has-text-white">
-                From {{ event.start.format('h:mm a') }}
-                to {{ event.end.format('h:mm a') }}
-            </strong>
-            <span v-if="!smallViewportMode">in {{ event.room.name }}</span>
-            <span v-if="event.duration <= 30">
-                by {{ event.user.name }}
-            </span>
-            <div v-else-if="event.duration >= 30">
-                <span class="icon is-small">
-                    <i class="fas fa-user"></i>
+        <template slot-scope="{ event: booking, smallViewportMode }">
+            <!-- delete button -->
+            <delete-button :booking="booking" classes="delete is-small" style="float: right;">
+            </delete-button>
+            <section class="event-body">
+            <!-- booking infos -->
+                <strong class="has-text-white">
+                    From {{ booking.start.format('h:mm a') }}
+                    to {{ booking.end.format('h:mm a') }}
+                </strong>
+                <!-- room infos -->
+                <span v-if="!smallViewportMode">in {{ booking.room.name }}</span>
+                <!-- user infos -->
+                <span v-if="booking.duration <= 30">
+                    by {{ booking.user.name }}
                 </span>
-                {{ event.user.name }}
-                <br>
-                <span class="icon is-small">
-                    <i class="fas fa-envelope"></i>
-                </span>
-                {{ event.user.email }}
-            </div>
+                <div v-else-if="booking.duration >= 30">
+                    <span class="icon is-small">
+                        <i class="fas fa-user"></i>
+                    </span>
+                    {{ booking.user.name }}
+                    <br>
+                    <span class="icon is-small">
+                        <i class="fas fa-envelope"></i>
+                    </span>
+                    {{ booking.user.email }}
+                </div>
+            </section>
         </template>
     </schedule>
     </div>
@@ -71,6 +79,7 @@ import moment from 'moment'
 
 import DatePicker from 'vue2-datepicker'
 import Schedule from '../../ui/schedule/schedule.vue'
+import DeleteButton from './delete-button.vue'
 
 import api from '../api.js'
 import lib from '../lib.js'
@@ -81,7 +90,7 @@ import { ROOMS_REQUEST } from '../../room/actions.js'
 const colors = ['#618da1', '#513e63', '#b1c4be', '#f7bd7f'];
 
 export default {
-    components: { Schedule, DatePicker },
+    components: { Schedule, DatePicker, DeleteButton },
     props: {
         bookings: {
             type: Array,
