@@ -94,19 +94,49 @@ import DatePicker from 'vue2-datepicker'
 import ErrorsList from '../../error/components/errors.vue'
 import RoomSelect from '../../room/components/select.vue'
 
-import { BOOKINGS_CREATE, BOOKINGS_SET_DATE } from '../actions.js'
+import { BOOKINGS_CREATE, BOOKINGS_UPDATE, BOOKINGS_SET_DATE } from '../actions.js'
 import api from '../api.js'
 import room from '../../room/api.js'
 import lib from '../lib.js'
 
 export default {
     components: { DatePicker, ErrorsList, RoomSelect },
+    props: {
+        id: {
+            required: false,
+        },
+    },
     created: function() {
         // Force set to trigger update.
         this.start = this.startData
+
+        this.updateBookingData = function(id) {
+            // Assume the booking is already loaded for now.
+            let booking = this.$store.state.booking.bookings.find(b => b.id == id)
+            if (booking) {
+                this.idData = Number(id)
+                this.room = booking.room.id
+                this.startData = booking.start
+                this.duration = booking.duration
+            } else {
+                this.clear()
+            }
+        }
+    },
+    beforeRouteLeave: function(to, from, next) {
+        this.clear()
+        next()
+    },
+    beforeRouteEnter: function(to, from, next) {
+        next(vm => vm.updateBookingData(to.params.id))
+    },
+    beforeRouteUpdate: function(to, from, next) {
+        this.updateBookingData(to.params.id)
+        next()
     },
     data: function() {
         return {
+            idData: 0,
             room: 0,
             roomCausingConflict: 0,
             startData: lib.nextSlot(),
@@ -166,20 +196,33 @@ export default {
         submit: function() {
             this.clearErrors()
             let booking = new api.Booking({
+                id: this.idData,
                 start: this.start,
                 duration: this.duration,
                 room: new room.Room({
                     id: this.room,
                 })
             })
-            this.$store.dispatch(BOOKINGS_CREATE, { booking, override: this.override })
+            let action = BOOKINGS_CREATE
+            // If editing.
+            if (this.idData) {
+                action = BOOKINGS_UPDATE
+            }
+            this.$store.dispatch(action, { booking, override: this.override })
                 .then(function (booking) {
                     let date = moment(this.start).format('/YYYY/MM/DD')
                     this.$router.push('/bookings' + date, function() {
-                        this.$emit('flash', {
-                            type: 'success',
-                            message: 'Booking created.',
-                        })
+                        if (this.idData) {
+                            this.$emit('flash', {
+                                type: 'success',
+                                message: 'Booking updated.',
+                            })
+                        } else {
+                            this.$emit('flash', {
+                                type: 'success',
+                                message: 'Booking created.',
+                            })
+                        }
                     }.bind(this))
                 }.bind(this))
                 .catch(function (error) {
@@ -195,6 +238,7 @@ export default {
                 }.bind(this));
         },
         clear: function() {
+            this.isData = 0
             this.room = 0
             this.roomCausingConflict = 0
             this.start = lib.nextSlot()
