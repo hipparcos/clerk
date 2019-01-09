@@ -76,6 +76,7 @@
                 </a>
                 <button-confirmed
                     classes="button is-small is-danger is-outlined"
+                    classesConfirm="button is-danger is-outlined"
                     @confirmed="remove">
                     <template slot="title">
                         Confirm booking deletion
@@ -84,6 +85,13 @@
                     <template slot="message">
                         Do you really want to delete this booking?
                         <booking-box :booking="booking"></booking-box>
+                    </template>
+
+                    <template slot="confirm">
+                        <span>Delete</span>
+                        <span class="icon is-small">
+                            <i class="fas fa-times"></i>
+                        </span>
                     </template>
 
                     <span>Delete</span>
