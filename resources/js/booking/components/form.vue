@@ -55,9 +55,15 @@
                 <div class="field has-addons">
                     <p class="control">
                         <input class="input" type="text"
-                            maxlength="4" style="max-width: 4em;"
+                            maxlength="4" style="max-width: 4.6em;"
                             v-model="duration"
                             v-bind:class="{ 'is-danger': errors.hasErrors('duration') }">
+                    </p>
+                    <p class="control">
+                        <a class="button" @click.prevent="incDuration">+</a>
+                    </p>
+                    <p class="control">
+                        <a class="button" @click.prevent="decDuration">-</a>
                     </p>
                     <p class="control">
                         <a class="button is-static">minutes</a>
@@ -115,6 +121,7 @@ export default {
         // Force set to trigger update.
         this.start = this.startData
 
+        // Init component data using an instance of api.Booking.
         this.initFromBooking = function(booking) {
             if (booking instanceof api.Booking) {
                 this.room = booking.room.id
@@ -122,6 +129,7 @@ export default {
                 this.duration = booking.duration
             }
         }
+        // Update component data by getting a booking by id.
         this.updateBookingData = function(id) {
             id = Number(id)
             if (!id) {
@@ -136,6 +144,17 @@ export default {
             } else {
                 this.initFromBooking(booking)
             }
+        }
+
+        // Round duration to the next slot value.
+        // @param {Number} duration
+        // @param {Function} rounding function to be used (default: Math.round)
+        this.roundToSlot = function(duration, roundFn = Math.round) {
+            duration = roundFn(duration / lib.slot) * lib.slot
+            if (duration == 0) {
+                return lib.slot
+            }
+            return duration
         }
     },
     watch: {
@@ -213,6 +232,22 @@ export default {
         },
     },
     methods: {
+        incDuration: function() {
+            let roundedDuration = this.roundToSlot(this.duration, Math.ceil)
+            if (roundedDuration == this.duration) {
+                this.duration += lib.slot
+            } else {
+                this.duration = roundedDuration
+            }
+        },
+        decDuration: function() {
+            let roundedDuration = this.roundToSlot(this.duration, Math.floor)
+            if (roundedDuration == this.duration && this.duration >= 2 * lib.slot) {
+                this.duration -= lib.slot
+            } else {
+                this.duration = roundedDuration
+            }
+        },
         submit: function() {
             this.clearErrors()
             let booking = new api.Booking({
