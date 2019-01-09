@@ -6,7 +6,8 @@
             ></errors-list>
         <div class="message is-link">
         <div class="message-header">
-            <p>Book a room</p>
+            <p v-if="editMode">Edit a booking</p>
+            <p v-else>Book a room</p>
             <button class="delete" aria-label="delete"
                 @click.prevent="close"></button>
         </div>
@@ -74,7 +75,8 @@
                             :class="submitClass"
                             :disabled="submitState"
                             @click.prevent="submit">
-                            Book
+                            <span v-if="editMode">Edit</span>
+                            <span v-else>Book</span>
                         </button>
                     </div>
                     <div class="control">
@@ -155,6 +157,9 @@ export default {
         }
     },
     computed: {
+        editMode: function() {
+            return !!this.idData
+        },
         start: {
             get: function() {
                 return this.startData
@@ -211,13 +216,13 @@ export default {
             })
             let action = BOOKINGS_CREATE
             // If editing.
-            if (this.idData) {
+            if (this.editMode) {
                 action = BOOKINGS_UPDATE
             }
             this.$store.dispatch(action, { booking, override: this.override })
                 .then(function (booking) {
                     this.$router.push(this.thisDayBookingsURL, function() {
-                        if (this.idData) {
+                        if (this.editMode) {
                             this.$emit('flash', {
                                 type: 'success',
                                 message: 'Booking updated.',
