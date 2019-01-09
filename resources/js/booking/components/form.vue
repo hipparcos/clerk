@@ -1,3 +1,4 @@
+<!-- A form to create/edit a booking -->
 <template>
     <form class="booking-form">
         <errors-list

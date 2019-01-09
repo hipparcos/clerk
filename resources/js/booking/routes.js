@@ -1,7 +1,7 @@
 import auth from '../auth/routes.js'
 
 import BookingIndexComponent from './components/index.vue'
-import BookingNewComponent   from './components/new.vue'
+import BookingFormComponent   from './components/form.vue'
 
 const routes = [
     {
@@ -9,7 +9,7 @@ const routes = [
         name: 'bookings.new',
         components: {
             default: BookingIndexComponent,
-            top: BookingNewComponent,
+            top: BookingFormComponent,
         },
         beforeEnter: auth.ifAuthenticated,
         meta: {
@@ -21,7 +21,7 @@ const routes = [
         name: 'bookings.edit',
         components: {
             default: BookingIndexComponent,
-            top: BookingNewComponent,
+            top: BookingFormComponent,
         },
         beforeEnter: auth.ifAuthenticated,
         props: { top: true },
