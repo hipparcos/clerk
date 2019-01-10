@@ -8,7 +8,7 @@ use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\RegisterUser;
+use App\Http\Requests\User\Register as RegisterRequest;
 use App\Http\Resources\User as UserResource;
 
 class AuthController extends Controller
@@ -17,10 +17,10 @@ class AuthController extends Controller
      * Handle a registration request for the application.
      *
      * @override
-     * @param  \App\Http\Requests\RegisterUser  $request
+     * @param  \App\Http\Requests\User\Register  $request
      * @return \Illuminate\Http\Response
      */
-    public function register(RegisterUser $request)
+    public function register(RegisterRequest $request)
     {
         $data = $request->validated()['data']['attributes'];
 
