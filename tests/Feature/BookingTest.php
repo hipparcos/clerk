@@ -263,7 +263,7 @@ class BookingTest extends TestCase
                 'data' => [
                     'id' => $id,
                     'attributes' => [
-                        'end' => json_encode((clone $this->inst2)->addMinutes($duration)),
+                        'end' => (clone $this->inst2)->addMinutes($duration)->jsonSerialize(),
                     ],
                 ],
             ]);
@@ -297,7 +297,7 @@ class BookingTest extends TestCase
                 'data' => [
                     'id' => $id,
                     'attributes' => [
-                        'end' => json_encode((clone $this->inst0)->addMinutes($duration)),
+                        'end' => (clone $this->inst0)->addMinutes($duration)->jsonSerialize(),
                     ],
                 ],
             ]);
