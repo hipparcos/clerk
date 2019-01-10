@@ -181,7 +181,7 @@ class BookingTest extends TestCase
 
         $response
             ->assertStatus(409)
-            ->assertJsonValidationErrors('data.attributes.room.data.id');
+            ->assertJsonValidationErrors('data.relationships.room.data.id');
     }
 
     public function testCreateAuthenticatedUserCollision() {
@@ -327,7 +327,7 @@ class BookingTest extends TestCase
 
         $response
             ->assertStatus(409)
-            ->assertJsonValidationErrors('data.attributes.room.data.id');
+            ->assertJsonValidationErrors('data.relationships.room.data.id');
     }
 
     public function testUpdateNotOwned() {
