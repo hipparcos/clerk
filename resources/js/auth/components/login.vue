@@ -30,6 +30,8 @@
 <script>
 import api from '../api.js'
 import { AUTH_REQUEST } from '../actions.js'
+import { NOTIFICATIONS_PUSH } from '../../notification/actions.js'
+import notif from '../../notification/lib.js'
 
 import ErrorsList from '../../error/components/errors.vue'
 
@@ -51,12 +53,11 @@ export default {
             this.$store.dispatch(AUTH_REQUEST, { email, password })
                 .then(function(token) {
                     this.clear()
-                    this.$router.push('/', function() {
-                        this.$emit('flash', {
-                            type: 'success',
-                            message: 'You are now logged in.'
-                        })
-                    }.bind(this))
+                    this.$store.dispatch(NOTIFICATIONS_PUSH, new notif.Notification({
+                        type: notif.Type.success,
+                        message: 'You are now logged in.',
+                    }))
+                    this.$router.push('/')
                 }.bind(this))
                 .catch(function (error) {
                     this.$set(this.$data, 'errors', error)

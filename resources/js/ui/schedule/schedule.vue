@@ -1,3 +1,9 @@
+<--
+Schedule main component.
+
+A schedule displays a list of events organised by groups and positioned on a timeline.
+An event can be a meeting, a group can be the day of a week, the timeline hours of each day.
+-->
 <template>
     <div class="schedule">
         <schedule-timeline
@@ -5,8 +11,10 @@
             :to="to"
             :step="step"
             :unit="unit"
+            :slot-height="slotHeight"
             :format="format"
             :width="groups.length"
+            :small-viewport-mode="smallViewportMode"
             >
         </schedule-timeline>
 
@@ -21,11 +29,13 @@
                     :to="to"
                     :step="step"
                     :unit="unit"
+                    :slot-height="slotHeight"
                     :format="format"
                     :style="style"
+                    :small-viewport-mode="smallViewportMode"
                     >
                     <template slot-scope="{ event }">
-                        <slot :event="event"></slot>
+                        <slot :event="event" :small-viewport-mode="smallViewportMode"></slot>
                     </template>
                 </schedule-group>
             </ul>
@@ -63,6 +73,10 @@ export default {
             type: String,
             default: 'minutes',
         },
+        slotHeight: {
+            type: Number,
+            default: 50,
+        },
         format: {
             type: String,
             default: 'H:mm',
@@ -88,16 +102,36 @@ export default {
             },
         },
     },
+    data: function() {
+        return {
+            windowWidth: window.innerWidth,
+        }
+    },
     computed: {
+        smallViewportMode: function() {
+            return this.windowWidth > 0 && this.windowWidth < 800
+        },
         style: function() {
             let width = 0;
             if (this.groups.length > 0) {
-                width = 100 / this.groups.length
+                if (this.smallViewportMode) {
+                    width = 100
+                } else {
+                    width = 100 / this.groups.length
+                }
             }
             return {
                 'width': width+'%',
             }
         },
+    },
+    mounted: function() {
+        this.$nextTick(() => {
+            let self = this
+            window.addEventListener('resize', () => {
+                self.windowWidth = window.innerWidth
+            });
+        })
     },
 }
 </script>

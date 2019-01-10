@@ -1,3 +1,4 @@
+<!-- A form to create/edit a booking -->
 <template>
     <form class="booking-form">
         <errors-list
@@ -6,7 +7,10 @@
             ></errors-list>
         <div class="message is-link">
         <div class="message-header">
-            <p>Book a room</p>
+            <p v-if="editMode">Edit a booking</p>
+            <p v-else>Book a room</p>
+            <button class="delete" aria-label="delete"
+                @click.prevent="close"></button>
         </div>
         <div class="message-body">
         <div class="field is-horizontal">
@@ -48,17 +52,8 @@
                 <label class="label">Duration</label>
             </div>
             <div class="field-body">
-                <div class="field has-addons">
-                    <p class="control">
-                        <input class="input" type="text"
-                            maxlength="4" style="max-width: 4em;"
-                            v-model="duration"
-                            v-bind:class="{ 'is-danger': errors.hasErrors('duration') }">
-                    </p>
-                    <p class="control">
-                        <a class="button is-static">minutes</a>
-                    </p>
-                </div>
+                <duration-field v-model="duration" width="4.6em"
+                    :has-errors="errors.hasErrors('duration')"></duration-field>
             </div>
         </div>
         <div class="field is-horizontal">
@@ -72,11 +67,12 @@
                             :class="submitClass"
                             :disabled="submitState"
                             @click.prevent="submit">
-                            Book
+                            <span v-if="editMode">Edit</span>
+                            <span v-else>Book</span>
                         </button>
                     </div>
                     <div class="control">
-                        <button class="button is-text" @click.prevent="clear">Clear</button>
+                        <button class="button is-text" @click.prevent="reset">Clear</button>
                     </div>
                 </div>
             </div>
@@ -93,24 +89,69 @@ import DatePicker from 'vue2-datepicker'
 
 import ErrorsList from '../../error/components/errors.vue'
 import RoomSelect from '../../room/components/select.vue'
+import DurationField from './duration-field.vue'
 
-import { BOOKINGS_CREATE, BOOKINGS_SET_DATE } from '../actions.js'
+import { NOTIFICATIONS_PUSH } from '../../notification/actions.js'
+import notif from '../../notification/lib.js'
+
+import { BOOKINGS_CREATE, BOOKINGS_UPDATE, BOOKINGS_SET_DATE } from '../actions.js'
 import api from '../api.js'
 import room from '../../room/api.js'
 import lib from '../lib.js'
 
 export default {
-    components: { DatePicker, ErrorsList, RoomSelect },
+    components: { DatePicker, ErrorsList, RoomSelect, DurationField },
+    props: {
+        id: {
+            required: false,
+        },
+    },
     created: function() {
         // Force set to trigger update.
         this.start = this.startData
+
+        // Init component data using an instance of api.Booking.
+        this.initFromBooking = function(booking) {
+            if (booking instanceof api.Booking) {
+                this.room = booking.room.id
+                this.start = booking.start // set this.start so BOOKINGS_SET_DATE is triggered.
+                this.duration = booking.duration
+            }
+        }
+        // Update component data by getting a booking by id.
+        this.updateBookingData = function(id) {
+            id = Number(id)
+            if (!id) {
+                return
+            }
+            let booking = this.$store.getters.getBookings.find(b => b.id == id)
+            if (!booking) {
+                // This booking is not loaded yet, get it from the API.
+                api.get(id)
+                    .then(b => this.initFromBooking(b))
+                    .catch(err => console.log(err))
+            } else {
+                this.initFromBooking(booking)
+            }
+        }
+    },
+    watch: {
+        id: function(newId) {
+            this.reset(newId)
+        },
+    },
+    beforeRouteEnter: function(to, from, next) {
+        // Needed to display initial data when editing.
+        next(vm => {
+            vm.reset(to.params.id)
+        })
     },
     data: function() {
         return {
             room: 0,
             roomCausingConflict: 0,
             startData: lib.nextSlot(),
-            durationData: lib.slot,
+            duration: lib.slot,
             override: false,
             errors: new api.BookingError({}),
             // DatePicker
@@ -122,6 +163,9 @@ export default {
         }
     },
     computed: {
+        editMode: function() {
+            return !!this.id
+        },
         start: {
             get: function() {
                 return this.startData
@@ -130,19 +174,6 @@ export default {
                 this.startData = moment(newStart)
                 this.$store.dispatch(BOOKINGS_SET_DATE, { date: this.startData })
             },
-        },
-        duration: {
-            get: function() {
-                return this.durationData
-            },
-            set: function(value) {
-                value = Math.round(value)
-                if (value > 0) {
-                    this.durationData = value
-                } else {
-                    this.durationData = 0
-                }
-            }
         },
         today: function() {
             return moment().startOf('day')
@@ -161,25 +192,40 @@ export default {
             return this.errors.conflict() && !this.errors.isOverridable()
                 && this.room == this.roomCausingConflict
         },
+        thisDayBookingsURL: function() {
+            return moment(this.start).format('[/bookings]/YYYY/MM/DD')
+        },
     },
     methods: {
         submit: function() {
             this.clearErrors()
             let booking = new api.Booking({
+                id: this.id,
                 start: this.start,
                 duration: this.duration,
                 room: new room.Room({
                     id: this.room,
                 })
             })
-            this.$store.dispatch(BOOKINGS_CREATE, { booking, override: this.override })
+            let action = BOOKINGS_CREATE
+            // If editing.
+            if (this.editMode) {
+                action = BOOKINGS_UPDATE
+            }
+            this.$store.dispatch(action, { booking, override: this.override })
                 .then(function (booking) {
-                    let date = moment(this.start).format('/YYYY/MM/DD')
-                    this.$router.push('/bookings' + date, function() {
-                        this.$emit('flash', {
-                            type: 'success',
-                            message: 'Booking created.',
-                        })
+                    this.$router.push(this.thisDayBookingsURL, function() {
+                        if (this.editMode) {
+                            this.$store.dispatch(NOTIFICATIONS_PUSH, new notif.Notification({
+                                type: notif.Type.success,
+                                message: 'Booking updated.',
+                            }))
+                        } else {
+                            this.$store.dispatch(NOTIFICATIONS_PUSH, new notif.Notification({
+                                type: notif.Type.success,
+                                message: 'Booking created.',
+                            }))
+                        }
                     }.bind(this))
                 }.bind(this))
                 .catch(function (error) {
@@ -194,17 +240,27 @@ export default {
                     }
                 }.bind(this));
         },
+        reset: function(id) {
+            this.clear()
+            id = Number(id) || this.id || 0
+            if (id) {
+                this.updateBookingData(id)
+            }
+        },
         clear: function() {
             this.room = 0
-            this.roomCausingConflict = 0
             this.start = lib.nextSlot()
             this.duration = lib.slot
+            this.roomCausingConflict = 0
             this.override = false
             this.clearErrors()
         },
         clearErrors: function() {
             this.$set(this.$data, 'errors', new api.BookingError({}))
-        }
+        },
+        close: function() {
+            this.$router.push(this.thisDayBookingsURL)
+        },
     }
 }
 </script>

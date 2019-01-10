@@ -34,19 +34,9 @@
         </td>
         <td>
             <template v-if="editMode">
-                <span class="field has-addons">
-                    <span class="control">
-                    <input class="input is-small" type="text" ref="duration"
-                        size="4" maxlength="4" style="width: 4em;"
-                        v-model="duration"
-                        @keyup.enter="edit"
-                        :class="{ 'is-danger': errors.hasErrors('duration') }"
-                        >
-                    </span>
-                    <span class="control">
-                        <a class="button is-small is-static">minutes</a>
-                    </span>
-                </span>
+                <duration-field v-model="duration"
+                    :has-errors="errors.hasErrors('duration')"
+                    classes="is-small"></duration-field>
             </template>
             <template v-else>
                 {{ booking.duration }} min
@@ -74,23 +64,15 @@
                         <i class="fas fa-ban"></i>
                     </span>
                 </a>
-                <button-confirmed
+                <delete-button
                     classes="button is-small is-danger is-outlined"
-                    @confirmed="remove">
-                    <template slot="title">
-                        Confirm booking deletion
-                    </template>
-
-                    <template slot="message">
-                        Do you really want to delete this booking?
-                        <booking-box :booking="booking"></booking-box>
-                    </template>
-
+                    classesConfirm="button is-danger is-outlined"
+                    :booking="booking">
                     <span>Delete</span>
                     <span class="icon is-small">
                         <i class="fas fa-times"></i>
                     </span>
-                </button-confirmed>
+                </delete-button>
             </span>
         </td>
     </tr>
@@ -101,18 +83,21 @@ import _ from 'lodash'
 import moment from 'moment'
 
 import DatePicker from 'vue2-datepicker'
-import ButtonConfirmed from '../../ui/button-confirmed.vue'
+import DeleteButton from './delete-button.vue'
 import BookingBox from './box.vue'
 import RoomSelect from '../../room/components/select.vue'
+import DurationField from './duration-field.vue'
 
-import { BOOKINGS_UPDATE, BOOKINGS_DELETE } from '../actions.js'
+import { NOTIFICATIONS_PUSH } from '../../notification/actions.js'
+import notif from '../../notification/lib.js'
+import { BOOKINGS_UPDATE } from '../actions.js'
 import api from '../api.js'
 import room from '../../room/api.js'
 
 const copy = (obj) => JSON.parse(JSON.stringify(obj))
 
 export default {
-    components: { DatePicker, ButtonConfirmed, BookingBox, RoomSelect },
+    components: { DatePicker, DeleteButton, BookingBox, RoomSelect, DurationField },
     props: {
         booking: Object,
     },
@@ -185,10 +170,10 @@ export default {
             this.$store.dispatch(BOOKINGS_UPDATE, { booking, override: this.override })
                 .then(function(booking) {
                     this.reset()
-                    this.$emit('flash', {
-                        type: 'success',
+                    this.$store.dispatch(NOTIFICATIONS_PUSH, new notif.Notification({
+                        type: notif.Type.success,
                         message: 'Booking updated.',
-                    })
+                    }))
                 }.bind(this))
                 .catch(function (errors) {
                     console.log(errors)
@@ -203,18 +188,6 @@ export default {
                         }
                     }
                 }.bind(this));
-        },
-        remove: function() {
-            this.$store.dispatch(BOOKINGS_DELETE, { id: this.booking.id })
-                .then(function(id) {
-                    this.$emit('flash', {
-                        type: 'success',
-                        message: 'Booking deleted.',
-                    })
-                }.bind(this))
-                .catch(function(err) {
-                    console.log(err)
-                })
         },
         reset: function() {
             this.editMode = false

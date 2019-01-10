@@ -144,9 +144,6 @@ export default {
         onErrors: function(errors) {
             this.$set(this.$data, 'errors', errors)
         },
-        onFlash: function(flash) {
-            this.$emit('flash', flash)
-        },
         onRefresh: function() {
             this.$store.dispatch(BOOKINGS_REQUEST)
         },

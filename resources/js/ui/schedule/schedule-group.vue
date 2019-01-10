@@ -1,7 +1,13 @@
+<--
+Schedule group component.
+
+A column in the schedule.
+Can be a day, a category...
+-->
 <template>
     <li class="events-group">
         <div class="top-info" refs="datum"><span>{{ group }}</span></div>
-        <ul>
+        <ul :style="style">
             <schedule-event
                 v-for="event in filteredEvents"
                 :key="event.id"
@@ -11,6 +17,7 @@
                 :step="step"
                 :unit="unit"
                 :format="format"
+                :small-viewport-mode="smallViewportMode"
                 >
                 <template slot-scope="{ event }">
                     <slot :event="event"></slot>
@@ -32,11 +39,11 @@ export default {
     },
     props: {
         from: {
-            type: Object,
+            type: moment,
             default: () => moment().startOf('day').hours(8),
         },
         to: {
-            type: Object,
+            type: moment,
             default: () => moment().startOf('day').hours(18),
         },
         step: {
@@ -47,9 +54,17 @@ export default {
             type: String,
             default: 'minutes',
         },
+        slotHeight: {
+            type: Number,
+            default: 50,
+        },
         format: {
             type: String,
             default: 'H:mm',
+        },
+        smallViewportMode: {
+            type: Boolean,
+            default: false,
         },
         group: {
             type: String,
@@ -63,15 +78,19 @@ export default {
             },
         },
     },
-    data: function() {
-        return {
-            slotHeight: 50,
-        }
-    },
-    beforeUpdate: function() {
-        this.slotHeight = this.$refs.datum.clientHeight
-    },
     computed: {
+        numberOfSlots: function() {
+            let timespan = moment.duration(this.to.diff(this.from)).as(this.unit)
+            return Math.ceil(timespan / this.step)
+        },
+        style: function() {
+            if (!this.smallViewportMode) {
+                let height = this.numberOfSlots * this.slotHeight
+                return {
+                    height: height + 'px'
+                }
+            }
+        },
         filteredEvents: function() {
             let self = this
             return this.events.filter(evt => {
@@ -160,7 +179,7 @@ export default {
         margin-bottom: 0;
     }
     .schedule .events .events-group > ul {
-        height: 950px;
+        /* height: 950px; */
         /* reset style */
         display: block;
         overflow: visible;

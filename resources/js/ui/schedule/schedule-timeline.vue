@@ -1,7 +1,13 @@
+<--
+Schedule timeline component.
+
+The list of instants on the side of the schedule.
+Can be a list of hours, days...
+-->
 <template>
-    <div class="timeline">
+    <div class="timeline" v-if="!smallViewportMode">
         <ul>
-            <li v-for="i in instants">
+            <li v-for="i in instants" :style="style">
                 <span>{{ i.format(format) }}</span>
             </li>
         </ul>
@@ -14,11 +20,11 @@ import moment from 'moment'
 export default {
     props: {
         from: {
-            type: Object,
+            type: moment,
             default: () => moment().startOf('day').hours(8),
         },
         to: {
-            type: Object,
+            type: moment,
             default: () => moment().startOf('day').hours(18),
         },
         step: {
@@ -29,6 +35,10 @@ export default {
             type: String,
             default: 'minutes',
         },
+        slotHeight: {
+            type: Number,
+            default: 50,
+        },
         format: {
             type: String,
             default: 'H:mm',
@@ -37,16 +47,25 @@ export default {
             type: Number,
             default: 1,
         },
+        smallViewportMode: {
+            type: Boolean,
+            default: false,
+        },
     },
     computed: {
         instants: function() {
             let instants = []
             for (let i = this.from.clone();
-                 i.isBefore(this.to);
+                 i.isSameOrBefore(this.to);
                  i.add(this.step, this.unit)) {
                 instants.push(i.clone())
             }
             return instants
+        },
+        style: function() {
+            return {
+                height: this.slotHeight + 'px',
+            }
         },
     },
 }
@@ -69,7 +88,6 @@ export default {
     }
     .schedule .timeline li {
         position: relative;
-        height: 50px;
     }
     .schedule .timeline li::after {
         /* this is used to create the table horizontal lines */

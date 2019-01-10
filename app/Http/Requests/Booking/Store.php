@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Booking;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Booking;
 
-class StoreBooking extends FormRequest
+class Store extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.

@@ -19,8 +19,11 @@
                     </slot>
                 </section>
                 <footer class="modal-card-foot">
-                    <a :class="classes.replace('is-small', '')" @click.prevent="onConfirm">
-                        <slot></slot>
+                    <a :class="classesConfirm ||classes"
+                        @click.prevent="onConfirm">
+                        <slot name="confirm">
+                            Confirm
+                        </slot>
                     </a>
                     <a :class="classesCancel" @click.prevent="onCancel">
                         <slot name="cancel">
@@ -40,6 +43,10 @@
 export default {
     props: {
         classes: {
+            type: String,
+            default: "button is-danger",
+        },
+        classesConfirm: {
             type: String,
             default: "button is-danger",
         },

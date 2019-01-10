@@ -37,10 +37,8 @@
 
             <div class="navbar-end">
                 <user-nav
-                    v-on:flash="onFlash"
                     ></user-nav>
                 <auth-nav
-                    v-on:flash="onFlash"
                     ></auth-nav>
             </div>
         </div>
@@ -66,10 +64,5 @@ export default {
         'user-nav': UserNavComponent,
         'booking-nav': BookingNavComponent,
     },
-    methods: {
-        onFlash: function(flash) {
-            this.$emit('flash', flash)
-        },
-    }
 }
 </script>

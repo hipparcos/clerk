@@ -65,6 +65,8 @@
 <script>
 import api from './../api.js'
 import { AUTH_REQUEST } from '../../auth/actions.js'
+import { NOTIFICATIONS_PUSH } from '../../notification/actions.js'
+import notif from '../../notification/lib.js'
 
 import ErrorsList from '../../error/components/errors.vue'
 import ErrorsForField from '../../error/components/errorsForField.vue'
@@ -90,18 +92,17 @@ export default {
                     this.$store.dispatch(AUTH_REQUEST, { email, password })
                         .then(function(token) {
                             this.clear()
-                            this.$router.push('/', function() {
-                                this.$emit('flash', {
-                                    type: 'success',
-                                    message: 'Registration completed.',
-                                })
-                            }.bind(this))
+                            this.$store.dispatch(NOTIFICATIONS_PUSH, new notif.Notification({
+                                type: notif.Type.success,
+                                message: 'Registration completed.',
+                            }))
+                            this.$router.push('/')
                         }.bind(this))
                         .catch(function (error) {
-                            this.$emit('flash', {
-                                type: 'error',
+                            this.$store.dispatch(NOTIFICATIONS_PUSH, new notif.Notification({
+                                type: notif.Type.error,
                                 message: 'Fail to log in after registration.',
-                            })
+                            }))
                         }.bind(this));
                 }.bind(this))
                 .catch(function (error) {

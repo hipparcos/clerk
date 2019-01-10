@@ -6,6 +6,7 @@ import auth from './auth/store.js'
 import user from './user/store.js'
 import room from './room/store.js'
 import booking from './booking/store.js'
+import notification from './notification/store.js'
 
 const debug = process.env.NODE_ENV !== 'production'
 
@@ -15,6 +16,7 @@ export default new Vuex.Store({
         user,
         room,
         booking,
+        notification,
     },
     strict: debug,
 })

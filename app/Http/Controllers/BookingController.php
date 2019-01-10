@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Booking;
 use App\Http\Resources\Booking as BookingResource;
 use App\Http\Resources\BookingCollection;
-use App\Http\Requests\StoreBooking;
+use App\Http\Requests\Booking\Store as StoreRequest;
 use Carbon\Carbon;
 
 class BookingController extends Controller {
@@ -40,7 +40,7 @@ class BookingController extends Controller {
     /**
      * store creates a booking.
      */
-    public function store(StoreBooking $request) {
+    public function store(StoreRequest $request) {
         $data = $request->validated()['data'];
         $start = new Carbon($data['attributes']['start']);
 
@@ -61,7 +61,7 @@ class BookingController extends Controller {
     /**
      * update updates an existing booking.
      */
-    public function update(StoreBooking $request, $id) {
+    public function update(StoreRequest $request, $id) {
         $booking = Booking::where([
             ['id', '=', $id],
             ['user_id', '=', Auth::id()],

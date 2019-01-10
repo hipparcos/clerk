@@ -30,4 +30,8 @@ export default new VueRouter({
         user.routes,
         booking.routes,
     ]),
+    scrollBehavior: function(to, from, savedPosition) {
+        // page scroll to top for all route navigations.
+        return { x: 0, y: 0 }
+    },
 })

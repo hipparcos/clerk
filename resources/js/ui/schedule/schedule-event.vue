@@ -1,7 +1,20 @@
+<--
+Schedule single event component.
+
+A single event is displayed as a block relative to the top of the schedule.
+
+To be styled, single event body must be encapsulated in:
+    section class="event-body"
+
+Some colors for events background:
+- blue: #577F92 (accent #618da1);
+- violet: #443453 (accent #513e63);
+- grey: #A2B9B2 (accent #b1c4be);
+- orange: #f6b067 (accent #f7bd7f);
+-->
+
 <template>
-    <li class="single-event"
-        :style="style"
-        >
+    <li class="single-event" :style="style">
         <slot :event="event"></slot>
     </li>
 </template>
@@ -14,7 +27,7 @@ import lib from './lib.js'
 export default {
     props: {
         from: {
-            type: Object,
+            type: moment,
             default: () => moment().startOf('day').hours(8),
         },
         step: {
@@ -32,6 +45,10 @@ export default {
         slotHeight: {
             type: Number,
             default: 50,
+        },
+        smallViewportMode: {
+            type: Boolean,
+            default: false,
         },
         event: {
             type: lib.Event,
@@ -54,11 +71,16 @@ export default {
             return this.slotHeight * (this.event.duration / this.step)
         },
         style: function() {
-            return {
-                top: this.top + 'px',
-                height: this.height - this.offset + 'px',
+            let style = {
                 background: this.event.background || '#3273dc',
             }
+            if (!this.smallViewportMode) {
+                Object.assign(style, {
+                    top: this.top - 1 + 'px',
+                    height: this.height - this.offset - 1 + 'px',
+                })
+            }
+            return style
         },
     },
 }
@@ -77,7 +99,6 @@ export default {
     margin-right: 20px;
     -webkit-transition: opacity .2s, background .2s;
     transition: opacity .2s, background .2s;
-    color: #ffffff;
 }
 
 .schedule .events .single-event:last-of-type {
@@ -87,7 +108,11 @@ export default {
 .schedule .events .single-event {
     display: block;
     height: 100%;
-    padding: .375em .8em;
+    padding: .15em .3em;
+}
+
+.schedule .events .single-event section.event-body {
+    color: #ffffff;
     font-size: 0.75rem;
 }
 
@@ -100,7 +125,7 @@ export default {
 @media only screen and (min-width: 800px) {
     .schedule .events .single-event {
         position: absolute;
-        z-index: 3;
+        /* z-index: 3; */
         /* top position and height will be set using js */
         width: calc(100% + 2px);
         left: -1px;
@@ -112,80 +137,9 @@ export default {
         max-width: none;
         margin-right: 0;
     }
-    .schedule .events .single-event a {
-        padding: 1.2em;
-    }
     .schedule .events .single-event:last-of-type {
         /* reset style */
         margin-right: 0;
     }
-    .schedule .events .single-event.selected-event {
-        /* the .selected-event class is added when an user select the event */
-        visibility: hidden;
-    }
-}
-
-.schedule .event-name,
-.schedule .event-date {
-    display: block;
-    color: white;
-    font-weight: bold;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-.schedule .event-name {
-    font-size: 2.4rem;
-}
-
-@media only screen and (min-width: 800px) {
-    .schedule .event-name {
-        font-size: 2rem;
-    }
-}
-
-.schedule .event-date {
-    /* they are not included in the the HTML but added using JavScript */
-    font-size: 1.4rem;
-    opacity: .7;
-    line-height: 1.2;
-    margin-bottom: .2em;
-}
-
-.schedule .single-event[data-event="event-1"],
-.schedule [data-event="event-1"] .header-bg {
-    /* this is used to set a background color for the event */
-    background: #577F92;
-}
-
-.schedule .single-event[data-event="event-1"]:hover {
-    background: #618da1;
-}
-
-.schedule .single-event[data-event="event-2"],
-.schedule [data-event="event-2"] .header-bg {
-    background: #443453;
-}
-
-.schedule .single-event[data-event="event-2"]:hover {
-    background: #513e63;
-}
-
-.schedule .single-event[data-event="event-3"],
-.schedule [data-event="event-3"] .header-bg {
-    background: #A2B9B2;
-}
-
-.schedule .single-event[data-event="event-3"]:hover {
-    background: #b1c4be;
-}
-
-.schedule .single-event[data-event="event-4"],
-.schedule [data-event="event-4"] .header-bg {
-    background: #f6b067;
-}
-
-.schedule .single-event[data-event="event-4"]:hover {
-    background: #f7bd7f;
 }
 </style>
