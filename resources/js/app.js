@@ -4,9 +4,9 @@ import Vue from 'vue'
 import router from './router.js'
 import store from './store.js'
 import { USER_REQUEST } from './user/actions.js'
-import { ROOMS_REQUEST } from './room/actions.js'
 
-import NavComponent from './nav.vue'
+import Navigation from './nav.vue'
+import Notifications from './notification/components/notifications.vue'
 
 const app = new Vue({
     router: router,
@@ -26,26 +26,5 @@ const app = new Vue({
             store.dispatch(USER_REQUEST)
         }
     },
-    components: {
-        'clerk-nav': NavComponent,
-    },
-    data: {
-        flash: '',
-        flashClass: 'is-info',
-    },
-    methods: {
-        onFlash: function({type, message}) {
-            // class.
-            this.flashClass = 'is-info'
-            switch (type) {
-                case 'success': this.flashClass = 'is-primary'; break;
-                case 'error': this.flashClass = 'is-danger'; break;
-            }
-            // content.
-            this.flash = message
-            setTimeout(function() {
-                this.flash = ''
-            }.bind(this), 5000);
-        },
-    }
+    components: { Navigation, Notifications },
 }).$mount('#app')

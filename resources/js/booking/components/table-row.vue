@@ -88,6 +88,8 @@ import BookingBox from './box.vue'
 import RoomSelect from '../../room/components/select.vue'
 import DurationField from './duration-field.vue'
 
+import { NOTIFICATIONS_PUSH } from '../../notification/actions.js'
+import notif from '../../notification/lib.js'
 import { BOOKINGS_UPDATE } from '../actions.js'
 import api from '../api.js'
 import room from '../../room/api.js'
@@ -168,10 +170,10 @@ export default {
             this.$store.dispatch(BOOKINGS_UPDATE, { booking, override: this.override })
                 .then(function(booking) {
                     this.reset()
-                    this.$emit('flash', {
-                        type: 'success',
+                    this.$store.dispatch(NOTIFICATIONS_PUSH, new notif.Notification({
+                        type: notif.Type.success,
                         message: 'Booking updated.',
-                    })
+                    }))
                 }.bind(this))
                 .catch(function (errors) {
                     console.log(errors)

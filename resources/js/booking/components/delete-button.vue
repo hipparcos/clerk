@@ -32,6 +32,8 @@
 import ButtonConfirmed from '../../ui/button-confirmed.vue'
 import BookingBox from './box.vue'
 
+import { NOTIFICATIONS_PUSH } from '../../notification/actions.js'
+import notif from '../../notification/lib.js'
 import api from '../api.js'
 import { BOOKINGS_DELETE } from '../actions.js'
 
@@ -52,10 +54,10 @@ export default {
         remove: function() {
             this.$store.dispatch(BOOKINGS_DELETE, { id: this.booking.id })
                 .then(function(id) {
-                    this.$emit('flash', {
-                        type: 'success',
+                    this.$store.dispatch(NOTIFICATIONS_PUSH, new notif.Notification({
+                        type: notif.Type.success,
                         message: 'Booking deleted.',
-                    })
+                    }))
                 }.bind(this))
                 .catch(function(err) {
                     console.log(err)

@@ -91,6 +91,9 @@ import ErrorsList from '../../error/components/errors.vue'
 import RoomSelect from '../../room/components/select.vue'
 import DurationField from './duration-field.vue'
 
+import { NOTIFICATIONS_PUSH } from '../../notification/actions.js'
+import notif from '../../notification/lib.js'
+
 import { BOOKINGS_CREATE, BOOKINGS_UPDATE, BOOKINGS_SET_DATE } from '../actions.js'
 import api from '../api.js'
 import room from '../../room/api.js'
@@ -213,15 +216,15 @@ export default {
                 .then(function (booking) {
                     this.$router.push(this.thisDayBookingsURL, function() {
                         if (this.editMode) {
-                            this.$emit('flash', {
-                                type: 'success',
+                            this.$store.dispatch(NOTIFICATIONS_PUSH, new notif.Notification({
+                                type: notif.Type.success,
                                 message: 'Booking updated.',
-                            })
+                            }))
                         } else {
-                            this.$emit('flash', {
-                                type: 'success',
+                            this.$store.dispatch(NOTIFICATIONS_PUSH, new notif.Notification({
+                                type: notif.Type.success,
                                 message: 'Booking created.',
-                            })
+                            }))
                         }
                     }.bind(this))
                 }.bind(this))

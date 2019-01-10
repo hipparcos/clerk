@@ -20,24 +20,25 @@
 
 <script>
 import { AUTH_LOGOUT } from '../actions.js'
+import { NOTIFICATIONS_PUSH } from '../../notification/actions.js'
+import notif from '../../notification/lib.js'
 
 export default {
     methods: {
         logout: function() {
             this.$store.dispatch(AUTH_LOGOUT)
                 .then(function(response) {
-                    this.$router.push('/', function() {
-                        this.$emit('flash', {
-                            type: 'success',
-                            message: 'You are now logged out.',
-                        })
-                    }.bind(this))
+                    this.$store.dispatch(NOTIFICATIONS_PUSH, new notif.Notification({
+                        type: notif.Type.success,
+                        message: 'You are now logged out.',
+                    }))
+                    this.$router.push('/')
                 }.bind(this))
                 .catch(function (error) {
-                    this.$emit('flash', {
-                        type: 'error',
+                    this.$store.dispatch(NOTIFICATIONS_PUSH, new notif.Notification({
+                        type: notif.Type.error,
                         message: 'Fail to log out.',
-                    })
+                    }))
                 }.bind(this));
         }
     }

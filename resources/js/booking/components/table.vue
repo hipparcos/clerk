@@ -25,7 +25,6 @@
                 :key="booking.id"
                 :booking="booking"
                 @errors="onErrors"
-                @flash="onFlash"
                 >
             </booking-tr>
         </tbody>
@@ -67,9 +66,6 @@ export default {
         },
         onErrors: function(errors) {
             this.$emit('errors', errors)
-        },
-        onFlash: function(flash) {
-            this.$emit('flash', flash)
         },
     },
 }

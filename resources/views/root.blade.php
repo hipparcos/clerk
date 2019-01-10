@@ -13,22 +13,16 @@
     <body>
         <div id="app">
             <!-- navbar -->
-            <clerk-nav
+            <navigation
                 app="{{ config('app.name', 'clerk') }}"
-                v-on:flash="onFlash"
-                ></clerk-nav>
-            <!-- flash -->
-            <div v-if="flash" class="container notification" :class="flashClass">
-                <button class="delete" @click.prevent="flash = ''"></button>
-                <p>@{{ flash }}</p>
-            </div>
+                ></navigation>
+            <!-- notifications -->
+            <notifications></notifications>
             <!-- top view -->
             <router-view class="container" name="top"
-                v-on:flash="onFlash"
                 ></router-view>
             <!-- main view -->
             <router-view class="container"
-                v-on:flash="onFlash"
                 ></router-view>
         </div>
         <script src="js/app.js"></script>
