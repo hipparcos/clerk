@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 */
 
 // Auth routes.
-Route::post('register', 'AuthController@register')->name('register');
+Route::post('register', 'UserController@register')->name('register');
 
 Route::middleware('auth:api')->group(function() {
     // Bookings.

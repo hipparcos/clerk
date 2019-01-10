@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\User\Register as RegisterRequest;
 use App\Http\Resources\User as UserResource;
 
-class AuthController extends Controller
+class UserController extends Controller
 {
     /**
      * Handle a registration request for the application.
