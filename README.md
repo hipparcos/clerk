@@ -126,3 +126,13 @@ You can register a new user or connect with the test user:
         - [x] Create booking form.
 - [ ] Deployment:
     - [ ] Create a Dockerfile to deploy the application.
+
+### Changelog
+- 1.0.0 -> 1.1.0:
+    - frontend/booking: allow to set to & from in agenda view;
+    - frontend/booking: allow to edit/remove a booking from the agenda;
+    - frontend/booking: add control to inc/decrease duration by the duration of a slot;
+    - frontend: add a notification module (replace flash event);
+    - backend: rename AuthController to UserController;
+    - backend: organize Requests in sub-directories;
+    - backend: fix tests.
