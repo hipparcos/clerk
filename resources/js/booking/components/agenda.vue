@@ -42,7 +42,8 @@
         >
         <template slot-scope="{ event: booking, smallViewportMode }">
             <!-- delete button -->
-            <span style="float: right; line-height: 1 !important;">
+            <span style="float: right; line-height: 1 !important;"
+                v-if="booking.user.id == $store.getters.getProfile.id">
                 <a class="icon is-small is-size-7 has-text-white"
                     @click.prevent="$router.push('/bookings/'+booking.id+'/edit')">
                     <i class="fas fa-edit"></i>
